@@ -1,0 +1,7 @@
+<!-- Расширили шаблон home_page-->
+{% extends 'photobatle/home_page.html'%}
+
+<!-- Динамический блок контента home_page-->
+{% block content %}
+<button><h5><a href="{% url 'logout_user'%}">Выйти из аккаунта</a></h5></button>
+{% endblock %}

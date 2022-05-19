@@ -1,0 +1,11 @@
+
+/* Изменили положение элементов navbar */
+nav.navbar.navbar-expand-lg.navbar-light {
+    justify-content: space-between;
+    padding: 0px 15px ;
+}
+
+/* Изменили цвет фона navbar */
+.navbar {
+    background-color: #E0FFFF;
+}
