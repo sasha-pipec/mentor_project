@@ -12,6 +12,8 @@ social-auth-app-django = "*"
 django-allauth = "*"
 pillow = "*"
 djangorestframework = "*"
+gunicorn = "*"
+django-heroku = "*"
 
 [dev-packages]
 

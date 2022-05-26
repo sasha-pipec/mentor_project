@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 from pathlib import Path
 
 import os
+import django_heroku
 
 from decouple import config
 
@@ -140,6 +141,8 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
@@ -155,3 +158,5 @@ AUTH_USER_MODEL = 'photobatle.User'
 ACCOUNT_EMAIL_REQUIRED = True
 SITE_ID = 1
 LOGIN_REDIRECT_URL = '/'
+
+django_heroku.settings(locals())
