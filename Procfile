@@ -1,1 +1,1 @@
-web: gunicorn mentor_project.wsgi
+web: gunicorn mentor_prooject.wsgi
