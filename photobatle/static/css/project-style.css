@@ -1,3 +1,43 @@
+/*Блок всего контента*/
+.container{
+background-color:#FFB6C1;
+display:inline-flex;
+}
+
+/* Поставили фиксированный размер картинки */
+img.card-img-top{
+    object-fit: cover;
+    width: 100%;
+    height: 250px;
+}
+
+/* Выровнили изображения по центру блока */
+.card{
+position:relative;
+height:550px;
+margin:auto;
+border:3px solid black ;
+}
+
+/* Убираем описание из зоны видимости */
+p#post_content{
+display:none;
+}
+
+/* Возвращаем описание в зону видимости */
+.card:hover p#post_content{
+display:block;
+}
+
+/* Меняем цвет ссылок */
+.card:hover a{
+color:#4B0082;
+}
+
+/* Автоматически выставляем высоту при пояфлении описания */
+.card:hover{
+height:auto;
+}
 
 /* Изменили положение элементов navbar */
 nav.navbar.navbar-expand-lg.navbar-light {
@@ -7,5 +47,60 @@ nav.navbar.navbar-expand-lg.navbar-light {
 
 /* Изменили цвет фона navbar */
 .navbar {
-    background-color: #E0FFFF;
+    background: rgb(17,16,17);
+    background: linear-gradient(90deg, rgba(17,16,17,1) 0%, rgba(95,94,95,1) 100%);
+    color:white;
+    margin-bottom:10px;
 }
+
+/* Изменили цвет элементов navbar */
+.navbar-light .navbar-brand {
+    color: white;
+}
+
+/* navbar при ховере */
+.navbar-light .navbar-brand:hover {
+    color: blue;
+}
+
+/* Убираем декорацию у ссылок и меняем цвет */
+a{
+text-decoration:none;
+color:black;
+}
+
+/* Внешний отступ снизу у карточек */
+.col{
+margin-bottom:10px;
+}
+
+/* Внешний вид формы для сортироовки*/
+.SortForm{
+height:100%;
+width:400px;
+background: rgb(155,185,193);
+background: linear-gradient(90deg, rgba(155,185,193,1) 0%, rgba(197,210,214,1) 100%);
+text-align:center;
+color:black;
+justify-content:center;
+}
+
+/* Отступы у кнопок */
+.btn{
+margin:10px 0px;
+}
+
+/* Стиль для inputa */
+.form-control{
+border-radius:50px;
+height:40px;
+}
+
+/*Блоки в линию*/
+.line{
+width:100%;
+display:inline-flex;
+}
+
+
+

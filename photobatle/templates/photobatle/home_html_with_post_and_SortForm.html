@@ -1,0 +1,136 @@
+<!-- Расширили шаблон home_page-->
+{% extends 'photobatle/home_page.html'%}
+
+<!-- Динамический блок контента home_page-->
+{% block content %}
+<div class="line">
+    <div class="container">
+        <!-- Форма сортировки -->
+        <div class="SortForm">
+            <form method="POST" id="contactForm">
+                {% csrf_token %}
+                {{form.as_p}}
+            </form>
+            <form id="serchForm">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input class="form-control" type="text" placeholder="Поиск по слову" name="content">
+                </div>
+                <button type="submit" name="contact-submit" class="btn btn-primary test">Поиск</button>
+            </form>
+        </div>
+        <!-- Конец формы -->
+        <div class="row">
+            <!-- Цикл для рендера постов-->
+            {% for post in posts %}
+            <div class="col">
+                <a href="">
+                    <div class="card" style="width: 18rem;" id="card">
+                        <img class="card-img-top" src="media/{{post.photo}}" alt="Card image cap">
+                        <div class="card-body" id="card-body">
+                            <h5 class="card-title">Название: {{post.photo_name}}</h5>
+                            <p class="card-text" id="post_content">Описание: {{post.photo_content}}</p>
+                            <p class="card-text">Автор: {{post.user_name.username}}</p>
+                            <p class="card-text">Лайки: {{post.like_count}}</p>
+                            <p class="card-text">Комментарии: {{post.comment_count}}</p>
+                            <p class="card-text">Дата публикации: {{post.date_published_on_site}}</p>
+                            <a href="#" class="btn btn-primary">Посмотреть</a>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+            <!-- Конец цикла -->
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<!-- Формирование AJAX запроса -->
+<script>
+      $(document).ready(function () {
+        $('#contactForm').change(function () {
+        var contentInput=$('input[name="content"]').val().trim();
+              $.ajax({
+                  data: {'form':$(this).serialize(),
+                  'name':contentInput,
+                  'csrfmiddlewaretoken': '{{csrf_token}}',},
+                  type: $(this).attr('method'),
+                  url: "{% url 'ajax' %}",
+                  success: function (response) {
+                      $('.row').empty();
+                      for(var key in response.posts)
+                      {
+                      var content=
+                        '<div class="col">'+
+                            '<a href="">'+
+                                '<div class="card" style="width: 18rem;" id="card">'+
+                                    "<img class='card-img-top' src='"+response.posts[key].photo+"' alt='Card image cap'>"+
+                                    '<div class="card-body" id="card-body">'+
+                                        '<h5 class="card-title">Название: '+response.posts[key].photo_name+'</h5>'+
+                                        '<p class="card-text" id="post_content">Описание: '+response.posts[key].photo_content+'</p>'+
+                                        '<p class="card-text">Автор: '+ response.posts[key].user_name.username +'</p>'+
+                                        '<p class="card-text">Лайки: '+response.posts[key].like_count+'</p>'+
+                                        '<p class="card-text">Комментарии: '+response.posts[key].comment_count+'</p>'+
+                                        '<p class="card-text">Дата публикации: '+ response.posts[key].date_published_on_site +'</p>'+
+                                        '<a href="#" class="btn btn-primary">Посмотреть</a>'+
+                                    '</div>'+
+                                '</div>'+
+                            '</a>'+
+                        '</div>'
+                      ;
+                      $('.row').append(content);
+                      }
+                  },
+                  error: function (response) {
+                      alert('error')
+                  }
+                  });
+              return false;
+        });
+
+        $('#serchForm').submit(function () {
+        var contentInput=$('input[name="content"]').val().trim();
+              $.ajax({
+                  data: {'name':contentInput,
+                  'csrfmiddlewaretoken': '{{csrf_token}}',},
+                  type: 'POST',
+                  url: "{% url 'ajax_second' %}",
+                  success: function (response) {
+                      $('#contactForm')[0].reset('');
+                      $('.row').empty();
+                      for(var key in response.posts)
+                      {
+                      var content=
+                        '<div class="col">'+
+                            '<a href="">'+
+                                '<div class="card" style="width: 18rem;" id="card">'+
+                                    "<img class='card-img-top' src='"+response.posts[key].photo+"' alt='Card image cap'>"+
+                                    '<div class="card-body" id="card-body">'+
+                                        '<h5 class="card-title">Название: '+response.posts[key].photo_name+'</h5>'+
+                                        '<p class="card-text" id="post_content">Описание: '+response.posts[key].photo_content+'</p>'+
+                                        '<p class="card-text">Автор: '+ response.posts[key].user_name.username +'</p>'+
+                                        '<p class="card-text">Лайки: '+response.posts[key].like_count+'</p>'+
+                                        '<p class="card-text">Комментарии: '+response.posts[key].comment_count+'</p>'+
+                                        '<p class="card-text">Дата публикации: '+ response.posts[key].date_published_on_site +'</p>'+
+                                        '<a href="#" class="btn btn-primary">Посмотреть</a>'+
+                                    '</div>'+
+                                '</div>'+
+                            '</a>'+
+                        '</div>'
+                      ;
+                      $('.row').append(content);
+                      }
+                  },
+                  error: function (response) {
+                      alert('errorrrrrrrrrr')
+                  }
+                  });
+              return false;
+        });
+
+      });
+</script>
+{% endblock %}

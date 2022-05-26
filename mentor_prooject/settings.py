@@ -51,6 +51,8 @@ INSTALLED_APPS = [
     # Приложение фото батла
     'photobatle.apps.PhotobatleConfig',
 
+    # DRF
+    'rest_framework'
 ]
 
 MIDDLEWARE = [

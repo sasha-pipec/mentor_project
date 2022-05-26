@@ -11,10 +11,10 @@
 <h1>{% blocktrans with provider.name as provider %}Авторизация через {{ provider }}{% endblocktrans %}</h1>
 
 <p>{% blocktrans with provider.name as provider %}Вы собираетесь войти, используя сторонний аккаунт из {{ provider }}.{% endblocktrans %}</p>
-{% endif %}
+  {% endif %}
 
 <form method="post" action="">
   {% csrf_token %}
-  <button type="submit">{% trans "Авторизоваться" %}</button>
+  <button type="submit" class="btn btn-primary ">{% trans "Авторизоваться" %}</button>
 </form>
 {% endblock %}

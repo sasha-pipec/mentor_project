@@ -1,3 +1,5 @@
+import datetime
+
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 
@@ -19,10 +21,11 @@ class UserAdmin(admin.ModelAdmin):
 class PhotoAdmin(admin.ModelAdmin):
     '''Модель фото в админке'''
     list_display = (
-        'user_name', 'get_html_photo', 'photo_name', 'photo_content', 'date_published_on_site', 'like_count',
+        'user_name', 'get_html_photo', 'photo_name', 'date_published_on_site', 'like_count',
         'comment_count', 'moderation')
     list_filter = ('moderation',)
-    readonly_fields = ('date_published_on_site', 'like_count', 'comment_count',)
+    readonly_fields = ('date_published_on_site','like_count', 'comment_count',)
+    list_editable = ('moderation',)
 
     def get_html_photo(self, object):
         if object.photo:
