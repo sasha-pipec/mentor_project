@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import User,Photo
 
+
 class UserSerializer(serializers.ModelSerializer):
     '''Сериализатор для модели User'''
     class Meta:

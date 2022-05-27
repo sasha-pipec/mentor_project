@@ -130,7 +130,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'ru'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
@@ -160,3 +160,4 @@ SITE_ID = 1
 LOGIN_REDIRECT_URL = '/'
 
 django_heroku.settings(locals())
+

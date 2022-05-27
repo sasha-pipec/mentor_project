@@ -19,7 +19,7 @@ class Photo(models.Model):
     photo = models.ImageField(upload_to='photobatl/photos/', verbose_name='Фото')
     photo_name = models.CharField(max_length=255, verbose_name='Имя фото')
     photo_content = models.TextField(blank=False, verbose_name='Описание фото')
-    date_published_on_site = models.DateField(max_length=300,auto_now=False, verbose_name='Дата публикации')
+    date_published_on_site = models.DateField(max_length=300, auto_now=False, verbose_name='Дата публикации')
     like_count = models.IntegerField(default=0, verbose_name='Лайки')
     comment_count = models.IntegerField(default=0, verbose_name='Комментарии')
 
@@ -34,7 +34,7 @@ class Photo(models.Model):
         return self.user_name.username
 
     def save(self, *args, **kwargs):
-        if self.moderation=='3':
+        if self.moderation == '3':
             self.date_published_on_site = datetime.datetime.now()
         super(Photo, self).save(*args, **kwargs)
 
