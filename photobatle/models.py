@@ -16,10 +16,10 @@ class Photo(models.Model):
     '''Модель фотографий'''
     user_name = models.ForeignKey('User', on_delete=models.CASCADE, verbose_name='Пользователь',
                                   related_name='user_name_username')
-    photo = models.ImageField(upload_to='photobatl/photos/', verbose_name='Фото')
+    photo = models.ImageField(max_length=300, upload_to='photobatl/photos/', verbose_name='Фото')
     photo_name = models.CharField(max_length=255, verbose_name='Имя фото')
     photo_content = models.TextField(blank=False, verbose_name='Описание фото')
-    date_published_on_site = models.DateField(max_length=300, auto_now=False, verbose_name='Дата публикации')
+    date_published_on_site = models.DateField(auto_now=False, verbose_name='Дата публикации')
     like_count = models.IntegerField(default=0, verbose_name='Лайки')
     comment_count = models.IntegerField(default=0, verbose_name='Комментарии')
 
