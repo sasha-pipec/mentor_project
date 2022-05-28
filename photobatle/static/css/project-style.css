@@ -2,6 +2,8 @@
 .container{
 background-color:#FFB6C1;
 display:inline-flex;
+height:auto;
+justify-content: space-evenly;
 }
 
 /* Поставили фиксированный размер картинки */
@@ -14,7 +16,7 @@ img.card-img-top{
 /* Выровнили изображения по центру блока */
 .card{
 position:relative;
-height:550px;
+height:auto;
 margin:auto;
 border:3px solid black ;
 }
@@ -50,7 +52,7 @@ nav.navbar.navbar-expand-lg.navbar-light {
     background: rgb(17,16,17);
     background: linear-gradient(90deg, rgba(17,16,17,1) 0%, rgba(95,94,95,1) 100%);
     color:white;
-    margin-bottom:10px;
+    height:75px;
 }
 
 /* Изменили цвет элементов navbar */
@@ -71,13 +73,14 @@ color:black;
 
 /* Внешний отступ снизу у карточек */
 .col{
+margin-top:10px;
 margin-bottom:10px;
 }
 
 /* Внешний вид формы для сортироовки*/
 .SortForm{
 height:100%;
-width:400px;
+width:270px;
 background: rgb(155,185,193);
 background: linear-gradient(90deg, rgba(155,185,193,1) 0%, rgba(197,210,214,1) 100%);
 text-align:center;
