@@ -12,7 +12,14 @@
 
 <form class="signup" id="signup_form" method="post" action="{% url 'socialaccount_signup' %}">
   {% csrf_token %}
-  {{ form.as_p }}
+  {% for f in form %}
+    {% if forloop.last %}
+      <p style="display: none">{{ f }}</p>
+    {% else %}
+      <label for="email-signup">Email</label>
+      <p id="email-signup">{{ f }}</p>
+    {% endif %}
+  {% endfor %}
   {% if redirect_field_value %}
   <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
   {% endif %}

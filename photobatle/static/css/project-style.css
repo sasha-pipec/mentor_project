@@ -52,7 +52,7 @@ nav.navbar.navbar-expand-lg.navbar-light {
     background: rgb(17,16,17);
     background: linear-gradient(90deg, rgba(17,16,17,1) 0%, rgba(95,94,95,1) 100%);
     color:white;
-    height:75px;
+    height:auto;
 }
 
 /* Изменили цвет элементов navbar */
@@ -103,6 +103,22 @@ height:40px;
 .line{
 width:100%;
 display:inline-flex;
+}
+
+/*Выпадающий список в navbar*/
+a#navbarDropdownMenuLink {
+    margin-top:5px;
+    color: white;
+}
+
+/* Поиск по словам */
+.form-group {
+    display: inline-flex;
+    margin: auto;
+}
+
+.navbar-brand{
+margin-left:10px;
 }
 
 

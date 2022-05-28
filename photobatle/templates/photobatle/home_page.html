@@ -1,8 +1,8 @@
 {% load static%}
 {% load socialaccount %}
 {% providers_media_js %}
-<DOCTYPE html>
-    <html lang="en">
+<!doctype html>
+<html lang="en">
     <head>
         <meta charset="UTF-8">
         <title>Фото батл</title>
@@ -15,13 +15,17 @@
     <!--Навигация-->
     <nav class="navbar navbar-expand-lg navbar-light">
         <a class="navbar-brand" href="{% url 'home'%}"><h5>Главная</h5></a>
+        {%block navbar%}
+        {% endblock %}
         {% if user.is_authenticated %}
+
         {%if user.first_name%}
         <h5>Привет, {{user.first_name}} {{user.last_name}}</h5>
         {% else %}
         <h5>Привет, {{user.username}}</h5>
         {% endif %}
         <a class="navbar-brand" href="{% url 'user_page'%}"><h5>Личный кабинет</h5></a>
+
         {% else %}
         <a class="navbar-brand" href="{% provider_login_url 'vk' method='oauth2'%}"><h5>Вход</h5></a>
         {% endif %}
@@ -41,5 +45,4 @@
     {% block script%}
     {% endblock %}
     </body>
-    </html>
-</DOCTYPE>
+</html>
