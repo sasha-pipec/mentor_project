@@ -53,7 +53,9 @@ INSTALLED_APPS = [
     'photobatle.apps.PhotobatleConfig',
 
     # DRF
-    'rest_framework'
+    'rest_framework',
+
+    'imagekit'
 ]
 
 MIDDLEWARE = [
