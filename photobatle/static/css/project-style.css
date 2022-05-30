@@ -118,6 +118,8 @@ a#navbarDropdownMenuLink {
     margin: auto;
 }
 
+
+/* Отступ в navbar */
 .navbar-brand{
 margin-left:10px;
 }

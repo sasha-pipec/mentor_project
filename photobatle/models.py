@@ -2,6 +2,8 @@ import datetime
 
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from imagekit.models import ImageSpecField
+from imagekit.processors import ResizeToFill
 
 
 class User(AbstractUser):
@@ -17,6 +19,10 @@ class Photo(models.Model):
     user_name = models.ForeignKey('User', on_delete=models.CASCADE, verbose_name='Пользователь',
                                   related_name='user_name_username')
     photo = models.ImageField(max_length=300, upload_to='photobatl/photos/', verbose_name='Фото')
+    photo_imagekit = ImageSpecField(source='photo',
+                                    processors=[ResizeToFill(350, 350)],
+                                    format='JPEG',
+                                    options={'quality': 60})
     photo_name = models.CharField(max_length=255, verbose_name='Имя фото')
     photo_content = models.TextField(blank=False, verbose_name='Описание фото')
     date_published_on_site = models.DateField(auto_now=False, verbose_name='Дата публикации')
