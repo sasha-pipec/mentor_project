@@ -1,6 +1,7 @@
 /*Блок всего контента*/
-.container{
-background-color:#FFB6C1;
+.container-fluid{
+background: rgb(155,185,193);
+background: linear-gradient(90deg, rgba(155,185,193,1) 0%, rgba(197,210,214,1) 100%);
 display:inline-flex;
 height:auto;
 justify-content: space-evenly;
