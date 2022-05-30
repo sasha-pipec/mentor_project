@@ -18,7 +18,7 @@ class Photo(models.Model):
     '''Модель фотографий'''
     user_name = models.ForeignKey('User', on_delete=models.CASCADE, verbose_name='Пользователь',
                                   related_name='user_name_username')
-    slug = models.SlugField(max_length=255, unique=True, db_index=True, verbose_name='URL')
+    '''slug = models.SlugField(max_length=255, unique=True, db_index=True, verbose_name='URL')'''
     photo = models.ImageField(max_length=300, upload_to='photobatl/photos/', verbose_name='Фото')
     photo_imagekit = ImageSpecField(source='photo',
                                     processors=[ResizeToFill(350, 350)],
