@@ -51,3 +51,5 @@ def serch_form_ajax(request):
                                       Q(photo_name__icontains=content) |
                                       Q(photo_content__icontains=content),moderation='3')
     return JsonResponse({'posts': serializers.PhotoSerializer(posts, many=True).data}, status=200)
+
+
