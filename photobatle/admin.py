@@ -20,6 +20,7 @@ class UserAdmin(admin.ModelAdmin):
 
 class PhotoAdmin(admin.ModelAdmin):
     '''Модель фото в админке'''
+    prepopulated_fields = {'slug':('photo_name',)}
     list_display = (
         'user_name', 'get_html_photo', 'photo_name', 'date_published_on_site', 'like_count',
         'comment_count', 'moderation')
