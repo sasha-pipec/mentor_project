@@ -1,18 +1,8 @@
 import datetime
 
 from django.db import models
-from django.contrib.auth.models import AbstractUser
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
-
-
-class User(AbstractUser):
-    '''Переопределенная модель user'''
-    photo = models.FileField(upload_to='user/photos/%Y/%m/%d', verbose_name='Фото', max_length=255)
-
-    def __str__(self):
-        return self.username
-
 
 class Photo(models.Model):
     '''Модель фотографий'''
@@ -30,12 +20,12 @@ class Photo(models.Model):
     like_count = models.IntegerField(default=0, verbose_name='Лайки')
     comment_count = models.IntegerField(default=0, verbose_name='Комментарии')
 
-    GENDER_CHOICES = (
+    STATUS_CHOICES = (
         ('1', 'На удалении'),
         ('2', 'На модерации'),
         ('3', 'Одобренно'),
     )
-    moderation = models.CharField(max_length=1, choices=GENDER_CHOICES, verbose_name='Статус')
+    moderation = models.CharField(max_length=1, choices=STATUS_CHOICES, verbose_name='Статус')
 
     def __str__(self):
         return self.user_name.username
@@ -46,4 +36,5 @@ class Photo(models.Model):
         super(Photo, self).save(*args, **kwargs)
 
     class Meta:
+        app_label = 'photobatle'
         verbose_name_plural = 'Фото'
