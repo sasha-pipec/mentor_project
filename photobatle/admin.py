@@ -24,7 +24,7 @@ class PhotoAdmin(admin.ModelAdmin):
         'user_name', 'get_html_photo', 'photo_name', 'date_published_on_site', 'like_count',
         'comment_count', 'moderation')
     list_filter = ('moderation',)
-    readonly_fields = ('date_published_on_site','like_count', 'comment_count','slug')
+    readonly_fields = ('date_published_on_site','like_count', 'comment_count')
     list_editable = ('moderation',)
     prepopulated_fields = {'slug': ('photo_name',)}
 
@@ -35,6 +35,6 @@ class PhotoAdmin(admin.ModelAdmin):
     get_html_photo.short_description = 'фото'
 
 
-admin.site.register(models.User, UserAdmin)
-admin.site.register(models.Photo, PhotoAdmin)
+admin.site.register(models.Usermodels.User, UserAdmin)
+admin.site.register(models.Photomodels.Photo, PhotoAdmin)
 # Register your models here.
