@@ -20,13 +20,13 @@ class UserAdmin(admin.ModelAdmin):
 
 class PhotoAdmin(admin.ModelAdmin):
     '''Модель фото в админке'''
-    '''prepopulated_fields = {'slug':('photo_name',)}'''
     list_display = (
         'user_name', 'get_html_photo', 'photo_name', 'date_published_on_site', 'like_count',
         'comment_count', 'moderation')
     list_filter = ('moderation',)
-    readonly_fields = ('date_published_on_site','like_count', 'comment_count',)
+    readonly_fields = ('date_published_on_site','like_count', 'comment_count','slug')
     list_editable = ('moderation',)
+    prepopulated_fields = {'slug': ('photo_name',)}
 
     def get_html_photo(self, object):
         if object.photo:
