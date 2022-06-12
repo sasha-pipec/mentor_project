@@ -1,4 +1,5 @@
 from django import template
+import os
 
 register = template.Library()
 
@@ -12,3 +13,12 @@ def len_name(value):
 @register.filter
 def first_letters(value):
     return value[0:8]
+
+
+@register.filter
+def check_photo(value):
+    if os.path.isfile('media/'+str(value)):
+        return True
+    else:
+        return False
+

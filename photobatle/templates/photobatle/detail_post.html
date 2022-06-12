@@ -1,12 +1,21 @@
 <!-- Расширили шаблон home_page-->
 {% extends 'photobatle/home_page.html'%}
 {% load imagekit %}
+{% load filter%}
 
 {% block content %}
 <div class="container" id="first-detail-block">
     <div class="row">
         <div class="col-12 col-sm-5">
-            <img src="{{post.photo_imagekit.url }}" alt="Card image cap" id="detail-photo">
+            {% if post.photo|check_photo %}
+            <a href="{% url 'detail_post' post.slug%}">
+                <img src="{{post.photo_imagekit.url }}" alt="Card image cap" id="detail-photo">
+            </a>
+            {% else %}
+            <a href="{% url 'detail_post' post.slug%}">
+                <img class="card-img-top" src="/static/image/default-photo-post.png" alt="Card image cap" style="width:100%;height:100%;">
+            </a>
+            {% endif %}
         </div>
         <div class="col-12 col-sm-7">
             <div class="add-comment">
@@ -29,7 +38,7 @@
                 <p>Автор: {{post.user_name.username}}</p>
                 <p>Лайки: {{post.like_count}}</p>
                 <p>Комментарии: {{post.comment_count}}</p>
-                <p>Дата публикации: {{post.date_published_on_site}}</p>
+                <p>Дата публикации: <br> {{post.date_published_on_site}}</p>
                 <a href="#" class="btn btn-primary" id="btn-post">Проголосовать</a>
             </div>
 
