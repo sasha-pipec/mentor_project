@@ -2,6 +2,7 @@ from django.contrib.auth import logout
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
+from django.views.generic import DetailView
 
 from . import models
 from . import forms
@@ -34,23 +35,31 @@ def logout_user(request):
 
 def sort_form_ajax(request):
     """Функция для AJAX запроса сортировка"""
-    form=forms.SortForm()
+    form = forms.SortForm()
     if request.method == "POST" and request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        #Получаем значение формы по которому будем сортировать
-        field=request.POST['form'].split('=')[-1]
+        # Получаем значение формы по которому будем сортировать
+        field = request.POST['form'].split('=')[-1]
         serch_word = request.POST['name']
         posts = models.Photomodels.Photo.objects.filter(Q(user_name__username__icontains=serch_word) |
-                                    Q(photo_name__icontains=serch_word) |
-                                    Q(photo_content__icontains=serch_word),moderation='3').order_by(f"-{field}")
+                                                        Q(photo_name__icontains=serch_word) |
+                                                        Q(photo_content__icontains=serch_word),
+                                                        moderation='3').order_by(f"-{field}")
         return JsonResponse({'posts': serializers.PhotoSerializer(posts, many=True).data}, status=200)
-    return render(request, "home_html_with_post_and_SortForm.html",context={'form':form})
+    return render(request, "home_html_with_post_and_SortForm.html", context={'form': form})
+
 
 def serch_form_ajax(request):
     """Функция для AJAX запроса поиск по слову"""
-    content=request.POST['name']
-    posts=models.Photomodels.Photo.objects.filter(Q(user_name__username__icontains=content) |
-                                      Q(photo_name__icontains=content) |
-                                      Q(photo_content__icontains=content),moderation='3')
+    content = request.POST['name']
+    posts = models.Photomodels.Photo.objects.filter(Q(user_name__username__icontains=content) |
+                                                    Q(photo_name__icontains=content) |
+                                                    Q(photo_content__icontains=content), moderation='3')
     return JsonResponse({'posts': serializers.PhotoSerializer(posts, many=True).data}, status=200)
 
 
+class detail_post(DetailView):
+    """Детальный просмотр поста"""
+    model = models.Photomodels.Photo
+    template_name = 'photobatle/detail_post.html'
+    slug_url_kwarg = 'slug_id'
+    context_object_name = 'post'

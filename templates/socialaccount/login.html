@@ -3,6 +3,7 @@
 {% load i18n %}
 
 {% block content %}
+<div class="authorization-block">
 {% if process == "connect" %}
 <h1>{% blocktrans with provider.name as provider %}Connect {{ provider }}{% endblocktrans %}</h1>
 
@@ -17,4 +18,5 @@
   {% csrf_token %}
   <button type="submit" class="btn btn-primary ">{% trans "Авторизоваться" %}</button>
 </form>
+</div>
 {% endblock %}

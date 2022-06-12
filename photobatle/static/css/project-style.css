@@ -1,9 +1,17 @@
+html,body{
+font-family: 'Montserrat', sans-serif;
+height:100%;
+background-image:url(../image/background-mage-body.jpg);
+background-repeat:no-repeat;
+background-size:cover;
+background-position:cover;
+background-attachment: fixed;
+}
+
 /*Блок всего контента*/
 .container-fluid{
-background: rgb(155,185,193);
-background: linear-gradient(90deg, rgba(155,185,193,1) 0%, rgba(197,210,214,1) 100%);
 display:inline-flex;
-height:auto;
+min-height:100vh;
 justify-content: space-evenly;
 }
 
@@ -12,6 +20,7 @@ img.card-img-top{
     object-fit: cover;
     width: 100%;
     height: 250px;
+    -webkit-border-radius: 50px;
 }
 
 /* Выровнили изображения по центру блока */
@@ -19,12 +28,26 @@ img.card-img-top{
 position:relative;
 height:auto;
 margin:auto;
-border:3px solid black ;
+border:none;
+border-radius:50px;
 }
+
 
 /* Убираем описание из зоны видимости */
 p#post_content{
 display:none;
+}
+
+h5#full_letters{
+display:none;
+}
+
+.card:hover h5#first_letters{
+display:none;
+}
+
+.card:hover h5#full_letters{
+display:block;
 }
 
 /* Возвращаем описание в зону видимости */
@@ -78,26 +101,18 @@ margin-top:10px;
 margin-bottom:10px;
 }
 
-/* Внешний вид формы для сортироовки*/
-.SortForm{
-height:100%;
-width:270px;
-background: rgb(155,185,193);
-background: linear-gradient(90deg, rgba(155,185,193,1) 0%, rgba(197,210,214,1) 100%);
-text-align:center;
-color:black;
-justify-content:center;
-}
 
 /* Отступы у кнопок */
 .btn{
 margin:10px 0px;
+border-radius:100px;
+background: rgb(255,131,219);
+background: linear-gradient(90deg, rgba(255,131,219,1) 0%, rgba(255,81,81,1) 100%);
 }
 
-/* Стиль для inputa */
-.form-control{
-border-radius:50px;
-height:40px;
+/*Кнопка у постов*/
+#btn-post{
+width:100%;
 }
 
 /*Блоки в линию*/
@@ -115,14 +130,140 @@ a#navbarDropdownMenuLink {
 /* Поиск по словам */
 .form-group {
     display: inline-flex;
-    margin: auto;
+    margin: 3px;
+    background-color:white;
+    border-radius:100px;
+    height:50px;
 }
 
+/* Стиль для inputa */
+.form-control{
+margin:auto;
+border:none;
+border-radius:50px;
+}
 
 /* Отступ в navbar */
 .navbar-brand{
 margin-left:10px;
 }
+
+
+/* блок лайков на детальном просмотре*/
+.like{
+margin:auto;
+width:90%;
+border:1px solid black;
+height:50px;
+margin-top:10px;
+}
+
+
+/* блок комментариев на детальном просмотре*/
+.comment{
+margin:auto;
+width:90%;
+border:1px solid black;
+height:80%;
+margin-top:10px;
+}
+
+/* блок в котором хранится шаблон авторизации через вк*/
+.authorization-block{
+display:block;
+justify-content:left;
+width:100%;
+}
+
+/* блок в котором хранится детальный просмотр фото*/
+.deteil-block{
+display:flex;
+justify-content:center;
+}
+
+.text-center{
+    background: rgb(17,16,17);
+    background: linear-gradient(90deg, rgba(17,16,17,1) 0%, rgba(95,94,95,1) 100%);
+color:white;
+}
+
+#first-detail-block{
+margin-top:15px;
+}
+
+.row{
+margin-bottom:15px;
+}
+
+.add-comment{
+width:100%;
+height:100%;
+background-color:white;
+}
+
+.comment-header{
+padding-left:10%;
+padding-top:2%;
+}
+
+.comment-content{
+border:1px solid black;
+height:300px;
+width:90%;
+margin:auto;
+overflow:auto;
+}
+.input-group{
+height:50px;
+width:90%;
+margin:auto;
+margin-top:10px;
+}
+
+#detail-photo{
+max-width: 100%;
+height: auto;
+margin:auto;
+}
+
+#input-comment{
+width:80%;
+}
+
+#button-comment{
+width:20%;
+height:100%
+}
+
+#image-comment-button{
+width:auto;
+height:100%;
+}
+
+.detail-post-info{
+width:100%;
+height:250px;
+padding:10px;
+background-color:white;
+}
+
+.detail-post-description{
+width:100%;
+height:250px;
+background-color:white;
+}
+
+#detail-post-description{
+margin:10% 10px 10px 10px;
+}
+
+#detail-post-description-header{
+margin-left:10px;
+}
+
+
+
+
 
 
 

@@ -1,2 +1,46 @@
 <!-- Расширили шаблон home_page-->
 {% extends 'photobatle/home_page.html'%}
+{% load imagekit %}
+
+{% block content %}
+<div class="container" id="first-detail-block">
+    <div class="row">
+        <div class="col-12 col-sm-4">
+            <img src="{{post.photo_imagekit.url }}" alt="Card image cap" id="detail-photo">
+        </div>
+        <div class="col-12 col-sm-8">
+            <div class="add-comment">
+                <div class="comment-header">
+                    <h5>Комментарии</h5>
+                </div>
+                <div class="comment-content">
+
+                </div>
+                <div class="input-group">
+                    <input type="text" id="input-comment" placeholder="Оставить комментарий">
+                    <button id="button-comment"><img src="/static/image/add-comment.svg" alt="" id="image-comment-button"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-sm-4">
+            <div class="detail-post-info">
+                <p class="card-text">Автор: {{post.user_name.username}}</p>
+                <p class="card-text">Лайки: {{post.like_count}}</p>
+                <p class="card-text">Комментарии: {{post.comment_count}}</p>
+                <p class="card-text">Дата публикации: {{post.date_published_on_site}}</p>
+                <a href="#" class="btn btn-primary" id="btn-post">Проголосовать</a>
+            </div>
+
+        </div>
+        <div class="col-12 col-sm-8">
+            <div class="detail-post-description">
+                <h5 id="detail-post-description-header">Описнаие</h5>
+                <p class="card-text" id="detail-post-description">{{post.photo_content}}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
