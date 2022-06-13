@@ -6,5 +6,7 @@ FRUIT_CHOICES = [
     ('date_published_on_site', 'Сортировка по дате'),
 ]
 
+
 class SortForm(forms.Form):
-    choice = forms.CharField(label='Сортировка',widget=forms.RadioSelect(choices=FRUIT_CHOICES))
+    choice = forms.CharField(label='Сортировка', widget=forms.RadioSelect(choices=FRUIT_CHOICES))
+

@@ -42,7 +42,7 @@
         <div class="card" style="width: 18rem;" id="card">
             {% if post.photo|check_photo %}
             <a href="{% url 'detail_post' post.slug%}">
-                <img class="card-img-top" src="media/{{post.photo}}" alt="Card image cap">
+                <img class="card-img-top" src="{{post.photo.url}}" alt="Card image cap">
             </a>
             {% else %}
             <a href="{% url 'detail_post' post.slug%}">

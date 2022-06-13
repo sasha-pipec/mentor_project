@@ -35,6 +35,10 @@ class PhotoAdmin(admin.ModelAdmin):
     get_html_photo.short_description = 'фото'
 
 
+class CommentAdmin(admin.ModelAdmin):
+    list_display=('content',)
+
 admin.site.register(models.Usermodels.User, UserAdmin)
 admin.site.register(models.Photomodels.Photo, PhotoAdmin)
+admin.site.register(models.Commentmodels.Comment, CommentAdmin)
 # Register your models here.

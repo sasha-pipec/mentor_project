@@ -28,7 +28,7 @@ class Photo(models.Model):
     moderation = models.CharField(max_length=1, choices=STATUS_CHOICES, verbose_name='Статус')
 
     def __str__(self):
-        return self.user_name.username
+        return self.photo_name
 
     def save(self, *args, **kwargs):
         if self.moderation == '3':

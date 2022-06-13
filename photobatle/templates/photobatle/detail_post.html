@@ -8,13 +8,9 @@
     <div class="row">
         <div class="col-12 col-sm-5">
             {% if post.photo|check_photo %}
-            <a href="{% url 'detail_post' post.slug%}">
-                <img src="{{post.photo_imagekit.url }}" alt="Card image cap" id="detail-photo">
-            </a>
+            <img src="{{post.photo_imagekit.url }}" alt="Card image cap" id="detail-photo">
             {% else %}
-            <a href="{% url 'detail_post' post.slug%}">
-                <img src="/static/image/default-photo-post.png" alt="Card image cap" id="detail-photo">
-            </a>
+            <img src="/static/image/default-photo-post.png" alt="Card image cap" id="detail-photo">
             {% endif %}
         </div>
         <div class="col-12 col-sm-7">
@@ -23,12 +19,32 @@
                     <h5>Комментарии</h5>
                 </div>
                 <div class="comment-content">
-
+                    {% for comment in comments %}
+                    <div class="row">
+                        <div class="col">
+                            <div class="comment-content-detail">
+                                <img class="comment-image" src='{{comment.user_name.photo.url}}' alt="avatar">
+                                <div class="comment-content-detail-info">
+                                    <h5 id="comment-content-detail-info">{{comment.user_name.username}}</h5>
+                                    <p id="comment-content-detail-info">{{comment}}</p>
+                                    <p id="comment-content-detail-info">{{comment.date}} <a href="">Ответить</a></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor%}
                 </div>
-                <div class="input-group">
-                    <textarea type="text" id="input-comment" placeholder="Оставить комментарий"></textarea>
-                    <button id="button-comment"><img src="/static/image/add-comment.svg" alt="" id="image-comment-button"></button>
-                </div>
+                <form method="POST" action="{% url 'create_comment' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="pk" value="{{post.pk}}">
+                    <input type="hidden" name="slug" value="{{post.slug}}">
+                    <div class="input-group">
+                        <textarea name="comment" type="text" id="input-comment"
+                                  placeholder="Оставить комментарий"></textarea>
+                        <button id="button-comment" type="submit"><img
+                                src="/static/image/add-comment.svg" alt="" id="image-comment-button"></button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

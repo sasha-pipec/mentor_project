@@ -263,6 +263,29 @@ margin:10% 10px 10px 10px;
 margin-left:10px;
 }
 
+.comment-content-detail{
+margin-left:5%;
+display:inline-flex;
+}
+
+.comment-content-detail-info{
+width:100%;
+margin-left:5px;
+display:block;
+}
+
+.comment-image{
+width:60px;
+height:60px;
+border:1px solid black;
+border-radius:100%;
+}
+
+#comment-content-detail-info{
+padding:0;
+margin:0;
+}
+
 
 
 

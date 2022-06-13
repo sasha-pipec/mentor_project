@@ -57,9 +57,23 @@ def serch_form_ajax(request):
     return JsonResponse({'posts': serializers.PhotoSerializer(posts, many=True).data}, status=200)
 
 
-class detail_post(DetailView):
+def create_comment_for_photo(request):
+    comment = request.POST['comment']
+    photo_slug = request.POST['slug']
+    user = request.user.id
+    photo_id = models.Photomodels.Photo(pk=request.POST['pk'])
+    models.Commentmodels.Comment.objects.create(photo=photo_id, user_name_id=user, content=comment)
+    return redirect('detail_post', slug_id=photo_slug)
+
+
+class DetailPost(DetailView):
     """Детальный просмотр поста"""
     model = models.Photomodels.Photo
     template_name = 'photobatle/detail_post.html'
     slug_url_kwarg = 'slug_id'
     context_object_name = 'post'
+
+    def get_context_data(self,*args,oject_list=None, **kwargs):
+        context = super().get_context_data(*args,**kwargs)
+        context['comments'] = models.Commentmodels.Comment.objects.filter(photo_id=context['post'].id)
+        return context
