@@ -217,7 +217,7 @@ overflow:auto;
 height:50px;
 width:90%;
 margin:auto;
-margin-top:10px;
+margin-top:5%;
 }
 
 #detail-photo{
@@ -228,6 +228,7 @@ margin:auto;
 
 #input-comment{
 width:80%;
+height:100%;
 }
 
 #button-comment{
