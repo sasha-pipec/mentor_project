@@ -2,12 +2,15 @@
 {% extends 'photobatle/home_page.html'%}
 {% load imagekit %}
 {% load filter%}
+{% load static %}
+{% load socialaccount %}
+{% providers_media_js %}
 
 {% block content %}
 <div class="container" id="first-detail-block">
     <div class="row">
         <div class="col-12 col-sm-5">
-            {% if post.photo|check_photo %}
+            {% if post.photo.url|check_photo %}
             <img src="{{post.photo_imagekit.url }}" alt="Card image cap" id="detail-photo">
             {% else %}
             <img src="/static/image/default-photo-post.png" alt="Card image cap" id="detail-photo">
@@ -23,7 +26,11 @@
                     <div class="row">
                         <div class="col">
                             <div class="comment-content-detail">
+                                {% if comment.user_name.photo.url|check_photo %}
                                 <img class="comment-image" src='{{comment.user_name.photo.url}}' alt="avatar">
+                                {% else %}
+                                <img class="comment-image" src="/static/image/default-photo-post.png" alt="Card image cap" id="detail-photo">
+                                {% endif %}
                                 <div class="comment-content-detail-info">
                                     <h5 id="comment-content-detail-info">{{comment.user_name.username}}</h5>
                                     <p id="comment-content-detail-info">{{comment}}</p>
@@ -39,10 +46,16 @@
                     <input type="hidden" name="pk" value="{{post.pk}}">
                     <input type="hidden" name="slug" value="{{post.slug}}">
                     <div class="input-group">
-                        <textarea name="comment" type="text" id="input-comment"
+                        <textarea onblur="default_text()" onclick="click_text()" name="comment" type="text"
+                                  id="input-comment"
                                   placeholder="Оставить комментарий"></textarea>
+                        {% if user.is_authenticated %}
                         <button id="button-comment" type="submit"><img
                                 src="/static/image/add-comment.svg" alt="" id="image-comment-button"></button>
+                        {% else %}
+                        <a id="button-comment" href="{%provider_login_url 'vk' method='oauth2'%}"><img
+                                src="/static/image/auth-for-comment.png" alt="" id="image-comment-button"></a>
+                        {% endif %}
                     </div>
                 </form>
             </div>
@@ -53,7 +66,7 @@
             <div class="detail-post-info">
                 <p>Автор: {{post.user_name.username}}</p>
                 <p>Лайки: {{post.like_count}}</p>
-                <p>Комментарии: {{post.comment_count}}</p>
+                <p>Комментарии: {{post|comment_count}}</p>
                 <p>Дата публикации: <br> {{post.date_published_on_site}}</p>
                 <a href="#" class="btn btn-primary" id="btn-post">Проголосовать</a>
             </div>
@@ -69,3 +82,8 @@
 </div>
 
 {% endblock %}
+
+{% block script%}
+<script type="text/javascript" src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/main.js' %}"></script>
+{% endblock%}

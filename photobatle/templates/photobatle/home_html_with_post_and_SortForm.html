@@ -40,7 +40,7 @@
     {% for post in posts %}
     <div class="col">
         <div class="card" style="width: 18rem;" id="card">
-            {% if post.photo|check_photo %}
+            {% if post.photo.url|check_photo %}
             <a href="{% url 'detail_post' post.slug%}">
                 <img class="card-img-top" src="{{post.photo.url}}" alt="Card image cap">
             </a>
@@ -61,7 +61,7 @@
                 <p class="card-text" id="post_content">Описание: {{post.photo_content}}</p>
                 <p class="card-text">Автор: {{post.user_name.username}}</p>
                 <p class="card-text">Лайки: {{post.like_count}}</p>
-                <p class="card-text">Комментарии: {{post.comment_count}}</p>
+                <p class="card-text">Комментарии: {{post|comment_count}}</p>
                 <p class="card-text">Дата публикации: <br> {{post.date_published_on_site}}</p>
                 <a href="{% url 'detail_post' post.slug%}" class="btn btn-primary" id="btn-post">Посмотреть</a>
             </div>
@@ -78,6 +78,9 @@
 <!-- Формирование AJAX запроса -->
 <script>
       $(document).ready(function () {
+
+
+      <!--  AJAX для фильтрации     -->
         $('#contactForm').change(function () {
         var contentInput=$('input[name="content"]').val().trim();
          var options = {
@@ -95,14 +98,31 @@
                       $('.row').empty();
                       for(var key in response.posts)
                       {
+
+                      var name_photo=response.posts[key].photo_name;
+                      var url_photo=response.posts[key].checking_the_existence;
+                      if(url_photo!="exists"){
+                      var url_photo='/static/image/default-photo-post.png';
+                      }else{
+                      var url_photo=response.posts[key].photo;
+                      }
+
                       var content=
                         '<div class="col">'+
                                 '<div class="card" style="width: 18rem;" id="card">'+
                                 '<a href="post/' + response.posts[key].slug + '">'+
-                                    "<img class='card-img-top' src='"+response.posts[key].photo+"' alt='Card image cap'>"+
+                                    "<img id='foo' class='card-img-top' src='"+url_photo+"'alt='Не загрузилось :('>"+
                                 '</a>'+
-                                    '<div class="card-body" id="card-body">'+
-                                        '<h5 class="card-title">Название: '+response.posts[key].photo_name+'</h5>'+
+                                    '<div class="card-body" id="card-body">';
+
+                                    if(name_photo.length>=11){
+                                    var content=content+'<h5 class="card-title" id="first_letters">Название:'+name_photo.substr(0,8)+'...</h5>'+
+                                    '<h5 class="card-title" id="full_letters">Название: '+name_photo+'</h5>';
+                                    }else{
+                                    var content=content+'<h5 class="card-title">Название: '+name_photo+'</h5>';
+                                    }
+
+                                      var content=content +
                                         '<p class="card-text" id="post_content">Описание: '+response.posts[key].photo_content+'</p>'+
                                         '<p class="card-text">Автор: '+ response.posts[key].user_name.username +'</p>'+
                                         '<p class="card-text">Лайки: '+response.posts[key].like_count+'</p>'+
@@ -123,6 +143,7 @@
               return false;
         });
 
+        <!--  AJAX для поиска по слову      -->
         $('#serchForm').submit(function () {
         var contentInput=$('input[name="content"]').val().trim();
         var options = {
@@ -140,18 +161,35 @@
                       $('.row').empty();
                       for(var key in response.posts)
                       {
+
+                      var name_photo=response.posts[key].photo_name;
+                      var url_photo=response.posts[key].checking_the_existence;
+                      if(url_photo!="exists"){
+                      var url_photo='/static/image/default-photo-post.png';
+                      }else{
+                      var url_photo=response.posts[key].photo;
+                      }
+
                       var content=
                         '<div class="col">'+
                                 '<div class="card" style="width: 18rem;" id="card">'+
                                 '<a href="post/' + response.posts[key].slug + '">'+
-                                    "<img class='card-img-top' src='"+response.posts[key].photo+"' alt='Card image cap'>"+
+                                    "<img class='card-img-top' src='"+url_photo+"' alt='Card image cap'>"+
                                 '</a>'+
-                                    '<div class="card-body" id="card-body">'+
-                                        '<h5 class="card-title">Название: '+response.posts[key].photo_name+'</h5>'+
+                                    '<div class="card-body" id="card-body">';
+
+                                    if(name_photo.length>=11){
+                                    var content=content+'<h5 class="card-title" id="first_letters">Название:'+name_photo.substr(0,8)+'...</h5>'+
+                                    '<h5 class="card-title" id="full_letters">Название: '+name_photo+'</h5>';
+                                    }else{
+                                    var content=content+'<h5 class="card-title">Название: '+name_photo+'</h5>';
+                                    }
+
+                                      var content=content +
                                         '<p class="card-text" id="post_content">Описание: '+response.posts[key].photo_content+'</p>'+
                                         '<p class="card-text">Автор: '+ response.posts[key].user_name.username +'</p>'+
                                         '<p class="card-text">Лайки: '+response.posts[key].like_count+'</p>'+
-                                        '<p class="card-text">Комментарии: '+response.posts[key].comment_count+'</p>'+
+                                        '<p class="card-text">Комментарии: '+response.posts[key].comment_count +'</p>'+
                                         '<p class="card-text">Дата публикации: <br> '+ new Date(response.posts[key].date_published_on_site).toLocaleDateString("ru", options) +'</p>'+
                                         '<a href="post/' + response.posts[key].slug + '"class="btn btn-primary" id="btn-post">Посмотреть</a>'+
                                     '</div>'+
@@ -168,6 +206,7 @@
               return false;
         });
       });
+
 
 </script>
 {% endblock %}

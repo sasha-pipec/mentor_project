@@ -22,9 +22,9 @@ class PhotoAdmin(admin.ModelAdmin):
     '''Модель фото в админке'''
     list_display = (
         'user_name', 'get_html_photo', 'photo_name', 'date_published_on_site', 'like_count',
-        'comment_count', 'moderation')
+        'moderation')
     list_filter = ('moderation',)
-    readonly_fields = ('date_published_on_site','like_count', 'comment_count')
+    readonly_fields = ('date_published_on_site', 'like_count')
     list_editable = ('moderation',)
     prepopulated_fields = {'slug': ('photo_name',)}
 
@@ -36,7 +36,8 @@ class PhotoAdmin(admin.ModelAdmin):
 
 
 class CommentAdmin(admin.ModelAdmin):
-    list_display=('content',)
+    list_display = ('content',)
+
 
 admin.site.register(models.Usermodels.User, UserAdmin)
 admin.site.register(models.Photomodels.Photo, PhotoAdmin)

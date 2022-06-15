@@ -1,5 +1,6 @@
 from django import template
 import os
+from photobatle import models
 
 register = template.Library()
 
@@ -17,8 +18,13 @@ def first_letters(value):
 
 @register.filter
 def check_photo(value):
-    if os.path.isfile('media/'+str(value)):
+    if os.path.exists(  str(value)[1::]):
         return True
     else:
         return False
+
+@register.filter
+def comment_count(value):
+    comment_count=models.Commentmodels.Comment.objects.filter(photo=value.pk).count()
+    return comment_count
 

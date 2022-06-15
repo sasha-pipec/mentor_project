@@ -1,4 +1,5 @@
 import datetime
+import os
 
 from django.db import models
 from imagekit.models import ImageSpecField
@@ -18,7 +19,6 @@ class Photo(models.Model):
     photo_content = models.TextField(blank=False, verbose_name='Описание фото')
     date_published_on_site = models.DateField(auto_now=False, verbose_name='Дата публикации')
     like_count = models.IntegerField(default=0, verbose_name='Лайки')
-    comment_count = models.IntegerField(default=0, verbose_name='Комментарии')
 
     STATUS_CHOICES = (
         ('1', 'На удалении'),
@@ -34,6 +34,12 @@ class Photo(models.Model):
         if self.moderation == '3':
             self.date_published_on_site = datetime.datetime.now()
         super(Photo, self).save(*args, **kwargs)
+
+    def checking_the_existence(self):
+        if os.path.exists(str(self.photo.url)[1::]):
+            return "exists"
+        else:
+            return "not exists"
 
     class Meta:
         app_label = 'photobatle'

@@ -286,6 +286,13 @@ padding:0;
 margin:0;
 }
 
+a#button-comment {
+    margin: auto;
+    text-align: center;
+    border: 1px solid;
+    border-radius: 100%;
+}
+
 
 
 
