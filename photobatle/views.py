@@ -33,15 +33,20 @@ def Logouting_user(request):
     return redirect('home')
 
 
-def Creating_comment_for_photo(request):
+def Creating_comment_for_photo(request, parent_comment_id):
     """Функция создания комментария для поста"""
     comment = request.POST['comment']
     photo_slug = request.POST['slug']
     user = request.user.id
     if len(comment) != 0:
-        # Создание записи комментария в бд
         photo_id = models.Photomodels.Photo(pk=request.POST['pk'])
-        models.Commentmodels.Comment.objects.create(photo=photo_id, user_name_id=user, content=comment)
+        if parent_comment_id == 'none':
+            # Создание записи комментария в бд
+            models.Commentmodels.Comment.objects.create(photo=photo_id, user_name_id=user, content=comment)
+        else:
+            # Создание записи ответа на комментарий в бд
+            models.Commentmodels.Comment.objects.create(photo=photo_id, user_name_id=user, parent_id=parent_comment_id,
+                                                        content=comment)
     return redirect('detail_post', slug_id=photo_slug)
 
 
@@ -52,10 +57,11 @@ def Sorting_form_ajax(request):
         # Получаем значение формы по которому будем сортировать
         field = request.POST['form'].split('=')[-1]
         serch_word = request.POST['name']
-        posts = models.Photomodels.Photo.objects.annotate(comment_count=Count('comment_photo')).filter(Q(user_name__username__icontains=serch_word) |
-                                                        Q(photo_name__icontains=serch_word) |
-                                                        Q(photo_content__icontains=serch_word),
-                                                        moderation='3').order_by(f"-{field}")
+        posts = models.Photomodels.Photo.objects.annotate(comment_count=Count('comment_photo')).filter(
+            Q(user_name__username__icontains=serch_word) |
+            Q(photo_name__icontains=serch_word) |
+            Q(photo_content__icontains=serch_word),
+            moderation='3').order_by(f"-{field}")
         return JsonResponse({'posts': serializers.PhotoSerializer(posts, many=True).data}, status=200)
     return render(request, "home_html_with_post_and_SortForm.html", context={'form': form})
 
@@ -63,9 +69,10 @@ def Sorting_form_ajax(request):
 def Search_form_ajax(request):
     """Функция для AJAX запроса поиск по слову"""
     serch_word = request.POST['name']
-    posts = models.Photomodels.Photo.objects.annotate(comment_count=Count('comment_photo')).filter(Q(user_name__username__icontains=serch_word) |
-                                                    Q(photo_name__icontains=serch_word) |
-                                                    Q(photo_content__icontains=serch_word), moderation='3')
+    posts = models.Photomodels.Photo.objects.annotate(comment_count=Count('comment_photo')).filter(
+        Q(user_name__username__icontains=serch_word) |
+        Q(photo_name__icontains=serch_word) |
+        Q(photo_content__icontains=serch_word), moderation='3')
     return JsonResponse({'posts': serializers.PhotoSerializer(posts, many=True).data}, status=200)
 
 
@@ -76,7 +83,28 @@ class DetailPost(DetailView):
     slug_url_kwarg = 'slug_id'
     context_object_name = 'post'
 
-    def get_context_data(self, *args, oject_list=None, **kwargs):
+    def all_comments_for_post(self, parent_id=None, photo_id=None):
+        comments = models.Commentmodels.Comment.objects.filter(photo_id=photo_id, parent_id=parent_id)
+        all_answer_for_comment = []
+        if len(comments) != 0:
+            for comment in comments:
+                all_answer_for_comment.append(comment)
+                childs = self.all_comments_for_post(parent_id=comment.pk, photo_id=comment.photo_id, )
+                if len(childs) != 0:
+                    for child in childs:
+                        all_answer_for_comment.append(child)
+        else:
+            return all_answer_for_comment
+        return all_answer_for_comment
+
+    def get_context_data(self, parent_id=None, *args, oject_list=None, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        context['comments'] = models.Commentmodels.Comment.objects.filter(photo_id=context['post'].id)
+        # тут хранятся основные комментарии
+        context['comments'] = models.Commentmodels.Comment.objects.filter(photo_id=context['post'].id,parent_id=parent_id)
+        # тут будут хранится ответы к основным комментариям
+        context['answer_comments'] = []
+        # перебираем основные комментарии и ищем их детей
+        for comment in context['comments']:
+            context['answer_comments'] += [self.all_comments_for_post(parent_id=comment.pk, photo_id=comment.photo_id)]
+
         return context

@@ -40,15 +40,17 @@
     {% for post in posts %}
     <div class="col">
         <div class="card" style="width: 18rem;" id="card">
+
             {% if post.photo.url|check_photo %}
             <a href="{% url 'detail_post' post.slug%}">
                 <img class="card-img-top" src="{{post.photo.url}}" alt="Card image cap">
             </a>
             {% else %}
             <a href="{% url 'detail_post' post.slug%}">
-                <img class="card-img-top" src="/static/image/default-photo-post.png" alt="Card image cap">
+                <img class="card-img-top" src="/static/image/default-photo-post.jpeg" alt="Card image cap">
             </a>
             {% endif %}
+
             <div class="card-body" id="card-body">
                 <!--Тут мы проверяем длину названия, чтобы если что её обрезать с помощью фильтра-->
                 {% if post.photo_name|len_name %}
@@ -102,7 +104,7 @@
                       var name_photo=response.posts[key].photo_name;
                       var url_photo=response.posts[key].checking_the_existence;
                       if(url_photo!="exists"){
-                      var url_photo='/static/image/default-photo-post.png';
+                      var url_photo='/static/image/default-photo-post.jpeg';
                       }else{
                       var url_photo=response.posts[key].photo;
                       }
@@ -116,7 +118,7 @@
                                     '<div class="card-body" id="card-body">';
 
                                     if(name_photo.length>=11){
-                                    var content=content+'<h5 class="card-title" id="first_letters">Название:'+name_photo.substr(0,8)+'...</h5>'+
+                                    var content=content+'<h5 class="card-title" id="first_letters">Название: '+name_photo.substr(0,8)+'...</h5>'+
                                     '<h5 class="card-title" id="full_letters">Название: '+name_photo+'</h5>';
                                     }else{
                                     var content=content+'<h5 class="card-title">Название: '+name_photo+'</h5>';
@@ -165,7 +167,7 @@
                       var name_photo=response.posts[key].photo_name;
                       var url_photo=response.posts[key].checking_the_existence;
                       if(url_photo!="exists"){
-                      var url_photo='/static/image/default-photo-post.png';
+                      var url_photo='/static/image/default-photo-post.jpeg';
                       }else{
                       var url_photo=response.posts[key].photo;
                       }
@@ -179,7 +181,7 @@
                                     '<div class="card-body" id="card-body">';
 
                                     if(name_photo.length>=11){
-                                    var content=content+'<h5 class="card-title" id="first_letters">Название:'+name_photo.substr(0,8)+'...</h5>'+
+                                    var content=content+'<h5 class="card-title" id="first_letters">Название: '+name_photo.substr(0,8)+'...</h5>'+
                                     '<h5 class="card-title" id="full_letters">Название: '+name_photo+'</h5>';
                                     }else{
                                     var content=content+'<h5 class="card-title">Название: '+name_photo+'</h5>';
@@ -206,6 +208,8 @@
               return false;
         });
       });
+
+
 
 
 </script>

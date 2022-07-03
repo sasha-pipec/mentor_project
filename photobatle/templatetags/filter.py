@@ -28,3 +28,14 @@ def comment_count(value):
     comment_count=models.Commentmodels.Comment.objects.filter(photo=value.pk).count()
     return comment_count
 
+
+@register.filter
+def list_answer_comment(value,arg):
+    #возвращаем список ответов к определенному комментарию
+    return value[arg-1]
+
+@register.filter
+def author_parent_comment(value,arg):
+    comment=models.Commentmodels.Comment.objects.get(pk=arg)
+    return comment.user_name
+
