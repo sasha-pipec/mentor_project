@@ -164,7 +164,7 @@
                                         <a onclick="open_all_answer_for_comment()" id="all-answer-for-comment"
                                            style="cursor:pointer; color:pink;">Показать больше</a>
                                         {% endif %}
-                                        {% if forloop.last and forloop.counter > 3 %}
+                                        {% if forloop.last and forloop.counter >= 3 %}
                                         <a onclick="close_all_answer_for_comment()" id="all-answer-for-comment"
                                            style="cursor:pointer; color:pink;">Скрыть</a>
                                         {% endif %}
