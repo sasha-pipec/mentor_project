@@ -33,9 +33,16 @@
                                      alt="Card image cap">
                                 {% endif %}
                                 <div class="comment-content-detail-info">
-                                    <h5 class="comment-content-detail-info-element">{{comment.user_name.username}}</h5>
-                                    <p class="comment-content-detail-info-element">{{comment}}</p>
-                                    <p class="comment-content-detail-info-element">{{comment.date}}
+                                    <h5 class="comment-content-detail-info-element">{{comment.user_name.username}}
+                                        {% if comment.user_name.username == user.username %}
+                                        <a onclick="edit_a_comment(id={{comment.pk}},content='{{comment.content}}')" style="cursor:pointer;"><img src="/static/image/изменение.png" alt=""></a>
+                                        {% if comment.pk|check_answer%}
+                                        <a href="{% url 'delete_comment' comment.pk%}"><img src="/static/image/мусорка.png" alt=""></a>
+                                        {% endif %}
+                                        {% endif %}
+                                    </h5>
+                                    <p class="comment-content-detail-info-element" id="comment-content-detail-info-{{comment.pk}}">{{comment}}</p>
+                                    <p class="comment-content-detail-info-element" id="comment-content-detail-info-date-{{comment.pk}}">{{comment.date}}
                                         {% if user.is_authenticated %}
                                         <a id="add-answer-for-comment"
                                            onclick="open_answer_textarea({{comment.pk}})">Ответить</a>
@@ -62,49 +69,18 @@
                                             </form>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {% for answer in answer_comments|list_answer_comment:forloop.counter %}
-
-                    <div class="row">
-                        <div class="col">
-                            <div class="comment-content-detail" id="answer-comment-detail-content">
-                                {% if answer.user_name.photo.url|check_photo %}
-                                <img class="comment-image" src='{{answer.user_name.photo.url}}' alt="avatar">
-                                {% else %}
-                                <img class="comment-image" src="/static/image/default-photo-post.jpeg"
-                                     alt="Card image cap">
-                                {% endif %}
-                                <div class="comment-content-detail-info">
-                                    <h5 class="comment-content-detail-info-element">{{answer.user_name.username}}</h5>
-                                    <p class="comment-content-detail-info-element">{{answer|author_parent_comment:answer.parent_id}}, {{answer}}</p>
-                                    <p class="comment-content-detail-info-element">{{answer.date}}
-                                        {% if user.is_authenticated %}
-                                        <a id="add-answer-for-comment"
-                                           onclick="open_answer_textarea({{answer.pk}})">Ответить</a>
-                                        {% else %}
-                                        <a id="add-answer-for-comment-disabled">Ответить</a>
-                                        {% endif %}
-                                    </p>
-                                    <div class="answer-for-comment" id="answer-for-comment-{{answer.pk}}">
+                                    <div class="edit-comment" id="edit-comment-{{comment.pk}}" style="display:none;">
                                         <div class="answer-comment-button">
                                             <form method="post"
-                                                  action="{% url 'create_comment' parent_comment_id=answer.pk %}">
+                                                  action="{% url 'update_comment' comment_pk=comment.pk %}">
                                                 {% csrf_token %}
                                                 <textarea name="comment" type="text"
                                                           class="md-textarea form-control answer-comment-textarea"
-                                                          rows="3" id="input-answer-comment" style="margin-left:-50px;"></textarea>
+                                                          rows="3" id="edit-comment-{{comment.pk}}-textarea"></textarea>
                                                 <input name="pk" type="hidden" value="{{post.pk}}">
                                                 <input name="slug" type="hidden" value="{{post.slug}}">
-                                                <a class="btn-danger" onclick="close_answer_comment()">Отмена</a>
-                                                {% if user.is_authenticated %}
-                                                <button class="btn-success" type="submit">Отправить</button>
-                                                {% else %}
-                                                <button class="btn-success" type="submit" disabled>Отправить</button>
-                                                {%endif%}
+                                                <a class="btn-danger" onclick="close_edit_comment(id={{comment.pk}},content='{{comment.content}}')">Отмена</a>
+                                                <button class="btn-success" type="submit">Сохранить</button>
                                             </form>
                                         </div>
                                     </div>
@@ -112,53 +88,138 @@
                             </div>
                         </div>
                     </div>
-                    {% endfor %}
 
-                    {% endfor%}
-                </div>
-                <form method="POST" action="{% url 'create_comment' parent_comment_id='none' %}">
-                    {% csrf_token %}
-                    <input type="hidden" name="pk" value="{{post.pk}}">
-                    <input type="hidden" name="slug" value="{{post.slug}}">
-                    <div class="input-group">
+                    {% for answer in answer_comments|list_answer_comment:forloop.counter %}
+                            {% if forloop.counter < 3%}
+                            <div class="row comment-content-detail" id="answer-comment-detail-content">
+                            {% else %}
+                            <div class="row comment-content-detail other-answer-to-comments"
+                                 id="answer-comment-detail-content" style="display:none;">
+                            {% endif %}
+                            <div class="col">
+                                <div class="comment-content-detail" id="answer-comment-detail-content">
+                                    {% if answer.user_name.photo.url|check_photo %}
+                                    <img class="comment-image" src='{{answer.user_name.photo.url}}' alt="avatar">
+                                    {% else %}
+                                    <img class="comment-image" src="/static/image/default-photo-post.jpeg"
+                                         alt="Card image cap">
+                                    {% endif %}
+                                    <div class="comment-content-detail-info">
+                                        <h5 class="comment-content-detail-info-element">
+                                            {{answer.user_name.username}}
+                                        {% if answer.user_name.username == user.username %}
+                                        <a onclick="edit_a_comment(id={{answer.pk}},content='{{answer.content}}')" style="cursor:pointer;"><img src="/static/image/изменение.png" alt=""></a>
+                                        {% if answer.pk|check_answer%}
+                                        <a href="{% url 'delete_comment' answer.pk%}"><img src="/static/image/мусорка.png" alt=""></a>
+                                        {% endif %}
+                                        {% endif %}
+                                        </h5>
+                                        <p class="comment-content-detail-info-element" id="comment-content-detail-info-{{answer.pk}}">
+                                            {{answer|author_parent_comment:answer.parent_id}}, {{answer}}</p>
+                                        <p class="comment-content-detail-info-element" id="comment-content-detail-info-date-{{answer.pk}}">{{answer.date}}
+                                            {% if user.is_authenticated %}
+                                            <a id="add-answer-for-comment"
+                                               onclick="open_answer_textarea({{answer.pk}})">Ответить</a>
+                                            {% else %}
+                                            <a id="add-answer-for-comment-disabled">Ответить</a>
+                                            {% endif %}
+                                        </p>
+                                        <div class="answer-for-comment" id="answer-for-comment-{{answer.pk}}">
+                                            <div class="answer-comment-button">
+                                                <form method="post"
+                                                      action="{% url 'create_comment' parent_comment_id=answer.pk %}">
+                                                    {% csrf_token %}
+                                                    <textarea name="comment" type="text"
+                                                              class="md-textarea form-control answer-comment-textarea"
+                                                              rows="3" id="input-answer-comment"
+                                                              style="margin-left:-50px;"></textarea>
+                                                    <input name="pk" type="hidden" value="{{post.pk}}">
+                                                    <input name="slug" type="hidden" value="{{post.slug}}">
+                                                    <a class="btn-danger" onclick="close_answer_comment()">Отмена</a>
+                                                    {% if user.is_authenticated %}
+                                                    <button class="btn-success" type="submit">Отправить</button>
+                                                    {% else %}
+                                                    <button class="btn-success" type="submit" disabled>Отправить
+                                                    </button>
+                                                    {%endif%}
+                                                </form>
+                                            </div>
+                                        </div>
+                                        <div class="edit-comment" id="edit-comment-{{answer.pk}}" style="display:none;">
+                                        <div class="answer-comment-button">
+                                            <form method="post"
+                                                  action="{% url 'update_comment' comment_pk=answer.pk %}">
+                                                {% csrf_token %}
+                                                <textarea name="comment" type="text"
+                                                          class="md-textarea form-control answer-comment-textarea"
+                                                          rows="3" id="edit-comment-{{answer.pk}}-textarea"></textarea>
+                                                <input name="pk" type="hidden" value="{{post.pk}}">
+                                                <input name="slug" type="hidden" value="{{post.slug}}">
+                                                <a class="btn-danger" onclick="close_edit_comment(id={{answer.pk}},content='{{answer.content}}')">Отмена</a>
+                                                <button class="btn-success" type="submit">Сохранить</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                        {% if forloop.counter == 2 and not forloop.last %}
+                                        <a onclick="open_all_answer_for_comment()" id="all-answer-for-comment"
+                                           style="cursor:pointer; color:pink;">Показать больше</a>
+                                        {% endif %}
+                                        {% if forloop.last and forloop.counter > 3 %}
+                                        <a onclick="close_all_answer_for_comment()" id="all-answer-for-comment"
+                                           style="cursor:pointer; color:pink;">Скрыть</a>
+                                        {% endif %}
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+
+                        {% endfor%}
+                    </div>
+                    <form method="POST" action="{% url 'create_comment' parent_comment_id='none' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="pk" value="{{post.pk}}">
+                        <input type="hidden" name="slug" value="{{post.slug}}">
+                        <div class="input-group">
                         <textarea onblur="default_text()" onclick="click_text()" name="comment" type="text"
                                   id="input-comment"
                                   placeholder="Оставить комментарий"></textarea>
-                        {% if user.is_authenticated %}
-                        <button class="button-comment" type="submit"><img
-                                src="/static/image/add-comment.svg" alt="" class="image-comment-button"></button>
-                        {% else %}
-                        <a class="button-comment" href="{%provider_login_url 'vk' method='oauth2'%}"><img
-                                src="/static/image/auth-for-comment.png" alt="" class="image-comment-button"></a>
-                        {% endif %}
-                    </div>
-                </form>
+                            {% if user.is_authenticated %}
+                            <button class="button-comment" type="submit"><img
+                                    src="/static/image/add-comment.svg" alt="" class="image-comment-button"></button>
+                            {% else %}
+                            <a class="button-comment" href="{%provider_login_url 'vk' method='oauth2'%}"><img
+                                    src="/static/image/auth-for-comment.png" alt="" class="image-comment-button"></a>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 col-sm-4">
+                <div class="detail-post-info">
+                    <p>Автор: {{post.user_name.username}}</p>
+                    <p>Лайки: {{post.like_count}}</p>
+                    <p>Комментарии: {{post|comment_count}}</p>
+                    <p>Дата публикации: <br> {{post.date_published_on_site}}</p>
+                    <a href="#" class="btn btn-primary" id="btn-post-detail">Проголосовать</a>
+                </div>
+
+            </div>
+            <div class="col-12 col-sm-8">
+                <div class="detail-post-description">
+                    <h5 id="detail-post-description-header">Описание</h5>
+                    <p class="card-text" id="detail-post-description">{{post.photo_content}}</p>
+                </div>
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-12 col-sm-4">
-            <div class="detail-post-info">
-                <p>Автор: {{post.user_name.username}}</p>
-                <p>Лайки: {{post.like_count}}</p>
-                <p>Комментарии: {{post|comment_count}}</p>
-                <p>Дата публикации: <br> {{post.date_published_on_site}}</p>
-                <a href="#" class="btn btn-primary" id="btn-post-detail">Проголосовать</a>
-            </div>
 
-        </div>
-        <div class="col-12 col-sm-8">
-            <div class="detail-post-description">
-                <h5 id="detail-post-description-header">Описание</h5>
-                <p class="card-text" id="detail-post-description">{{post.photo_content}}</p>
-            </div>
-        </div>
-    </div>
-</div>
+    {% endblock %}
 
-{% endblock %}
-
-{% block script%}
-<script type="text/javascript" src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/main.js' %}"></script>
-{% endblock%}
+    {% block script%}
+    <script type="text/javascript" src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
+    {% endblock%}

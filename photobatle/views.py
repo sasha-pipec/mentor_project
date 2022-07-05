@@ -50,6 +50,24 @@ def Creating_comment_for_photo(request, parent_comment_id):
     return redirect('detail_post', slug_id=photo_slug)
 
 
+def Deleting_comment_for_photo(request, comment_pk):
+    """Функция для удаления комментария"""
+    comment = models.Commentmodels.Comment.objects.get(pk=comment_pk)
+    photo_slug = models.Photomodels.Photo.objects.get(pk=comment.photo_id)
+    comment.delete()
+    return redirect('detail_post', slug_id=photo_slug.slug)
+
+
+def Updating_comment_for_photo(request, comment_pk):
+    """Функция для изменения комментария"""
+    comment_content = request.POST['comment']
+    comment = models.Commentmodels.Comment.objects.get(pk=comment_pk)
+    comment.content = comment_content
+    comment.save()
+    photo_slug = models.Photomodels.Photo.objects.get(pk=comment.photo_id)
+    return redirect('detail_post', slug_id=photo_slug.slug)
+
+
 def Sorting_form_ajax(request):
     """Функция для AJAX запроса сортировка"""
     form = forms.SortForm()
@@ -84,6 +102,7 @@ class DetailPost(DetailView):
     context_object_name = 'post'
 
     def all_comments_for_post(self, parent_id=None, photo_id=None):
+        # функция для получения всех ответов под комментарием
         comments = models.Commentmodels.Comment.objects.filter(photo_id=photo_id, parent_id=parent_id)
         all_answer_for_comment = []
         if len(comments) != 0:
@@ -100,7 +119,8 @@ class DetailPost(DetailView):
     def get_context_data(self, parent_id=None, *args, oject_list=None, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         # тут хранятся основные комментарии
-        context['comments'] = models.Commentmodels.Comment.objects.filter(photo_id=context['post'].id,parent_id=parent_id)
+        context['comments'] = models.Commentmodels.Comment.objects.filter(photo_id=context['post'].id,
+                                                                          parent_id=parent_id)
         # тут будут хранится ответы к основным комментариям
         context['answer_comments'] = []
         # перебираем основные комментарии и ищем их детей

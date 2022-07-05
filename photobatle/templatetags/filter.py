@@ -39,3 +39,11 @@ def author_parent_comment(value,arg):
     comment=models.Commentmodels.Comment.objects.get(pk=arg)
     return comment.user_name
 
+@register.filter
+def check_answer(value):
+    comment_count=models.Commentmodels.Comment.objects.filter(parent_id=value)
+    if len(comment_count)==0:
+        return True
+    else:
+        return False
+
