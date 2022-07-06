@@ -13,13 +13,10 @@ class UserSerializer(serializers.ModelSerializer):
 class PhotoSerializer(serializers.ModelSerializer):
     '''Сериализатор для модели Photo'''
     user_name = UserSerializer()
+    like_count = serializers.IntegerField()
     comment_count = serializers.IntegerField()
-    checking_the_existence=serializers.CharField()
+    checking_the_existence = serializers.CharField()
 
     class Meta:
         model = Photomodels.Photo
         fields = ('__all__')
-
-
-
-

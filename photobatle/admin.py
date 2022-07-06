@@ -21,10 +21,10 @@ class UserAdmin(admin.ModelAdmin):
 class PhotoAdmin(admin.ModelAdmin):
     '''Модель фото в админке'''
     list_display = (
-        'user_name', 'get_html_photo', 'photo_name', 'date_published_on_site', 'like_count',
+        'user_name', 'get_html_photo', 'photo_name', 'date_published_on_site',
         'moderation')
     list_filter = ('moderation',)
-    readonly_fields = ('date_published_on_site', 'like_count')
+    readonly_fields = ('date_published_on_site',)
     list_editable = ('moderation',)
     prepopulated_fields = {'slug': ('photo_name',)}
 
@@ -39,7 +39,12 @@ class CommentAdmin(admin.ModelAdmin):
     list_display = ('content',)
 
 
+class LikeAdmin(admin.ModelAdmin):
+    list_display = ('photo', 'user_name')
+
+
 admin.site.register(models.Usermodels.User, UserAdmin)
 admin.site.register(models.Photomodels.Photo, PhotoAdmin)
 admin.site.register(models.Commentmodels.Comment, CommentAdmin)
+admin.site.register(models.Likemodels.Like, LikeAdmin)
 # Register your models here.

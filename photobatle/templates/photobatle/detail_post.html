@@ -35,14 +35,18 @@
                                 <div class="comment-content-detail-info">
                                     <h5 class="comment-content-detail-info-element">{{comment.user_name.username}}
                                         {% if comment.user_name.username == user.username %}
-                                        <a onclick="edit_a_comment(id={{comment.pk}},content='{{comment.content}}')" style="cursor:pointer;"><img src="/static/image/изменение.png" alt=""></a>
+                                        <a onclick="edit_a_comment(id={{comment.pk}},content='{{comment.content}}')"
+                                           style="cursor:pointer;"><img src="/static/image/изменение.png" alt=""></a>
                                         {% if comment.pk|check_answer%}
-                                        <a href="{% url 'delete_comment' comment.pk%}"><img src="/static/image/мусорка.png" alt=""></a>
+                                        <a href="{% url 'delete_comment' comment.pk%}"><img
+                                                src="/static/image/мусорка.png" alt=""></a>
                                         {% endif %}
                                         {% endif %}
                                     </h5>
-                                    <p class="comment-content-detail-info-element" id="comment-content-detail-info-{{comment.pk}}">{{comment}}</p>
-                                    <p class="comment-content-detail-info-element" id="comment-content-detail-info-date-{{comment.pk}}">{{comment.date}}
+                                    <p class="comment-content-detail-info-element"
+                                       id="comment-content-detail-info-{{comment.pk}}">{{comment}}</p>
+                                    <p class="comment-content-detail-info-element"
+                                       id="comment-content-detail-info-date-{{comment.pk}}">{{comment.date}}
                                         {% if user.is_authenticated %}
                                         <a id="add-answer-for-comment"
                                            onclick="open_answer_textarea({{comment.pk}})">Ответить</a>
@@ -79,7 +83,8 @@
                                                           rows="3" id="edit-comment-{{comment.pk}}-textarea"></textarea>
                                                 <input name="pk" type="hidden" value="{{post.pk}}">
                                                 <input name="slug" type="hidden" value="{{post.slug}}">
-                                                <a class="btn-danger" onclick="close_edit_comment(id={{comment.pk}},content='{{comment.content}}')">Отмена</a>
+                                                <a class="btn-danger"
+                                                   onclick="close_edit_comment(id={{comment.pk}},content='{{comment.content}}')">Отмена</a>
                                                 <button class="btn-success" type="submit">Сохранить</button>
                                             </form>
                                         </div>
@@ -90,11 +95,11 @@
                     </div>
 
                     {% for answer in answer_comments|list_answer_comment:forloop.counter %}
-                            {% if forloop.counter < 3%}
-                            <div class="row comment-content-detail" id="answer-comment-detail-content">
-                            {% else %}
-                            <div class="row comment-content-detail other-answer-to-comments"
-                                 id="answer-comment-detail-content" style="display:none;">
+                    {% if forloop.counter < 3%}
+                    <div class="row comment-content-detail" id="answer-comment-detail-content">
+                        {% else %}
+                        <div class="row comment-content-detail other-answer-to-comments"
+                             id="answer-comment-detail-content" style="display:none;">
                             {% endif %}
                             <div class="col">
                                 <div class="comment-content-detail" id="answer-comment-detail-content">
@@ -107,16 +112,21 @@
                                     <div class="comment-content-detail-info">
                                         <h5 class="comment-content-detail-info-element">
                                             {{answer.user_name.username}}
-                                        {% if answer.user_name.username == user.username %}
-                                        <a onclick="edit_a_comment(id={{answer.pk}},content='{{answer.content}}')" style="cursor:pointer;"><img src="/static/image/изменение.png" alt=""></a>
-                                        {% if answer.pk|check_answer%}
-                                        <a href="{% url 'delete_comment' answer.pk%}"><img src="/static/image/мусорка.png" alt=""></a>
-                                        {% endif %}
-                                        {% endif %}
+                                            {% if answer.user_name.username == user.username %}
+                                            <a onclick="edit_a_comment(id={{answer.pk}},content='{{answer.content}}')"
+                                               style="cursor:pointer;"><img src="/static/image/изменение.png"
+                                                                            alt=""></a>
+                                            {% if answer.pk|check_answer%}
+                                            <a href="{% url 'delete_comment' answer.pk%}"><img
+                                                    src="/static/image/мусорка.png" alt=""></a>
+                                            {% endif %}
+                                            {% endif %}
                                         </h5>
-                                        <p class="comment-content-detail-info-element" id="comment-content-detail-info-{{answer.pk}}">
+                                        <p class="comment-content-detail-info-element"
+                                           id="comment-content-detail-info-{{answer.pk}}">
                                             {{answer|author_parent_comment:answer.parent_id}}, {{answer}}</p>
-                                        <p class="comment-content-detail-info-element" id="comment-content-detail-info-date-{{answer.pk}}">{{answer.date}}
+                                        <p class="comment-content-detail-info-element"
+                                           id="comment-content-detail-info-date-{{answer.pk}}">{{answer.date}}
                                             {% if user.is_authenticated %}
                                             <a id="add-answer-for-comment"
                                                onclick="open_answer_textarea({{answer.pk}})">Ответить</a>
@@ -146,20 +156,22 @@
                                             </div>
                                         </div>
                                         <div class="edit-comment" id="edit-comment-{{answer.pk}}" style="display:none;">
-                                        <div class="answer-comment-button">
-                                            <form method="post"
-                                                  action="{% url 'update_comment' comment_pk=answer.pk %}">
-                                                {% csrf_token %}
-                                                <textarea name="comment" type="text"
-                                                          class="md-textarea form-control answer-comment-textarea"
-                                                          rows="3" id="edit-comment-{{answer.pk}}-textarea"></textarea>
-                                                <input name="pk" type="hidden" value="{{post.pk}}">
-                                                <input name="slug" type="hidden" value="{{post.slug}}">
-                                                <a class="btn-danger" onclick="close_edit_comment(id={{answer.pk}},content='{{answer.content}}')">Отмена</a>
-                                                <button class="btn-success" type="submit">Сохранить</button>
-                                            </form>
+                                            <div class="answer-comment-button">
+                                                <form method="post"
+                                                      action="{% url 'update_comment' comment_pk=answer.pk %}">
+                                                    {% csrf_token %}
+                                                    <textarea name="comment" type="text"
+                                                              class="md-textarea form-control answer-comment-textarea"
+                                                              rows="3"
+                                                              id="edit-comment-{{answer.pk}}-textarea"></textarea>
+                                                    <input name="pk" type="hidden" value="{{post.pk}}">
+                                                    <input name="slug" type="hidden" value="{{post.slug}}">
+                                                    <a class="btn-danger"
+                                                       onclick="close_edit_comment(id={{answer.pk}},content='{{answer.content}}')">Отмена</a>
+                                                    <button class="btn-success" type="submit">Сохранить</button>
+                                                </form>
+                                            </div>
                                         </div>
-                                    </div>
                                         {% if forloop.counter == 2 and not forloop.last %}
                                         <a onclick="open_all_answer_for_comment()" id="all-answer-for-comment"
                                            style="cursor:pointer; color:pink;">Показать больше</a>
@@ -168,7 +180,6 @@
                                         <a onclick="close_all_answer_for_comment()" id="all-answer-for-comment"
                                            style="cursor:pointer; color:pink;">Скрыть</a>
                                         {% endif %}
-
                                     </div>
                                 </div>
                             </div>
@@ -201,10 +212,22 @@
             <div class="col-12 col-sm-4">
                 <div class="detail-post-info">
                     <p>Автор: {{post.user_name.username}}</p>
-                    <p>Лайки: {{post.like_count}}</p>
+                    <p>Лайки: {{post|like_count}}</p>
                     <p>Комментарии: {{post|comment_count}}</p>
                     <p>Дата публикации: <br> {{post.date_published_on_site}}</p>
-                    <a href="#" class="btn btn-primary" id="btn-post-detail">Проголосовать</a>
+                    {% if user.username %}
+                        {% if post.user_name.username == user.username %}
+                        <a class="btn btn-primary" id="btn-post-detail">Самолайки запрещены</a>
+                        {% else %}
+                            {% if user.pk|check_like:post.pk%}
+                            <a href="{% url 'delete_like' post.pk%}" class="btn btn-primary" id="btn-post-detail">Снять голос</a>
+                            {% else %}
+                            <a href="{% url 'create_like' post.pk%}" class="btn btn-primary" id="btn-post-detail">Лайк</a>
+                            {% endif %}
+                        {% endif %}
+                    {% else %}
+                    <a class="btn btn-primary" id="btn-post-detail">Авторизуйтесь</a>
+                    {% endif %}
                 </div>
 
             </div>

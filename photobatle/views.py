@@ -68,6 +68,23 @@ def Updating_comment_for_photo(request, comment_pk):
     return redirect('detail_post', slug_id=photo_slug.slug)
 
 
+def Creating_like_for_photo(request, photo_id):
+    """Функция для создания лайка"""
+    photo = models.Photomodels.Photo.objects.get(pk=photo_id)
+    user_id = request.user.id
+    models.Likemodels.Like.objects.create(photo_id=photo_id, user_name_id=user_id)
+    return redirect('detail_post', slug_id=photo.slug)
+
+
+def Deleting_like_for_photo(request, photo_id):
+    """Функция для удаления лайка"""
+    photo = models.Photomodels.Photo.objects.get(pk=photo_id)
+    user_id = request.user.id
+    like = models.Likemodels.Like.objects.get(photo_id=photo_id, user_name_id=user_id)
+    like.delete()
+    return redirect('detail_post', slug_id=photo.slug)
+
+
 def Sorting_form_ajax(request):
     """Функция для AJAX запроса сортировка"""
     form = forms.SortForm()
@@ -75,11 +92,13 @@ def Sorting_form_ajax(request):
         # Получаем значение формы по которому будем сортировать
         field = request.POST['form'].split('=')[-1]
         serch_word = request.POST['name']
-        posts = models.Photomodels.Photo.objects.annotate(comment_count=Count('comment_photo')).filter(
+        posts = models.Photomodels.Photo.objects.annotate(comment_count=Count('comment_photo', distinct=True),
+                                                          like_count=Count('like_photo', distinct=True)).filter(
             Q(user_name__username__icontains=serch_word) |
             Q(photo_name__icontains=serch_word) |
             Q(photo_content__icontains=serch_word),
             moderation='3').order_by(f"-{field}")
+        let = vars(posts[0])
         return JsonResponse({'posts': serializers.PhotoSerializer(posts, many=True).data}, status=200)
     return render(request, "home_html_with_post_and_SortForm.html", context={'form': form})
 
@@ -87,7 +106,8 @@ def Sorting_form_ajax(request):
 def Search_form_ajax(request):
     """Функция для AJAX запроса поиск по слову"""
     serch_word = request.POST['name']
-    posts = models.Photomodels.Photo.objects.annotate(comment_count=Count('comment_photo')).filter(
+    posts = models.Photomodels.Photo.objects.annotate(comment_count=Count('comment_photo', distinct=True),
+                                                      like_count=Count('like_photo', distinct=True)).filter(
         Q(user_name__username__icontains=serch_word) |
         Q(photo_name__icontains=serch_word) |
         Q(photo_content__icontains=serch_word), moderation='3')

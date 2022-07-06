@@ -10,6 +10,9 @@ urlpatterns = [
     path('delete_comment_for_photo/<comment_pk>', views.Deleting_comment_for_photo, name='delete_comment'),
     path('update_comment_for_photo/<comment_pk>', views.Updating_comment_for_photo, name='update_comment'),
 
+    path('create_like_for_photo/<photo_id>', views.Creating_like_for_photo, name='create_like'),
+    path('delete_like_for_photo/<photo_id>', views.Deleting_like_for_photo, name='delete_like'),
+
     # Классы предствавления
     path('post/<slug:slug_id>', views.DetailPost.as_view(), name='detail_post'),
 

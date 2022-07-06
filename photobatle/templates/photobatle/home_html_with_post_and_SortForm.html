@@ -62,7 +62,7 @@
                 <!--Конец-->
                 <p class="card-text" id="post_content">Описание: {{post.photo_content}}</p>
                 <p class="card-text">Автор: {{post.user_name.username}}</p>
-                <p class="card-text">Лайки: {{post.like_count}}</p>
+                <p class="card-text">Лайки: {{post|like_count}}</p>
                 <p class="card-text">Комментарии: {{post|comment_count}}</p>
                 <p class="card-text">Дата публикации: <br> {{post.date_published_on_site}}</p>
                 <a href="{% url 'detail_post' post.slug%}" class="btn btn-primary" id="btn-post">Посмотреть</a>
@@ -186,11 +186,10 @@
                                     }else{
                                     var content=content+'<h5 class="card-title">Название: '+name_photo+'</h5>';
                                     }
-
                                       var content=content +
                                         '<p class="card-text" id="post_content">Описание: '+response.posts[key].photo_content+'</p>'+
                                         '<p class="card-text">Автор: '+ response.posts[key].user_name.username +'</p>'+
-                                        '<p class="card-text">Лайки: '+response.posts[key].like_count+'</p>'+
+                                        '<p class="card-text">Лайки: '+response.posts[key].like_count +'</p>'+
                                         '<p class="card-text">Комментарии: '+response.posts[key].comment_count +'</p>'+
                                         '<p class="card-text">Дата публикации: <br> '+ new Date(response.posts[key].date_published_on_site).toLocaleDateString("ru", options) +'</p>'+
                                         '<a href="post/' + response.posts[key].slug + '"class="btn btn-primary" id="btn-post">Посмотреть</a>'+
