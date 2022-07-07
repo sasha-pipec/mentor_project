@@ -16,6 +16,7 @@ class PhotoSerializer(serializers.ModelSerializer):
     like_count = serializers.IntegerField()
     comment_count = serializers.IntegerField()
     checking_the_existence = serializers.CharField()
+    get_absolute_url = serializers.CharField()
 
     class Meta:
         model = Photomodels.Photo

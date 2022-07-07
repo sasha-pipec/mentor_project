@@ -2,8 +2,10 @@ import datetime
 import os
 
 from django.db import models
+from django.urls import reverse
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
+
 
 class Photo(models.Model):
     '''Модель фотографий'''
@@ -39,6 +41,9 @@ class Photo(models.Model):
             return "exists"
         else:
             return "not exists"
+
+    def get_absolute_url(self):
+        return reverse('detail_post', kwargs={'slug_id': self.slug})
 
     class Meta:
         app_label = 'photobatle'

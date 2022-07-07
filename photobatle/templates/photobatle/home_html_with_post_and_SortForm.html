@@ -42,11 +42,11 @@
         <div class="card" style="width: 18rem;" id="card">
 
             {% if post.photo.url|check_photo %}
-            <a href="{% url 'detail_post' post.slug%}">
+            <a href="{{ post.get_absolute_url }}">
                 <img class="card-img-top" src="{{post.photo.url}}" alt="Card image cap">
             </a>
             {% else %}
-            <a href="{% url 'detail_post' post.slug%}">
+            <a href="{{ post.get_absolute_url }}">
                 <img class="card-img-top" src="/static/image/default-photo-post.jpeg" alt="Card image cap">
             </a>
             {% endif %}
@@ -65,7 +65,7 @@
                 <p class="card-text">Лайки: {{post|like_count}}</p>
                 <p class="card-text">Комментарии: {{post|comment_count}}</p>
                 <p class="card-text">Дата публикации: <br> {{post.date_published_on_site}}</p>
-                <a href="{% url 'detail_post' post.slug%}" class="btn btn-primary" id="btn-post">Посмотреть</a>
+                <a href="{{ post.get_absolute_url }}" class="btn btn-primary" id="btn-post">Посмотреть</a>
             </div>
         </div>
     </div>
@@ -100,7 +100,6 @@
                       $('.row').empty();
                       for(var key in response.posts)
                       {
-
                       var name_photo=response.posts[key].photo_name;
                       var url_photo=response.posts[key].checking_the_existence;
                       if(url_photo!="exists"){
@@ -112,7 +111,7 @@
                       var content=
                         '<div class="col">'+
                                 '<div class="card" style="width: 18rem;" id="card">'+
-                                '<a href="post/' + response.posts[key].slug + '">'+
+                                '<a href="' + response.posts[key].get_absolute_url + '">'+
                                     "<img id='foo' class='card-img-top' src='"+url_photo+"'alt='Не загрузилось :('>"+
                                 '</a>'+
                                     '<div class="card-body" id="card-body">';
@@ -130,7 +129,7 @@
                                         '<p class="card-text">Лайки: '+response.posts[key].like_count+'</p>'+
                                         '<p class="card-text">Комментарии: '+response.posts[key].comment_count+'</p>'+
                                         '<p class="card-text">Дата публикации: <br> '+ new Date(response.posts[key].date_published_on_site).toLocaleDateString("ru", options) +'</p>'+
-                                        '<a href="post/' + response.posts[key].slug + '"class="btn btn-primary" id="btn-post">Посмотреть</a>'+
+                                        '<a href="'+ response.posts[key].get_absolute_url + '"class="btn btn-primary" id="btn-post">Посмотреть</a>'+
                                     '</div>'+
                                 '</div>'+
                         '</div>'
@@ -175,7 +174,7 @@
                       var content=
                         '<div class="col">'+
                                 '<div class="card" style="width: 18rem;" id="card">'+
-                                '<a href="post/' + response.posts[key].slug + '">'+
+                                '<a href="' + response.posts[key].get_absolute_url + '">'+
                                     "<img class='card-img-top' src='"+url_photo+"' alt='Card image cap'>"+
                                 '</a>'+
                                     '<div class="card-body" id="card-body">';
@@ -192,7 +191,7 @@
                                         '<p class="card-text">Лайки: '+response.posts[key].like_count +'</p>'+
                                         '<p class="card-text">Комментарии: '+response.posts[key].comment_count +'</p>'+
                                         '<p class="card-text">Дата публикации: <br> '+ new Date(response.posts[key].date_published_on_site).toLocaleDateString("ru", options) +'</p>'+
-                                        '<a href="post/' + response.posts[key].slug + '"class="btn btn-primary" id="btn-post">Посмотреть</a>'+
+                                        '<a href="' + response.posts[key].get_absolute_url + '"class="btn btn-primary" id="btn-post">Посмотреть</a>'+
                                     '</div>'+
                                 '</div>'+
                         '</div>'
