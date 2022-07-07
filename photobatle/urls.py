@@ -2,21 +2,21 @@ from django.urls import path, include
 from . import views
 
 urlpatterns = [
-    # Функции предствавления
-    path('', views.Rendering_home_page, name='home'),
-    path('logout_user/', views.Logouting_user, name='logout_user'),
-    path('user_page/', views.Rendering_user_page, name='user_page'),
-    path('create_comment_for_photo/<parent_comment_id>', views.Creating_comment_for_photo, name='create_comment'),
-    path('delete_comment_for_photo/<comment_pk>', views.Deleting_comment_for_photo, name='delete_comment'),
-    path('update_comment_for_photo/<comment_pk>', views.Updating_comment_for_photo, name='update_comment'),
-
-    path('create_like_for_photo/<photo_id>', views.Creating_like_for_photo, name='create_like'),
-    path('delete_like_for_photo/<photo_id>', views.Deleting_like_for_photo, name='delete_like'),
-
     # Классы предствавления
-    path('post/<slug:slug_id>', views.DetailPost.as_view(), name='detail_post'),
+    path('', views.RenderingHomePage.as_view(), name='home'),
+    path('User/', views.RenderingUserPage.as_view(), name='user_page'),
+    path('Photo/get/<slug:slug_id>', views.DetailPost.as_view(), name='detail_post'),
+    path('Comment/patch/<parent_comment_id>', views.CreatingCommentForPhoto.as_view(), name='create_comment'),
+    path('Comment/delete/<comment_pk>', views.DeletingCommentForPhoto.as_view(), name='delete_comment'),
+    path('Comment/put/<comment_pk>', views.UpdatingCommentForPhoto.as_view(), name='update_comment'),
+
+    path('Like/patch/<photo_id>', views.CreatingLikeForPhoto.as_view(), name='create_like'),
+    path('Like/delete/<photo_id>', views.DeletingLikeForPhoto.as_view(), name='delete_like'),
+
+    # Функции предствавления
+    path('logout_user/', views.Logouting_user, name='logout_user'),
 
     # AJAX запросы
-    path('sort_form_ajax/', views.Sorting_form_ajax, name='ajax'),
-    path('serch_form_ajax/', views.Search_form_ajax, name='ajax_second'),
+    path('sort_form_ajax/', views.SortingFormAjax.as_view(), name='ajax'),
+    path('serch_form_ajax/', views.SearchFormAjax.as_view(), name='ajax_second'),
 ]

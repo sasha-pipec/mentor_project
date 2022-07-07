@@ -15,13 +15,13 @@
                 Сортировкa
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                <form method="POST" id="contactForm">
+                <form method="post" id="contactForm">
                     {% csrf_token %}
                     {{form.as_p}}
                 </form>
             </div>
         </li>
-        <form id="serchForm">
+        <form method='post' id="serchForm">
             {% csrf_token %}
             <div class="form-group">
                 <input class="form-control" type="text" placeholder="Поиск по слову" name="content">
@@ -156,7 +156,7 @@
               $.ajax({
                   data: {'name':contentInput,
                   'csrfmiddlewaretoken': '{{csrf_token}}',},
-                  type: 'POST',
+                  type: 'post',
                   url: "{% url 'ajax_second' %}",
                   success: function (response) {
                       $('#contactForm')[0].reset('');

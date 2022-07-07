@@ -39,7 +39,7 @@
                                            style="cursor:pointer;"><img src="/static/image/изменение.png" alt=""></a>
                                         {% if comment.pk|check_answer%}
                                         <a href="{% url 'delete_comment' comment.pk%}"><img
-                                                src="/static/image/мусорка.png" alt=""></a>
+                                                    src="/static/image/мусорка.png" alt=""></a>
                                         {% endif %}
                                         {% endif %}
                                     </h5>
