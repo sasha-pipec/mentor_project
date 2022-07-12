@@ -367,6 +367,85 @@ a.btn-danger {
     padding-bottom: 5px;
 }
 
+.user-navbar{
+display:inline-flex;
+margin-top:5px;
+margin-bottom:5px;
+}
+
+.photo-user-navbar{
+width:50px;
+height:50px;
+border-radius:100%;
+margin-right:10px;
+}
+
+.info-user-navbar{
+height:50px;
+margin-right:10px;
+}
+
+.email-user-navbar{
+margin-top:-10px;
+}
+
+.logout-user-navbar{
+margin:auto;
+}
+
+#personal-account-container{
+background-color:white;
+height:100%;
+margin-top:50px;
+}
+
+.personal-account-user-image{
+text-align:center;
+}
+
+.personal-account-user-photo{
+max-width: 100%;
+height: auto;
+border-radius:100%;
+margin-bottom:30px;
+margin-top:30px
+}
+
+#btn-post-personal-account{
+width:80%;
+height:10%;
+padding-top:10px;
+border:none;
+}
+
+#add-photo-personal-account{
+margin-right:10px;
+}
+
+.public-personal-info{
+margin-top:25%;
+margin-right:30px;
+margin-left:10px;
+text-align:center;
+}
+
+.personal-info-item{
+opacity:60%;
+}
+
+.private-personal-info{
+margin-top:25%;
+margin-right:30px;
+margin-left:10px;
+text-align:center;
+}
+
+#button-my-photo-personal-account{
+width:100%;
+border:none;
+margin-top:45px;
+}
+
 
 
 

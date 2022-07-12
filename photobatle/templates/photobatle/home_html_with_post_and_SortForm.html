@@ -102,7 +102,7 @@
                       {
                       var name_photo=response.posts[key].photo_name;
                       var url_photo=response.posts[key].checking_the_existence;
-                      if(url_photo!="exists"){
+                      if(url_photo!='True'){
                       var url_photo='/static/image/default-photo-post.jpeg';
                       }else{
                       var url_photo=response.posts[key].photo;
@@ -165,7 +165,7 @@
 
                       var name_photo=response.posts[key].photo_name;
                       var url_photo=response.posts[key].checking_the_existence;
-                      if(url_photo!="exists"){
+                      if(url_photo!='True'){
                       var url_photo='/static/image/default-photo-post.jpeg';
                       }else{
                       var url_photo=response.posts[key].photo;

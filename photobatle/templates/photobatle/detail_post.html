@@ -4,14 +4,13 @@
 {% load filter%}
 {% load static %}
 {% load socialaccount %}
-{% providers_media_js %}
 
 {% block content %}
 <div class="container" id="first-detail-block">
     <div class="row">
         <div class="col-12 col-sm-4" id="photo-detail">
             {% if post.photo.url|check_photo %}
-            <img src="{{post.photo_imagekit.url }}" alt="Card image cap" class="detail-photo">
+            <img src="{{post.photo_imagekit_large.url }}" alt="Card image cap" class="detail-photo">
             {% else %}
             <img src="/static/image/default-photo-post.jpeg" alt="Card image cap" class="detail-photo">
             {% endif %}

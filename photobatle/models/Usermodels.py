@@ -1,9 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from imagekit.models import ImageSpecField
+from imagekit.processors import ResizeToFill
 
 class User(AbstractUser):
     '''Переопределенная модель user'''
     photo = models.FileField(upload_to='user/photos/%Y/%m/%d', verbose_name='Фото', max_length=255)
+    photo_imagekit_medium = ImageSpecField(source='photo',
+                                           processors=[ResizeToFill(350, 350)],
+                                           format='JPEG',
+                                           options={'quality': 60})
 
     def __str__(self):
         return self.username

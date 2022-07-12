@@ -61,3 +61,11 @@ def check_answer(value):
         return True
     else:
         return False
+
+@register.filter
+def all_likes(value):
+    return models.Likemodels.Like.objects.filter(user_name_id=value).count()
+
+@register.filter
+def all_comments(value):
+    return models.Commentmodels.Comment.objects.filter(user_name_id=value).count()

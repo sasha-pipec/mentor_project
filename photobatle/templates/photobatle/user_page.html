@@ -1,7 +1,82 @@
 <!-- Расширили шаблон home_page-->
 {% extends 'photobatle/home_page.html'%}
+{% load imagekit %}
+{% load filter%}
+{% load static %}
 
 <!-- Динамический блок контента home_page-->
 {% block content %}
-<button class="btn btn-primary "><h5><a href="{% url 'logout_user'%}">Выйти из аккаунта</a></h5></button>
+{% if user.is_authenticated %}
+<div class="container" id="personal-account-container">
+    <div class="row">
+        <div class="col-12 col-sm-4">
+            <div class="personal-account-user-image">
+                {% if user.photo.url|check_photo %}
+                <img src="{{user.photo_imagekit_medium.url}} " alt="Card image cap" class="personal-account-user-photo">
+                {% else %}
+                <img src="/static/image/default-photo-post.jpeg" alt="Card image cap"
+                     class="personal-account-user-photo">
+                {% endif %}
+                <a href="" class="btn btn-primary" id="btn-post-personal-account">
+                    <img src="/static/image/gallery.png" alt="" id="add-photo-personal-account">Добавить фото
+                </a>
+            </div>
+        </div>
+        <div class="col-12 col-sm-4">
+            <div class="public-personal-info">
+                <div class="public-item">
+                    <h5 class="personal-info-item">Фамилия</h5>
+                    {% if user.first_name %}
+                    <p>{{user.last_name}}</p>
+                    {%else%}
+                    <p>Отсутствует</p>
+                    {% endif %}
+                    <hr>
+                </div>
+                <div class="public-item">
+                    <h5 class="personal-info-item">Имя</h5>
+                    {% if user.first_name %}
+                    <p>{{user.first_name}}</p>
+                    {%else%}
+                    <p>{{user.username}}</p>
+                    {% endif %}
+                    <hr>
+                </div>
+                <div class="public-item">
+                    <h5 class="personal-info-item">Почта</h5>
+                    <p>{{user.email}}</p>
+                    <hr>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-4">
+            <div class="private-personal-info">
+                <div class="private-item">
+                    <h5 class="personal-info-item">Всего лайков</h5>
+                    <p>{{user.pk|all_likes}}</p>
+                    <hr>
+                </div>
+                <div class="private-item">
+                    <h5 class="personal-info-item">Всего комментариев</h5>
+                    <p>{{user.pk|all_comments}}</p>
+                    <hr>
+                </div>
+                <div class="private-item">
+                    <h5 class="personal-info-item">API token</h5>
+                    <a href=""><p>Сгенерировать</p></a>
+                    <hr>
+                </div>
+                <div class="private-item">
+                    <a href="" class="btn btn-primary" id="button-my-photo-personal-account">
+                        Мои фото
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{%else%}
+<h1>Зачем ты сюда зашел?)</h1>
+{%endif%}
 {% endblock %}

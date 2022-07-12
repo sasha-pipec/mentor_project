@@ -13,10 +13,14 @@ class Photo(models.Model):
                                   related_name='user_name_username')
     slug = models.SlugField(max_length=255, unique=True, db_index=True, verbose_name='URL')
     photo = models.ImageField(max_length=300, upload_to='photobatl/photos/', verbose_name='Фото')
-    photo_imagekit = ImageSpecField(source='photo',
-                                    processors=[ResizeToFill(450, 450)],
-                                    format='JPEG',
-                                    options={'quality': 60})
+    photo_imagekit_large = ImageSpecField(source='photo',
+                                          processors=[ResizeToFill(450, 450)],
+                                          format='JPEG',
+                                          options={'quality': 60})
+    photo_imagekit_medium = ImageSpecField(source='photo',
+                                           processors=[ResizeToFill(350, 350)],
+                                           format='JPEG',
+                                           options={'quality': 60})
     photo_name = models.CharField(max_length=255, verbose_name='Имя фото')
     photo_content = models.TextField(blank=False, verbose_name='Описание фото')
     date_published_on_site = models.DateField(auto_now=False, verbose_name='Дата публикации')
@@ -37,10 +41,7 @@ class Photo(models.Model):
         super(Photo, self).save(*args, **kwargs)
 
     def checking_the_existence(self):
-        if os.path.exists(str(self.photo.url)[1::]):
-            return "exists"
-        else:
-            return "not exists"
+        return os.path.exists(str(self.photo.url)[1::])
 
     def get_absolute_url(self):
         return reverse('detail_post', kwargs={'slug_id': self.slug})

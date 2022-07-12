@@ -22,14 +22,34 @@
     {%block navbar%}
     {% endblock %}
     {% if user.is_authenticated %}
-
-    {%if user.first_name%}
-    <h5>Привет, {{user.first_name}} {{user.last_name}}</h5>
-    {% else %}
-    <h5>Привет, {{user.username}}</h5>
-    {% endif %}
-    <a class="navbar-brand" href="{% url 'user_page'%}"><h5>Личный кабинет</h5></a>
-
+    <div class="user-navbar">
+        <div class="image-user-navbar">
+            <a href="{% url 'user_page'%}">
+                {% if user.photo.url|check_photo %}
+                <img src="{{user.photo.url}}" class="photo-user-navbar" alt="">
+                {% else %}
+                <img src="/static/image/default-photo-post.jpeg" class="photo-user-navbar" alt="">
+                {% endif %}
+            </a>
+        </div>
+        <div class="info-user-navbar">
+            <div class="name-user-navbar">
+                {%if user.first_name%}
+                <h5>{{user.first_name}} {{user.last_name}}</h5>
+                {% else %}
+                <h5>{{user.username}}</h5>
+                {% endif %}
+            </div>
+            <div class="email-user-navbar">
+                <p>{{user.email}}</p>
+            </div>
+        </div>
+        <div class="logout-user-navbar">
+            <a href="{% url 'logout_user'%}">
+                <img src="/static/image/logout.png" alt="">
+            </a>
+        </div>
+    </div>
     {% else %}
     <a class="navbar-brand" href="{% provider_login_url 'vk' method='oauth2'%}"><h5>Вход</h5></a>
     {% endif %}
