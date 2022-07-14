@@ -2,7 +2,7 @@ from django.db.models import *
 from django.views.generic import DetailView, ListView, TemplateView, View
 from rest_framework.views import APIView
 from django.contrib.auth import logout
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
 from django.http import JsonResponse
 
 from . import models
