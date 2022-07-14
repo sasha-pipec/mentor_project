@@ -1,0 +1,10 @@
+<!-- Расширили шаблон home_page-->
+{% extends 'photobatle/home_page.html'%}
+{% load filter%}
+
+{% block content %}
+<form action="">
+    {%csrf_token%}
+    {{form}}
+</form>
+{% endblock %}

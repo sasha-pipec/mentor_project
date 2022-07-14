@@ -12,7 +12,7 @@ class SortForm(forms.Form):
     choice = forms.CharField(label='Сортировка', widget=forms.RadioSelect(choices=FRUIT_CHOICES))
 
 
-class AddPhoto(forms.ModelForm):
+class AddPhotoForm(forms.ModelForm):
     class Meta:
         model = models.Photomodels.Photo
         fields = ['photo', 'photo_name', 'photo_content']

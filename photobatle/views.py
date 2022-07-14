@@ -1,5 +1,5 @@
 from django.db.models import *
-from django.views.generic import DetailView, ListView, TemplateView, View
+from django.views.generic import DetailView, ListView, TemplateView, View, CreateView
 from rest_framework.views import APIView
 from django.contrib.auth import logout
 from django.shortcuts import redirect
@@ -154,24 +154,6 @@ class SortingFormAjax(APIView):
         return JsonResponse({'posts': serializers.PhotoSerializer(posts, many=True).data}, status=200)
 
 
-# def Sorting_form_ajax(request):
-#    """Функция для AJAX запроса сортировка"""
-#    form = forms.SortForm()
-#    if request.method == "POST" and request.headers.get('x-requested-with') == 'XMLHttpRequest':
-#        # Получаем значение формы по которому будем сортировать
-#        field = request.POST['form'].split('=')[-1]
-#        serch_word = request.POST['name']
-#        posts = models.Photomodels.Photo.objects.annotate(comment_count=Count('comment_photo', distinct=True),
-#                                                          like_count=Count('like_photo', distinct=True)).filter(
-#            Q(user_name__username__icontains=serch_word) |
-#            Q(photo_name__icontains=serch_word) |
-#            Q(photo_content__icontains=serch_word),
-#            moderation='3').order_by(f"-{field}")
-#        let = vars(posts[0])
-#        return JsonResponse({'posts': serializers.PhotoSerializer(posts, many=True).data}, status=200)
-#    return render(request, "home_html_with_post_and_SortForm.html", context={'form': form})
-#
-
 class SearchFormAjax(APIView):
     """Класс для AJAX запроса поиск по слову"""
 
@@ -184,12 +166,8 @@ class SearchFormAjax(APIView):
             Q(photo_content__icontains=serch_word), moderation='3')
         return JsonResponse({'posts': serializers.PhotoSerializer(posts, many=True).data}, status=200)
 
-# def Search_form_ajax(request):
-#    """Функция для AJAX запроса поиск по слову"""
-#    serch_word = request.POST['name']
-#    posts = models.Photomodels.Photo.objects.annotate(comment_count=Count('comment_photo', distinct=True),
-#                                                      like_count=Count('like_photo', distinct=True)).filter(
-#        Q(user_name__username__icontains=serch_word) |
-#        Q(photo_name__icontains=serch_word) |
-#        Q(photo_content__icontains=serch_word), moderation='3')
-#    return JsonResponse({'posts': serializers.PhotoSerializer(posts, many=True).data}, status=200)
+
+class AddPhoto(CreateView):
+    """Класс для добавления фотографии"""
+    form_class = forms.AddPhotoForm
+    template_name = 'photobatle/add_photo_form.html'

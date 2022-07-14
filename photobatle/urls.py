@@ -5,6 +5,7 @@ urlpatterns = [
     # Классы предствавления
     path('', views.RenderingHomePage.as_view(), name='home'),
     path('user/', views.RenderingUserPage.as_view(), name='user_page'),
+    path('photo/patch', views.AddPhoto.as_view(), name='create_photo'),
     path('photo/get/<slug:slug_id>', views.DetailPost.as_view(), name='detail_post'),
     path('comment/patch/<parent_comment_id>', views.CreatingCommentForPhoto.as_view(), name='create_comment'),
     path('comment/delete/<comment_pk>', views.DeletingCommentForPhoto.as_view(), name='delete_comment'),
