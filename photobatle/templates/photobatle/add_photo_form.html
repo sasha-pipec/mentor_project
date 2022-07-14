@@ -3,8 +3,20 @@
 {% load filter%}
 
 {% block content %}
-<form action="">
-    {%csrf_token%}
-    {{form}}
-</form>
+<div class="container" id="add-photo-container">
+    <div class="row">
+        <div class="col">
+            <div class="add-photo-form">
+                <form method='post' id="add-photo-form" enctype="multipart/form-data">
+                    {%csrf_token%}
+                    {% for i in form%}
+                    <p><label for="{{i.id_for_label}}">{{i.label}}</label><br>{{i}}</p>
+                        {{i.errors}}
+                    {% endfor%}
+                    <button type="submit" class="btn btn-primary btn-post-personal-account" id="add-photo-button"> Добавить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

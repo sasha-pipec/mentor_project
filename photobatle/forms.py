@@ -16,3 +16,7 @@ class AddPhotoForm(forms.ModelForm):
     class Meta:
         model = models.Photomodels.Photo
         fields = ['photo', 'photo_name', 'photo_content']
+        widgets = {
+            'photo_name': forms.TextInput(attrs={'class': 'form-field'}),
+            'photo_content': forms.Textarea(attrs={'class': 'form-field'}),
+        }

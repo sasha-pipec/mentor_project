@@ -1,4 +1,5 @@
 from django.db.models import *
+from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView, TemplateView, View, CreateView
 from rest_framework.views import APIView
 from django.contrib.auth import logout
@@ -171,3 +172,4 @@ class AddPhoto(CreateView):
     """Класс для добавления фотографии"""
     form_class = forms.AddPhotoForm
     template_name = 'photobatle/add_photo_form.html'
+    success_url = reverse_lazy('home')

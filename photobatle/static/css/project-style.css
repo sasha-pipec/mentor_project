@@ -433,6 +433,32 @@ margin-left:10px;
 text-align:center;
 }
 
+#add-photo-container{
+width:80%;
+height:100%;
+margin-top:15px;
+}
+
+.add-photo-form{
+width:80%;
+margin-left:10%;
+border:1px solid black;
+border-radius:10px;
+}
+
+#add-photo-form{
+text-align:center;
+}
+
+#add-photo-button{
+width:60%;
+}
+
+.form-field{
+border:none;
+border-radius:10px;
+width:60%;
+}
 
 
 
