@@ -396,7 +396,7 @@ margin:auto;
 #personal-account-container{
 background-color:white;
 height:100%;
-margin-top:50px;
+margin-top:15px;
 }
 
 .personal-account-user-image{
@@ -411,19 +411,13 @@ margin-bottom:30px;
 margin-top:30px
 }
 
-#btn-post-personal-account{
-width:80%;
-height:10%;
-padding-top:10px;
+.btn-post-personal-account{
+width:100%;
 border:none;
-}
-
-#add-photo-personal-account{
-margin-right:10px;
+margin-top:45px;
 }
 
 .public-personal-info{
-margin-top:25%;
 margin-right:30px;
 margin-left:10px;
 text-align:center;
@@ -434,17 +428,12 @@ opacity:60%;
 }
 
 .private-personal-info{
-margin-top:25%;
 margin-right:30px;
 margin-left:10px;
 text-align:center;
 }
 
-#button-my-photo-personal-account{
-width:100%;
-border:none;
-margin-top:45px;
-}
+
 
 
 
