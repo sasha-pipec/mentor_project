@@ -148,7 +148,7 @@ class SortingFormAjax(APIView):
         serch_word = self.request.POST['name']
         posts = models.Photomodels.Photo.objects.annotate(comment_count=Count('comment_photo', distinct=True),
                                                           like_count=Count('like_photo', distinct=True)).filter(
-            Q(user_name__username__icontains=serch_word) |
+            Q(user__username__icontains=serch_word) |
             Q(photo_name__icontains=serch_word) |
             Q(photo_content__icontains=serch_word),
             moderation='3').order_by(f"-{field}")
@@ -162,7 +162,7 @@ class SearchFormAjax(APIView):
         serch_word = self.request.POST['name']
         posts = models.Photomodels.Photo.objects.annotate(comment_count=Count('comment_photo', distinct=True),
                                                           like_count=Count('like_photo', distinct=True)).filter(
-            Q(user_name__username__icontains=serch_word) |
+            Q(user__username__icontains=serch_word) |
             Q(photo_name__icontains=serch_word) |
             Q(photo_content__icontains=serch_word), moderation='3')
         return JsonResponse({'posts': serializers.PhotoSerializer(posts, many=True).data}, status=200)

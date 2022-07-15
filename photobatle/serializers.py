@@ -12,7 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class PhotoSerializer(serializers.ModelSerializer):
     '''Сериализатор для модели Photo'''
-    user_name = UserSerializer()
+    user = UserSerializer()
     like_count = serializers.IntegerField()
     comment_count = serializers.IntegerField()
     checking_the_existence = serializers.CharField()

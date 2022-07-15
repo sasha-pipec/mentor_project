@@ -61,10 +61,11 @@
                 {% endif %}
                 <!--Конец-->
                 <p class="card-text" id="post_content">Описание: {{post.photo_content}}</p>
-                <p class="card-text">Автор: {{post.user_name.username}}</p>
+                <p class="card-text">Автор: {{post.user.username}}</p>
                 <p class="card-text">Лайки: {{post|like_count}}</p>
                 <p class="card-text">Комментарии: {{post|comment_count}}</p>
-                <p class="card-text">Дата публикации: <br> {{post.date_published_on_site}}</p>
+                <p class="card-text">Дата публикации:
+                    <br> {{post.updated_at}}</p>
                 <a href="{{ post.get_absolute_url }}" class="btn btn-primary" id="btn-post">Посмотреть</a>
             </div>
         </div>
@@ -125,10 +126,10 @@
 
                                       var content=content +
                                         '<p class="card-text" id="post_content">Описание: '+response.posts[key].photo_content+'</p>'+
-                                        '<p class="card-text">Автор: '+ response.posts[key].user_name.username +'</p>'+
+                                        '<p class="card-text">Автор: '+ response.posts[key].user.username +'</p>'+
                                         '<p class="card-text">Лайки: '+response.posts[key].like_count+'</p>'+
                                         '<p class="card-text">Комментарии: '+response.posts[key].comment_count+'</p>'+
-                                        '<p class="card-text">Дата публикации: <br> '+ new Date(response.posts[key].date_published_on_site).toLocaleDateString("ru", options) +'</p>'+
+                                        '<p class="card-text">Дата публикации: <br> '+ new Date(response.posts[key].updated_at).toLocaleDateString("ru", options) +'</p>'+
                                         '<a href="'+ response.posts[key].get_absolute_url + '"class="btn btn-primary" id="btn-post">Посмотреть</a>'+
                                     '</div>'+
                                 '</div>'+
@@ -187,10 +188,10 @@
                                     }
                                       var content=content +
                                         '<p class="card-text" id="post_content">Описание: '+response.posts[key].photo_content+'</p>'+
-                                        '<p class="card-text">Автор: '+ response.posts[key].user_name.username +'</p>'+
+                                        '<p class="card-text">Автор: '+ response.posts[key].user.username +'</p>'+
                                         '<p class="card-text">Лайки: '+response.posts[key].like_count +'</p>'+
                                         '<p class="card-text">Комментарии: '+response.posts[key].comment_count +'</p>'+
-                                        '<p class="card-text">Дата публикации: <br> '+ new Date(response.posts[key].date_published_on_site).toLocaleDateString("ru", options) +'</p>'+
+                                        '<p class="card-text">Дата публикации: <br> '+ new Date(response.posts[key].updated_at).toLocaleDateString("ru", options) +'</p>'+
                                         '<a href="' + response.posts[key].get_absolute_url + '"class="btn btn-primary" id="btn-post">Посмотреть</a>'+
                                     '</div>'+
                                 '</div>'+
