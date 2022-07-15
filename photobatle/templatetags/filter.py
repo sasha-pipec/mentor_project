@@ -39,7 +39,7 @@ def like_count(value):
 
 @register.filter
 def check_like(value, arg):
-    return models.Likemodels.Like.objects.filter(photo_id=arg, user_name_id=value).exists()
+    return models.Likemodels.Like.objects.filter(photo_id=arg, user_id=value).exists()
 
 
 @register.filter
@@ -51,7 +51,7 @@ def list_answer_comment(value, arg):
 @register.filter
 def author_parent_comment(value, arg):
     comment = models.Commentmodels.Comment.objects.get(pk=arg)
-    return comment.user_name
+    return comment.user
 
 
 @register.filter
@@ -64,8 +64,8 @@ def check_answer(value):
 
 @register.filter
 def all_likes(value):
-    return models.Likemodels.Like.objects.filter(user_name_id=value).count()
+    return models.Likemodels.Like.objects.filter(user_id=value).count()
 
 @register.filter
 def all_comments(value):
-    return models.Commentmodels.Comment.objects.filter(user_name_id=value).count()
+    return models.Commentmodels.Comment.objects.filter(user_id=value).count()

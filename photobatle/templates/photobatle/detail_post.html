@@ -25,15 +25,15 @@
                     <div class="row">
                         <div class="col">
                             <div class="comment-content-detail">
-                                {% if comment.user_name.photo.url|check_photo %}
-                                <img class="comment-image" src='{{comment.user_name.photo.url}}' alt="avatar">
+                                {% if comment.user.photo.url|check_photo %}
+                                <img class="comment-image" src='{{comment.user.photo.url}}' alt="avatar">
                                 {% else %}
                                 <img class="comment-image" src="/static/image/default-photo-post.jpeg"
                                      alt="Card image cap">
                                 {% endif %}
                                 <div class="comment-content-detail-info">
-                                    <h5 class="comment-content-detail-info-element">{{comment.user_name.username}}
-                                        {% if comment.user_name.username == user.username %}
+                                    <h5 class="comment-content-detail-info-element">{{comment.user.username}}
+                                        {% if comment.user.username == user.username %}
                                         <a onclick="edit_a_comment(id={{comment.pk}},content='{{comment.content}}')"
                                            style="cursor:pointer;"><img src="/static/image/изменение.png" alt=""></a>
                                         {% if comment.pk|check_answer%}
@@ -45,7 +45,7 @@
                                     <p class="comment-content-detail-info-element"
                                        id="comment-content-detail-info-{{comment.pk}}">{{comment}}</p>
                                     <p class="comment-content-detail-info-element"
-                                       id="comment-content-detail-info-date-{{comment.pk}}">{{comment.date}}
+                                       id="comment-content-detail-info-date-{{comment.pk}}">{{comment.updated_at}}
                                         {% if user.is_authenticated %}
                                         <a id="add-answer-for-comment"
                                            onclick="open_answer_textarea({{comment.pk}})">Ответить</a>
@@ -102,16 +102,16 @@
                             {% endif %}
                             <div class="col">
                                 <div class="comment-content-detail" id="answer-comment-detail-content">
-                                    {% if answer.user_name.photo.url|check_photo %}
-                                    <img class="comment-image" src='{{answer.user_name.photo.url}}' alt="avatar">
+                                    {% if answer.user.photo.url|check_photo %}
+                                    <img class="comment-image" src='{{answer.user.photo.url}}' alt="avatar">
                                     {% else %}
                                     <img class="comment-image" src="/static/image/default-photo-post.jpeg"
                                          alt="Card image cap">
                                     {% endif %}
                                     <div class="comment-content-detail-info">
                                         <h5 class="comment-content-detail-info-element">
-                                            {{answer.user_name.username}}
-                                            {% if answer.user_name.username == user.username %}
+                                            {{answer.user.username}}
+                                            {% if answer.user.username == user.username %}
                                             <a onclick="edit_a_comment(id={{answer.pk}},content='{{answer.content}}')"
                                                style="cursor:pointer;"><img src="/static/image/изменение.png"
                                                                             alt=""></a>
@@ -125,7 +125,7 @@
                                            id="comment-content-detail-info-{{answer.pk}}">
                                             {{answer|author_parent_comment:answer.parent_id}}, {{answer}}</p>
                                         <p class="comment-content-detail-info-element"
-                                           id="comment-content-detail-info-date-{{answer.pk}}">{{answer.date}}
+                                           id="comment-content-detail-info-date-{{answer.pk}}">{{answer.updated_at}}
                                             {% if user.is_authenticated %}
                                             <a id="add-answer-for-comment"
                                                onclick="open_answer_textarea({{answer.pk}})">Ответить</a>
@@ -210,12 +210,12 @@
         <div class="row">
             <div class="col-12 col-sm-4">
                 <div class="detail-post-info">
-                    <p>Автор: {{post.user_name.username}}</p>
+                    <p>Автор: {{post.user.username}}</p>
                     <p>Лайки: {{post|like_count}}</p>
                     <p>Комментарии: {{post|comment_count}}</p>
-                    <p>Дата публикации: <br> {{post.date_published_on_site}}</p>
+                    <p>Дата публикации: <br> {{post.updated_at}}</p>
                     {% if user.username %}
-                        {% if post.user_name.username == user.username %}
+                        {% if post.user.username == user.username %}
                         <a class="btn btn-primary" id="btn-post-detail">Самолайки запрещены</a>
                         {% else %}
                             {% if user.pk|check_like:post.pk%}

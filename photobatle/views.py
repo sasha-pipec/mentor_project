@@ -51,10 +51,10 @@ class CreatingCommentForPhoto(View):
             photo_id = models.Photomodels.Photo(pk=self.request.POST['pk'])
             if kwargs['parent_comment_id'] == 'none':
                 # Создание записи комментария в бд
-                models.Commentmodels.Comment.objects.create(photo=photo_id, user_name_id=user, content=comment)
+                models.Commentmodels.Comment.objects.create(photo=photo_id, user_id=user, content=comment)
             else:
                 # Создание записи ответа на комментарий в бд
-                models.Commentmodels.Comment.objects.create(photo=photo_id, user_name_id=user,
+                models.Commentmodels.Comment.objects.create(photo=photo_id, user_id=user,
                                                             parent_id=kwargs['parent_comment_id'],
                                                             content=comment)
         return redirect('detail_post', slug_id=photo_slug)
@@ -88,7 +88,7 @@ class CreatingLikeForPhoto(View):
     def get(self, *args, **kwargs):
         photo = models.Photomodels.Photo.objects.get(pk=kwargs['photo_id'])
         user_id = self.request.user.id
-        models.Likemodels.Like.objects.create(photo_id=kwargs['photo_id'], user_name_id=user_id)
+        models.Likemodels.Like.objects.create(photo_id=kwargs['photo_id'], user_id=user_id)
         return redirect('detail_post', slug_id=photo.slug)
 
 
@@ -98,7 +98,7 @@ class DeletingLikeForPhoto(View):
     def get(self, *args, **kwargs):
         photo = models.Photomodels.Photo.objects.get(pk=kwargs['photo_id'])
         user_id = self.request.user.id
-        like = models.Likemodels.Like.objects.get(photo_id=kwargs['photo_id'], user_name_id=user_id)
+        like = models.Likemodels.Like.objects.get(photo_id=kwargs['photo_id'], user_id=user_id)
         like.delete()
         return redirect('detail_post', slug_id=photo.slug)
 
