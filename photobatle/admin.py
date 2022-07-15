@@ -21,10 +21,10 @@ class UserAdmin(admin.ModelAdmin):
 class PhotoAdmin(admin.ModelAdmin):
     '''Модель фото в админке'''
     list_display = (
-        'user_name', 'get_html_photo', 'photo_name', 'date_published_on_site',
+        'user', 'get_html_photo', 'photo_name', 'create_at', 'updated_at',
         'moderation')
     list_filter = ('moderation',)
-    readonly_fields = ('date_published_on_site',)
+    readonly_fields = ('create_at', 'updated_at',)
     list_editable = ('moderation',)
     prepopulated_fields = {'slug': ('photo_name',)}
 
@@ -40,7 +40,7 @@ class CommentAdmin(admin.ModelAdmin):
 
 
 class LikeAdmin(admin.ModelAdmin):
-    list_display = ('photo', 'user_name')
+    list_display = ('photo', 'user')
 
 
 admin.site.register(models.Usermodels.User, UserAdmin)
