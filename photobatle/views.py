@@ -15,13 +15,13 @@ from . import serializers
 # Create your views here.
 
 def Logouting_user(request):
-    """Выход из учетной записи"""
+    """Log out of your account"""
     logout(request)
     return redirect('home')
 
 
 class RenderingHomePage(ListView):
-    """Тут будет генерироваться главная  страничка приложения """
+    """The main page of the application will be generated here"""
     model = models.Photomodels.Photo
     template_name = 'photobatle/home_html_with_post_and_SortForm.html'
     context_object_name = 'posts'
@@ -37,12 +37,12 @@ class RenderingHomePage(ListView):
 
 
 class RenderingUserPage(TemplateView):
-    """Тут будет генерироваться личный кабинет пользователя """
+    """The user's personal account will be generated here """
     template_name = 'photobatle/user_page.html'
 
 
 class CreatingCommentForPhoto(View):
-    """Класс для создания комментария"""
+    """Class for creating a comment"""
 
     def post(self, *args, **kwargs):
         comment = self.request.POST['comment']
@@ -51,10 +51,10 @@ class CreatingCommentForPhoto(View):
         if len(comment) != 0:
             photo_id = models.Photomodels.Photo(pk=self.request.POST['pk'])
             if kwargs['parent_comment_id'] == 'none':
-                # Создание записи комментария в бд
+                # Creating a comment entry in the database
                 models.Commentmodels.Comment.objects.create(photo=photo_id, user_id=user, content=comment)
             else:
-                # Создание записи ответа на комментарий в бд
+                # Creating a record of a response to a comment in the database
                 models.Commentmodels.Comment.objects.create(photo=photo_id, user_id=user,
                                                             parent_id=kwargs['parent_comment_id'],
                                                             content=comment)
@@ -62,7 +62,7 @@ class CreatingCommentForPhoto(View):
 
 
 class DeletingCommentForPhoto(View):
-    """Класс для удаления комментария"""
+    """Class for deleting a comment"""
 
     def get(self, *args, **kwargs):
         comment = models.Commentmodels.Comment.objects.get(pk=kwargs['comment_pk'])
@@ -72,7 +72,7 @@ class DeletingCommentForPhoto(View):
 
 
 class UpdatingCommentForPhoto(View):
-    """Класс для изменения комментария"""
+    """Class for changing the comment"""
 
     def post(self, *args, **kwargs):
         comment_content = self.request.POST['comment']
@@ -84,7 +84,7 @@ class UpdatingCommentForPhoto(View):
 
 
 class CreatingLikeForPhoto(View):
-    """Класс для создания лайка"""
+    """Class for creating a like"""
 
     def get(self, *args, **kwargs):
         photo = models.Photomodels.Photo.objects.get(pk=kwargs['photo_id'])
@@ -94,7 +94,7 @@ class CreatingLikeForPhoto(View):
 
 
 class DeletingLikeForPhoto(View):
-    """Класс для удаления лайка"""
+    """Class for removing likes"""
 
     def get(self, *args, **kwargs):
         photo = models.Photomodels.Photo.objects.get(pk=kwargs['photo_id'])
@@ -105,14 +105,14 @@ class DeletingLikeForPhoto(View):
 
 
 class DetailPost(DetailView):
-    """Детальный просмотр поста"""
+    """Detailed view of the post"""
     model = models.Photomodels.Photo
     template_name = 'photobatle/detail_post.html'
     slug_url_kwarg = 'slug_id'
     context_object_name = 'post'
 
     def all_comments_for_post(self, parent_id=None, photo_id=None):
-        # функция для получения всех ответов под комментарием
+        # function for getting all the answers under the comment
         comments = models.Commentmodels.Comment.objects.filter(photo_id=photo_id, parent_id=parent_id)
         all_answer_for_comment = []
         if len(comments) != 0:
@@ -128,12 +128,12 @@ class DetailPost(DetailView):
 
     def get_context_data(self, parent_id=None, *args, oject_list=None, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        # тут хранятся основные комментарии
+        # the main comments are stored here
         context['comments'] = models.Commentmodels.Comment.objects.filter(photo_id=context['post'].id,
                                                                           parent_id=parent_id)
-        # тут будут хранится ответы к основным комментариям
+        # answers to the main comments will be stored here
         context['answer_comments'] = []
-        # перебираем основные комментарии и ищем их детей
+        # we go through the main comments and look for their children
         for comment in context['comments']:
             context['answer_comments'] += [self.all_comments_for_post(parent_id=comment.pk, photo_id=comment.photo_id)]
 
@@ -141,10 +141,10 @@ class DetailPost(DetailView):
 
 
 class SortingFormAjax(APIView):
-    """Класс для AJAX запроса сортировка"""
+    """Class for AJAX request sorting"""
 
     def post(self, *args, **kwargs):
-        # Получаем значение формы по которому будем сортировать
+        # We get the value of the form by which we will sort
         field = self.request.POST['form'].split('=')[-1]
         serch_word = self.request.POST['name']
         posts = models.Photomodels.Photo.objects.annotate(comment_count=Count('comment_photo', distinct=True),
@@ -157,7 +157,7 @@ class SortingFormAjax(APIView):
 
 
 class SearchFormAjax(APIView):
-    """Класс для AJAX запроса поиск по слову"""
+    """Class for AJAX query word search"""
 
     def post(self, *args, **kwargs):
         serch_word = self.request.POST['name']
@@ -170,19 +170,21 @@ class SearchFormAjax(APIView):
 
 
 class AddPhoto(CreateView):
-    """Класс для добавления фотографии"""
+    """Class for adding photos"""
     form_class = forms.AddPhotoForm
     template_name = 'photobatle/add_photo_form.html'
     success_url = reverse_lazy('home')
 
     def slug_russian_word(self, word):
+
+        # Making a slug of Russian words
         russia = 'абвгдежзийклмнопрстуфхцчшщыьэюя '
         england = ['a', 'b', 'v', 'g', 'd', 'e', 'j', 'z', 'i', "i'", 'k', 'l', 'm', 'n', 'o', 'p', 'r', 's', 't', 'u',
                    'f', 'x', 'с', 'ch', 'sh', "sh'", 'i', "'", 'e', 'yu', 'ia', '-']
         slug = ''
         for i in word:
-            if i in russia:
-                slug += england[russia.find(i)]
+            if i.lower() in russia:
+                slug += england[russia.find(i.lower())]
         return slug
 
     def form_valid(self, form):
