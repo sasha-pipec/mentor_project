@@ -31,14 +31,14 @@ class Photo(models.Model):
         ('2', 'На модерации'),
         ('3', 'Одобренно'),
     )
-    moderation = models.CharField(max_length=1, choices=STATUS_CHOICES, verbose_name='Статус')
+    moderation = models.CharField(max_length=1, choices=STATUS_CHOICES, verbose_name='Статус', default='2')
 
     def __str__(self):
         return self.photo_name
 
     def save(self, *args, **kwargs):
         if self.moderation == '3':
-            self.date_published_on_site = datetime.datetime.now()
+            self.updated_at = datetime.datetime.now()
         super(Photo, self).save(*args, **kwargs)
 
     def checking_the_existence(self):

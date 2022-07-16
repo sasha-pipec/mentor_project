@@ -1,5 +1,6 @@
 from django.db.models import *
 from django.urls import reverse_lazy
+from django.utils.text import slugify
 from django.views.generic import DetailView, ListView, TemplateView, View, CreateView
 from rest_framework.views import APIView
 from django.contrib.auth import logout
@@ -173,3 +174,22 @@ class AddPhoto(CreateView):
     form_class = forms.AddPhotoForm
     template_name = 'photobatle/add_photo_form.html'
     success_url = reverse_lazy('home')
+
+    def slug_russian_word(self, word):
+        russia = 'абвгдежзийклмнопрстуфхцчшщыьэюя '
+        england = ['a', 'b', 'v', 'g', 'd', 'e', 'j', 'z', 'i', "i'", 'k', 'l', 'm', 'n', 'o', 'p', 'r', 's', 't', 'u',
+                   'f', 'x', 'с', 'ch', 'sh', "sh'", 'i', "'", 'e', 'yu', 'ia', '-']
+        slug = ''
+        for i in word:
+            if i in russia:
+                slug += england[russia.find(i)]
+        return slug
+
+    def form_valid(self, form):
+        fields = form.save(commit=False)
+        fields.user_id = self.request.user.id
+        fields.slug = slugify(self.request.POST['photo_name'])
+        if not fields.slug:
+            fields.slug = self.slug_russian_word(self.request.POST['photo_name'])
+        fields.save()
+        return super().form_valid(form)
