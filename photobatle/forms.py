@@ -9,9 +9,19 @@ FRUIT_CHOICES = [
     ('updated_at', 'Сортировка по дате'),
 ]
 
+STATUS_CHOICES = (
+    ('1', 'На удалении'),
+    ('2', 'На модерации'),
+    ('3', 'Одобренно'),
+)
+
 
 class SortForm(forms.Form):
     choice = forms.CharField(label='Сортировка', widget=forms.RadioSelect(choices=FRUIT_CHOICES))
+
+class PersonalSortForm(forms.Form):
+    choice = forms.CharField(label='Сортировка', widget=forms.RadioSelect(choices=STATUS_CHOICES))
+
 
 
 class AddPhotoForm(forms.ModelForm):

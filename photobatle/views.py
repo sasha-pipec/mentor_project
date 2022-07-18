@@ -195,3 +195,15 @@ class AddPhoto(CreateView):
             fields.slug = self.slug_russian_word(self.request.POST['photo_name'])
         fields.save()
         return super().form_valid(form)
+
+class PersonalListPosts(ListView):
+    """The main page of the application will be generated here"""
+    model = models.Photomodels.Photo
+    template_name = 'photobatle/personal_list_posts.html'
+    context_object_name = 'posts'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = forms.PersonalSortForm()
+        return context
+

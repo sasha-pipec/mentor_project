@@ -1,0 +1,143 @@
+<!-- Расширили шаблон home_page-->
+{% extends 'photobatle/home_page.html'%}
+{% load filter%}
+
+{% block navbar %}
+<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+        aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+</button>
+<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+    <div class="navbar-nav">
+        <li class="nav-item dropdown" id="personal_list_posts">
+            <a class="navbar-brand nav-link dropdown-toggle " href="#" id="navbarDropdownMenuLink"
+               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Сортировкa
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <form method="post" id="contactForm">
+                    {% csrf_token %}
+                    {{form.as_p}}
+                </form>
+            </div>
+        </li>
+    </div>
+</div>
+{% endblock %}
+
+
+<!-- Динамический блок контента home_page-->
+{% block content %}
+<div class="row">
+    <!-- Цикл для рендера постов-->
+    {% for post in posts %}
+    <div class="col">
+        <div class="card" style="width: 18rem;" id="card">
+
+            {% if post.photo.url|check_photo %}
+            <a href="{{ post.get_absolute_url }}">
+                <img class="card-img-top" src="{{post.photo.url}}" alt="Card image cap">
+            </a>
+            {% else %}
+            <a href="{{ post.get_absolute_url }}">
+                <img class="card-img-top" src="/static/image/default-photo-post.jpeg" alt="Card image cap">
+            </a>
+            {% endif %}
+
+            <div class="card-body" id="card-body">
+                <!--Тут мы проверяем длину названия, чтобы если что её обрезать с помощью фильтра-->
+                {% if post.photo_name|len_name %}
+                <h5 class="card-title" id="first_letters">Название: {{post.photo_name|first_letters}}...</h5>
+                <h5 class="card-title" id="full_letters">Название: {{post.photo_name}}</h5>
+                {% else %}
+                <h5 class="card-title">Название: {{post.photo_name}}</h5>
+                {% endif %}
+                <!--Конец-->
+                <p class="card-text" id="post_content">Описание: {{post.photo_content}}</p>
+                <p class="card-text">Автор: {{post.user.username}}</p>
+                <p class="card-text">Лайки: {{post|like_count}}</p>
+                <p class="card-text">Комментарии: {{post|comment_count}}</p>
+                <p class="card-text">Дата публикации:
+                    <br> {{post.updated_at}}</p>
+                <p class="card-text">Статус: {{post.get_moderation_display}}</p>
+                <a href="{{ post.get_absolute_url }}" class="btn btn-primary" id="btn-post">Посмотреть</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    <!-- Конец цикла -->
+</div>
+{% endblock %}
+
+
+{% block script %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<!-- Формирование AJAX запроса -->
+<script>
+      $(document).ready(function () {
+
+
+      <!--  AJAX для фильтрации     -->
+        $('#contactForm').change(function () {
+        var contentInput=$('input[name="content"]').val().trim();
+         var options = {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            };
+              $.ajax({
+                  data: {'form':$(this).serialize(),
+                  'name':contentInput,
+                  'csrfmiddlewaretoken': '{{csrf_token}}',},
+                  type: $(this).attr('method'),
+                  url: "{% url 'ajax' %}",
+                  success: function (response) {
+                      $('.row').empty();
+                      for(var key in response.posts)
+                      {
+                      var name_photo=response.posts[key].photo_name;
+                      var url_photo=response.posts[key].checking_the_existence;
+                      if(url_photo!='True'){
+                      var url_photo='/static/image/default-photo-post.jpeg';
+                      }else{
+                      var url_photo=response.posts[key].photo;
+                      }
+
+                      var content=
+                        '<div class="col">'+
+                                '<div class="card" style="width: 18rem;" id="card">'+
+                                '<a href="' + response.posts[key].get_absolute_url + '">'+
+                                    "<img id='foo' class='card-img-top' src='"+url_photo+"'alt='Не загрузилось :('>"+
+                                '</a>'+
+                                    '<div class="card-body" id="card-body">';
+
+                                    if(name_photo.length>=11){
+                                    var content=content+'<h5 class="card-title" id="first_letters">Название: '+name_photo.substr(0,8)+'...</h5>'+
+                                    '<h5 class="card-title" id="full_letters">Название: '+name_photo+'</h5>';
+                                    }else{
+                                    var content=content+'<h5 class="card-title">Название: '+name_photo+'</h5>';
+                                    }
+
+                                      var content=content +
+                                        '<p class="card-text" id="post_content">Описание: '+response.posts[key].photo_content+'</p>'+
+                                        '<p class="card-text">Автор: '+ response.posts[key].user.username +'</p>'+
+                                        '<p class="card-text">Лайки: '+response.posts[key].like_count+'</p>'+
+                                        '<p class="card-text">Комментарии: '+response.posts[key].comment_count+'</p>'+
+                                        '<p class="card-text">Дата публикации: <br> '+ new Date(response.posts[key].updated_at).toLocaleDateString("ru", options) +'</p>'+
+                                        '<a href="'+ response.posts[key].get_absolute_url + '"class="btn btn-primary" id="btn-post">Посмотреть</a>'+
+                                    '</div>'+
+                                '</div>'+
+                        '</div>'
+                      ;
+                      $('.row').append(content);
+                      }
+                  },
+                  error: function (response) {
+                      alert('error')
+                  }
+                  });
+              return false;
+        });
+      });
+</script>
+{% endblock %}
