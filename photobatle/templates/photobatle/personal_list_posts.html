@@ -30,6 +30,7 @@
 {% block content %}
 <div class="row">
     <!-- Цикл для рендера постов-->
+    {% if posts|length > 0%}
     {% for post in posts %}
     <div class="col">
         <div class="card" style="width: 18rem;" id="card">
@@ -65,6 +66,9 @@
         </div>
     </div>
     {% endfor %}
+    {% else %}
+    <h1>Вы еще не загружали фото</h1>
+    {% endif %}
     <!-- Конец цикла -->
 </div>
 {% endblock %}
@@ -121,6 +125,7 @@
                                         '<p class="card-text">Лайки: '+response.posts[key].like_count+'</p>'+
                                         '<p class="card-text">Комментарии: '+response.posts[key].comment_count+'</p>'+
                                         '<p class="card-text">Дата публикации: <br> '+ new Date(response.posts[key].updated_at).toLocaleDateString("ru", options) +'</p>'+
+                                        '<p class="card-text">Комментарии: '+response.posts[key].get_moderation_display+'</p>'+
                                         '<a href="'+ response.posts[key].get_absolute_url + '"class="btn btn-primary" id="btn-post">Посмотреть</a>'+
                                     '</div>'+
                                 '</div>'+

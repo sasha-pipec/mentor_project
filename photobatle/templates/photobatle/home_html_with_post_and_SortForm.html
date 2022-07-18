@@ -99,6 +99,7 @@
                   url: "{% url 'ajax' %}",
                   success: function (response) {
                       $('.row').empty();
+                      if((response.posts).length>0){
                       for(var key in response.posts)
                       {
                       var name_photo=response.posts[key].photo_name;
@@ -137,6 +138,10 @@
                       ;
                       $('.row').append(content);
                       }
+                      }else{
+                      var content='<h1>Ничего не найдено</h1>';
+                      $('.row').append(content);
+                      }
                   },
                   error: function (response) {
                       alert('error')
@@ -161,6 +166,7 @@
                   success: function (response) {
                       $('#contactForm')[0].reset('');
                       $('.row').empty();
+                      if((response.posts).length>0){
                       for(var key in response.posts)
                       {
 
@@ -197,6 +203,10 @@
                                 '</div>'+
                         '</div>'
                       ;
+                      $('.row').append(content);
+                      }
+                      }else{
+                      var content='<h1>Ничего не найдено</h1>';
                       $('.row').append(content);
                       }
                   },
