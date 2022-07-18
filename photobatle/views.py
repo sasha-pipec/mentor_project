@@ -146,26 +146,38 @@ class SortingFormAjax(APIView):
     def post(self, *args, **kwargs):
         # We get the value of the form by which we will sort
         field = self.request.POST['form'].split('=')[-1]
-        serch_word = self.request.POST['name']
+        query = self.request.POST['name']
         posts = models.Photomodels.Photo.objects.annotate(comment_count=Count('comment_photo', distinct=True),
                                                           like_count=Count('like_photo', distinct=True)).filter(
-            Q(user__username__icontains=serch_word) |
-            Q(photo_name__icontains=serch_word) |
-            Q(photo_content__icontains=serch_word),
+            Q(user__username__icontains=query) |
+            Q(photo_name__icontains=query) |
+            Q(photo_content__icontains=query),
             moderation='3').order_by(f"-{field}")
         return JsonResponse({'posts': serializers.PhotoSerializer(posts, many=True).data}, status=200)
 
 
 class SearchFormAjax(APIView):
-    """Class for AJAX query word search"""
+    """Class for AJAX query"""
 
     def post(self, *args, **kwargs):
-        serch_word = self.request.POST['name']
+        query = self.request.POST['name']
         posts = models.Photomodels.Photo.objects.annotate(comment_count=Count('comment_photo', distinct=True),
                                                           like_count=Count('like_photo', distinct=True)).filter(
-            Q(user__username__icontains=serch_word) |
-            Q(photo_name__icontains=serch_word) |
-            Q(photo_content__icontains=serch_word), moderation='3')
+            Q(user__username__icontains=query) |
+            Q(photo_name__icontains=query) |
+            Q(photo_content__icontains=query), moderation='3')
+        return JsonResponse({'posts': serializers.PhotoSerializer(posts, many=True).data}, status=200)
+
+
+class PersonalSortingFormAjax(APIView):
+    """Class for AJAX request sorting personal list posts"""
+
+    def post(self, *args, **kwargs):
+        # We get the value of the form by which we will sort
+        field = self.request.POST['form'].split('=')[-1]
+        posts = models.Photomodels.Photo.objects.annotate(comment_count=Count('comment_photo', distinct=True),
+                                                          like_count=Count('like_photo', distinct=True)).filter(
+            moderation=field, user_id=self.request.user)
         return JsonResponse({'posts': serializers.PhotoSerializer(posts, many=True).data}, status=200)
 
 
@@ -178,9 +190,9 @@ class AddPhoto(CreateView):
     def slug_russian_word(self, word):
 
         # Making a slug of Russian words
-        russia = 'абвгдежзийклмнопрстуфхцчшщыьэюя '
+        russia = 'абвгдежзийклмнопрстуфхцчшщыэюя '
         england = ['a', 'b', 'v', 'g', 'd', 'e', 'j', 'z', 'i', "i'", 'k', 'l', 'm', 'n', 'o', 'p', 'r', 's', 't', 'u',
-                   'f', 'x', 'с', 'ch', 'sh', "sh'", 'i', "'", 'e', 'yu', 'ia', '-']
+                   'f', 'x', 'с', 'ch', 'sh', "sh", 'i', 'e', 'yu', 'ia', '-']
         slug = ''
         for i in word:
             if i.lower() in russia:
@@ -196,8 +208,9 @@ class AddPhoto(CreateView):
         fields.save()
         return super().form_valid(form)
 
+
 class PersonalListPosts(ListView):
-    """The main page of the application will be generated here"""
+    """A class for rendering the my photos personal page"""
     model = models.Photomodels.Photo
     template_name = 'photobatle/personal_list_posts.html'
     context_object_name = 'posts'
@@ -207,3 +220,6 @@ class PersonalListPosts(ListView):
         context['form'] = forms.PersonalSortForm()
         return context
 
+    def get_queryset(self, *, object_list=None, **kwargs):
+        posts = super().get_queryset(**kwargs)
+        return posts.filter(user_id=self.request.user)

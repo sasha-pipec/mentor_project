@@ -23,4 +23,5 @@ urlpatterns = [
     # AJAX запросы
     path('sort_form_ajax/', views.SortingFormAjax.as_view(), name='ajax'),
     path('serch_form_ajax/', views.SearchFormAjax.as_view(), name='ajax_second'),
+    path('personal_sort_form_ajax/', views.PersonalSortingFormAjax.as_view(), name='personal_sort_form'),
 ]

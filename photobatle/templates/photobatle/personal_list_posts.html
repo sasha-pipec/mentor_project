@@ -15,7 +15,7 @@
                 Сортировкa
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                <form method="post" id="contactForm">
+                <form method="post" id="SortForm">
                     {% csrf_token %}
                     {{form.as_p}}
                 </form>
@@ -75,11 +75,8 @@
 <!-- Формирование AJAX запроса -->
 <script>
       $(document).ready(function () {
-
-
       <!--  AJAX для фильтрации     -->
-        $('#contactForm').change(function () {
-        var contentInput=$('input[name="content"]').val().trim();
+        $('#SortForm').change(function () {
          var options = {
               year: 'numeric',
               month: 'long',
@@ -87,12 +84,12 @@
             };
               $.ajax({
                   data: {'form':$(this).serialize(),
-                  'name':contentInput,
                   'csrfmiddlewaretoken': '{{csrf_token}}',},
                   type: $(this).attr('method'),
-                  url: "{% url 'ajax' %}",
+                  url: "{% url 'personal_sort_form' %}",
                   success: function (response) {
                       $('.row').empty();
+                      if((response.posts).length!=0){
                       for(var key in response.posts)
                       {
                       var name_photo=response.posts[key].photo_name;
@@ -131,13 +128,18 @@
                       ;
                       $('.row').append(content);
                       }
+                      }else{
+                      var content='<h1>Ничего не найдено</h1>';
+                      $('.row').append(content);
+                      }
                   },
                   error: function (response) {
                       alert('error')
                   }
                   });
               return false;
-        });
+         });
       });
+
 </script>
 {% endblock %}
