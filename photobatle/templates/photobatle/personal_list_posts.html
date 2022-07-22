@@ -1,6 +1,8 @@
 <!-- Расширили шаблон home_page-->
 {% extends 'photobatle/home_page.html'%}
 {% load filter%}
+{% load static %}
+{% load imagekit %}
 
 {% block navbar %}
 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
@@ -28,7 +30,7 @@
 
 <!-- Динамический блок контента home_page-->
 {% block content %}
-<div class="row">
+<div class="row row-personal-photo">
     <!-- Цикл для рендера постов-->
     {% if posts|length > 0%}
     {% for post in posts %}
@@ -46,6 +48,9 @@
             {% endif %}
 
             <div class="card-body" id="card-body">
+                <a><img src="/static/image/удалить.png" style="margin-right:10%;" alt=""></a>
+                <a onclick="edit_a_photo(id={{post.pk}},content='{{post.photo_content}}',name='{{post.photo_name}}',photo='{{post.photo_imagekit_medium.url}}')">
+                    <img src="/static/image/изменение.png" style="margin-left:75%; cursor:pointer;" alt=""></a>
                 <!--Тут мы проверяем длину названия, чтобы если что её обрезать с помощью фильтра-->
                 {% if post.photo_name|len_name %}
                 <h5 class="card-title" id="first_letters">Название: {{post.photo_name|first_letters}}...</h5>
@@ -61,7 +66,9 @@
                 <p class="card-text">Дата публикации:
                     <br> {{post.updated_at}}</p>
                 <p class="card-text">Статус: {{post.get_moderation_display}}</p>
-                <a href="{{ post.get_absolute_url }}" class="btn btn-primary" id="btn-post">Посмотреть</a>
+                <a href="{{ post.get_absolute_url }}" class="btn btn-primary" id="btn-post">
+                    Посмотреть
+                </a>
             </div>
         </div>
     </div>
@@ -70,6 +77,40 @@
     <h1>Вы еще не загружали фото</h1>
     {% endif %}
     <!-- Конец цикла -->
+</div>
+<div class="row row-add-photo-form">
+    {% for post in posts%}
+    <div class="col col-add-photo-form" id="col-add-photo-form-{{post.pk}}">
+        <div id="add-photo-form">
+            <form class='save-photo-personal' method='post' action="{% url 'update_photo' post.slug%}"
+                  enctype="multipart/form-data">
+                <h5>Старое фото</h5>
+                <img src="" alt="" id="old-photo-{{post.pk}}">
+                {%csrf_token%}
+                <p><label for="{{change_form.id_for_label}}">Новое {{change_form.photo.label|lower}}</label><br>
+                    <input type="file" name="photo" accept="image/*" id="id_photo_{{post.pk}}">
+                </p>
+                <p><label for="{{change_form.id_for_label}}">Новое {{change_form.photo_name.label|lower}}</label><br>
+                    <input type="text" name="photo_name" class="form-field" maxlength="255" required
+                           id="id_photo_name_{{post.pk}}">
+                </p>
+                <p><label for="{{change_form.id_for_label}}">Новое {{change_form.photo_content.label|lower}}</label><br>
+                    <textarea name="photo_content" cols="40" rows="10" class="form-field" required
+                              id="id_photo_content_{{post.pk}}"></textarea>
+                </p>
+                {{i.errors}}
+                <div class="edit_personal_post">
+                    <a class="btn-danger" id="cancel-photo-button"
+                       onclick="close_edit_a_photo(id='post.pk')">Отмена</a>
+                    <button type="submit" class="btn btn-primary btn-post-personal-account"
+                            id="add-photo-button">
+                        Сохранить
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
 </div>
 {% endblock %}
 
@@ -92,7 +133,7 @@
                   type: $(this).attr('method'),
                   url: "{% url 'personal_sort_form' %}",
                   success: function (response) {
-                      $('.row').empty();
+                      $('.row-personal-photo').empty();
                       if((response.posts).length!=0){
                       for(var key in response.posts)
                       {
@@ -110,7 +151,10 @@
                                 '<a href="' + response.posts[key].get_absolute_url + '">'+
                                     "<img id='foo' class='card-img-top' src='"+url_photo+"'alt='Не загрузилось :('>"+
                                 '</a>'+
-                                    '<div class="card-body" id="card-body">';
+                                    '<div class="card-body" id="card-body">'+
+                                    '<a><img src="/static/image/удалить.png" style="margin-right:10%;" alt=""></a>'+
+                '<a onclick="'+"edit_a_photo(id='"+response.posts[key].id+"',content='"+response.posts[key].photo_content+"',name='"+response.posts[key].photo_name+"',photo='"+response.posts[key]['photo_imagekit_medium']+"')"+'">'+
+                    '<img src="/static/image/изменение.png" style="margin-left:75%; cursor:pointer;" alt=""></a>';
 
                                     if(name_photo.length>=11){
                                     var content=content+'<h5 class="card-title" id="first_letters">Название: '+name_photo.substr(0,8)+'...</h5>'+
@@ -131,12 +175,13 @@
                                 '</div>'+
                         '</div>'
                       ;
-                      $('.row').append(content);
+                      $('.row-personal-photo').append(content);
                       }
                       }else{
                       var content='<h1>Ничего не найдено</h1>';
-                      $('.row').append(content);
+                      $('.row-personal-photo').append(content);
                       }
+
                   },
                   error: function (response) {
                       alert('error')
@@ -145,6 +190,8 @@
               return false;
          });
       });
-
 </script>
+
+<script type="text/javascript" src="{% static 'js/main.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
 {% endblock %}

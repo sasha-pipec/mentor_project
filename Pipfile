@@ -15,6 +15,7 @@ djangorestframework = "*"
 gunicorn = "*"
 django-heroku = "*"
 django-imagekit = "*"
+transliterate = "*"
 
 [dev-packages]
 

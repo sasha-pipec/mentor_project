@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from django.contrib.auth import logout
 from django.shortcuts import redirect
 from django.http import JsonResponse
+from transliterate import translit
 
 from . import models
 from . import forms
@@ -190,21 +191,22 @@ class AddPhoto(CreateView):
     def slug_russian_word(self, word):
 
         # Making a slug of Russian words
-        russia = 'абвгдежзийклмнопрстуфхцчшщыэюя '
-        england = ['a', 'b', 'v', 'g', 'd', 'e', 'j', 'z', 'i', "i'", 'k', 'l', 'm', 'n', 'o', 'p', 'r', 's', 't', 'u',
-                   'f', 'x', 'с', 'ch', 'sh', "sh", 'i', 'e', 'yu', 'ia', '-']
+        russia = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя'
         slug = ''
         for i in word:
             if i.lower() in russia:
-                slug += england[russia.find(i.lower())]
+                slug += translit(i, language_code='ru', reversed=True)
+            else:
+                if i == ' ':
+                    slug += '-'
+                else:
+                    slug += i
         return slug
 
     def form_valid(self, form):
         fields = form.save(commit=False)
         fields.user_id = self.request.user.id
-        fields.slug = slugify(self.request.POST['photo_name'])
-        if not fields.slug:
-            fields.slug = self.slug_russian_word(self.request.POST['photo_name'])
+        fields.slug = self.slug_russian_word(self.request.POST['photo_name'])
         fields.save()
         return super().form_valid(form)
 
@@ -218,8 +220,26 @@ class PersonalListPosts(ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form'] = forms.PersonalSortForm()
+        context['change_form'] = forms.AddPhotoForm()
         return context
 
     def get_queryset(self, *, object_list=None, **kwargs):
         posts = super().get_queryset(**kwargs)
         return posts.filter(user_id=self.request.user)
+
+
+class UpdatePhoto(AddPhoto):
+    """Class for updating photos"""
+
+    def __init__(self):
+        super().__init__()
+
+    def post(self, *args, **kwargs):
+        post = models.Photomodels.Photo.objects.get(slug=kwargs['slug_id'])
+        if self.request.FILES.keys() & {'photo'}:
+            post.photo = self.request.FILES['photo']
+        post.slug = self.slug_russian_word(self.request.POST['photo_name'])
+        post.photo_name = self.request.POST['photo_name']
+        post.photo_content = self.request.POST['photo_content']
+        post.save()
+        return redirect('personal_list_posts')

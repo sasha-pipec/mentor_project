@@ -464,6 +464,42 @@ width:60%;
 margin-top:-10px;
 }
 
+.edit-photo-container{
+display:none;
+width:80%;
+height:100%;
+margin-top:15px;
+}
+
+.edit_personal_post{
+display:inline-flex;
+}
+
+#cancel-photo-button{
+border:none;
+margin-top:45px;
+margin-bottom:10px;
+width:60%;
+}
+
+#cancel-photo-button:hover{
+opacity:70%;
+background-color:white;
+color:black;
+}
+
+
+.row-add-photo-form{
+height:100%;
+margin-top:10px;
+border:1px solid black;
+display:none;
+}
+
+.col-add-photo-form{
+display:none;
+text-align:center;
+}
 
 
 

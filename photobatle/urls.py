@@ -7,6 +7,7 @@ urlpatterns = [
     path('user/', views.RenderingUserPage.as_view(), name='user_page'),
 
     path('photo/patch', views.AddPhoto.as_view(), name='create_photo'),
+    path('photo/put/<slug:slug_id>', views.UpdatePhoto.as_view(), name='update_photo'),
     path('photo/get/personal_list_photo', views.PersonalListPosts.as_view(), name='personal_list_posts'),
     path('photo/get/<slug:slug_id>', views.DetailPost.as_view(), name='detail_post'),
 
