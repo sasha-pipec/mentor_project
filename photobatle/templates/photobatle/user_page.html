@@ -11,7 +11,7 @@
     <div class="row">
         <div class="col-12 col-sm-12">
             <div class="personal-account-user-image">
-                {% if user.photo.url|check_photo %}
+                {% if user.photo|check_photo_admin %}
                 <img src="{{user.photo_imagekit_medium.url}} " alt="Card image cap" class="personal-account-user-photo">
                 {% else %}
                 <img src="/static/image/default-photo-post.jpeg" alt="Card image cap"

@@ -25,7 +25,7 @@
                     <div class="row">
                         <div class="col">
                             <div class="comment-content-detail">
-                                {% if comment.user.photo.url|check_photo %}
+                                {% if comment.user.photo|check_photo_admin %}
                                 <img class="comment-image" src='{{comment.user.photo.url}}' alt="avatar">
                                 {% else %}
                                 <img class="comment-image" src="/static/image/default-photo-post.jpeg"
@@ -102,7 +102,7 @@
                             {% endif %}
                             <div class="col">
                                 <div class="comment-content-detail" id="answer-comment-detail-content">
-                                    {% if answer.user.photo.url|check_photo %}
+                                    {% if answer.user.photo|check_photo_admin %}
                                     <img class="comment-image" src='{{answer.user.photo.url}}' alt="avatar">
                                     {% else %}
                                     <img class="comment-image" src="/static/image/default-photo-post.jpeg"

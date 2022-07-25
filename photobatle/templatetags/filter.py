@@ -19,6 +19,10 @@ def first_letters(value):
 def check_photo(value):
     return os.path.exists(str(value)[1::])
 
+@register.filter
+def check_photo_admin(value):
+    return bool(value)
+
 
 @register.filter
 def comment_count(value):
