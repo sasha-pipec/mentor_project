@@ -51,7 +51,7 @@
                 {% if post.moderation != '1'%}
                 <a href="{% url 'delete_photo' post.slug%}"><img src="/static/image/удалить.png"
                                                                  style="margin-right:10%;" alt=""></a>
-                    {% if post.photo_imagekit_medium.url%}
+                    {% if post.photo_imagekit_medium.url|check_photo%}
                     <a onclick="edit_a_photo(id={{post.pk}},content='{{post.photo_content}}',name='{{post.photo_name}}',photo='{{post.photo_imagekit_medium.url}}')">
                         <img src="/static/image/изменение.png" style="margin-left:75%; cursor:pointer;" alt=""></a>
                     {% else %}

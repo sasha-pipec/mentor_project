@@ -7,10 +7,7 @@ register = template.Library()
 
 @register.filter
 def len_name(value):
-    if len(value) >= 11:
-        return True
-    else:
-        return False
+    return len(value) >= 11
 
 
 @register.filter
@@ -20,21 +17,16 @@ def first_letters(value):
 
 @register.filter
 def check_photo(value):
-    if os.path.exists(str(value)[1::]):
-        return True
-    else:
-        return False
+    return os.path.exists(str(value)[1::])
 
 
 @register.filter
 def comment_count(value):
-    comment_count = models.Commentmodels.Comment.objects.filter(photo=value.pk).count()
-    return comment_count
+    return models.Commentmodels.Comment.objects.filter(photo=value.pk).count()
 
 @register.filter
 def like_count(value):
-    like_count = models.Likemodels.Like.objects.filter(photo_id=value.pk).count()
-    return like_count
+    return models.Likemodels.Like.objects.filter(photo_id=value.pk).count()
 
 
 @register.filter
