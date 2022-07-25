@@ -1,16 +1,17 @@
 from django.db.models import *
 from django.urls import reverse_lazy
-from django.utils.text import slugify
 from django.views.generic import DetailView, ListView, TemplateView, View, CreateView
 from rest_framework.views import APIView
 from django.contrib.auth import logout
 from django.shortcuts import redirect
 from django.http import JsonResponse
 from transliterate import translit
+from photobatle.celery import app
 
 from . import models
 from . import forms
 from . import serializers
+from . import tasks
 
 
 # Create your views here.
@@ -242,4 +243,26 @@ class UpdatePhoto(AddPhoto):
         post.photo_name = self.request.POST['photo_name']
         post.photo_content = self.request.POST['photo_content']
         post.save()
+        return redirect('personal_list_posts')
+
+
+class DeletePhoto(View):
+    """Class for deleting photos"""
+
+    def get(self, *args, **kwargs):
+        photo = models.Photomodels.Photo.objects.get(slug=kwargs['slug_id'])
+        photo.moderation = '1'
+        tasks.delete_photo.s(slug=kwargs['slug_id']).apply_async(countdown=20, task_id=photo.slug)
+        photo.save()
+        return redirect('personal_list_posts')
+
+
+class RecoveryPhoto(View):
+    """Class for recovery photos"""
+
+    def get(self, *args, **kwargs):
+        app.control.revoke(kwargs['slug_id'])
+        photo = models.Photomodels.Photo.objects.get(slug=kwargs['slug_id'])
+        photo.moderation = '2'
+        photo.save()
         return redirect('personal_list_posts')

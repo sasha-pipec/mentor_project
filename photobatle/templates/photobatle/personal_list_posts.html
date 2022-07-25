@@ -48,9 +48,20 @@
             {% endif %}
 
             <div class="card-body" id="card-body">
-                <a><img src="/static/image/удалить.png" style="margin-right:10%;" alt=""></a>
-                <a onclick="edit_a_photo(id={{post.pk}},content='{{post.photo_content}}',name='{{post.photo_name}}',photo='{{post.photo_imagekit_medium.url}}')">
-                    <img src="/static/image/изменение.png" style="margin-left:75%; cursor:pointer;" alt=""></a>
+                {% if post.moderation != '1'%}
+                <a href="{% url 'delete_photo' post.slug%}"><img src="/static/image/удалить.png"
+                                                                 style="margin-right:10%;" alt=""></a>
+                    {% if post.photo_imagekit_medium.url%}
+                    <a onclick="edit_a_photo(id={{post.pk}},content='{{post.photo_content}}',name='{{post.photo_name}}',photo='{{post.photo_imagekit_medium.url}}')">
+                        <img src="/static/image/изменение.png" style="margin-left:75%; cursor:pointer;" alt=""></a>
+                    {% else %}
+                    <a onclick="edit_a_photo(id={{post.pk}},content='{{post.photo_content}}',name='{{post.photo_name}}',photo='/static/image/default-photo-post.jpeg')">
+                        <img src="/static/image/изменение.png" style="margin-left:75%; cursor:pointer;" alt=""></a>
+                    {% endif %}
+                {% else %}
+                <a href="{% url 'recovery_photo' post.slug%}"><img src="/static/image/востановление.png"
+                                                                   style="margin-right:10%;" alt=""></a>
+                {% endif %}
                 <!--Тут мы проверяем длину названия, чтобы если что её обрезать с помощью фильтра-->
                 {% if post.photo_name|len_name %}
                 <h5 class="card-title" id="first_letters">Название: {{post.photo_name|first_letters}}...</h5>
@@ -139,6 +150,9 @@
                       {
                       var name_photo=response.posts[key].photo_name;
                       var url_photo=response.posts[key].checking_the_existence;
+                      var slug=response.posts[key].slug;
+                      var photo_delete='{% url "delete_photo" 0 %}'.replace('0',slug);
+                      var photo_recovery='{% url "recovery_photo" 0 %}'.replace('0',slug);
                       if(url_photo!='True'){
                       var url_photo='/static/image/default-photo-post.jpeg';
                       }else{
@@ -151,10 +165,14 @@
                                 '<a href="' + response.posts[key].get_absolute_url + '">'+
                                     "<img id='foo' class='card-img-top' src='"+url_photo+"'alt='Не загрузилось :('>"+
                                 '</a>'+
-                                    '<div class="card-body" id="card-body">'+
-                                    '<a><img src="/static/image/удалить.png" style="margin-right:10%;" alt=""></a>'+
-                '<a onclick="'+"edit_a_photo(id='"+response.posts[key].id+"',content='"+response.posts[key].photo_content+"',name='"+response.posts[key].photo_name+"',photo='"+response.posts[key]['photo_imagekit_medium']+"')"+'">'+
-                    '<img src="/static/image/изменение.png" style="margin-left:75%; cursor:pointer;" alt=""></a>';
+                                    '<div class="card-body" id="card-body">';
+                                    if(response.posts[key].moderation != "1"){
+                                    var content=content+'<a href="'+ photo_delete+'"><img src="/static/image/удалить.png" style="margin-right:10%;"></a>'+
+                                    '<a onclick="'+"edit_a_photo(id='"+response.posts[key].id+"',content='"+response.posts[key].photo_content+"',name='"+response.posts[key].photo_name+"',photo='"+response.posts[key]['photo_imagekit_medium']+"')"+'">'+
+                                    '<img src="/static/image/изменение.png" style="margin-left:75%; cursor:pointer;" alt=""></a>';
+                                    }else{
+                                    var content=content+'<a href="'+photo_recovery+'" ><img src="/static/image/востановление.png" style="margin-right:10%;"></a>';
+                                    }
 
                                     if(name_photo.length>=11){
                                     var content=content+'<h5 class="card-title" id="first_letters">Название: '+name_photo.substr(0,8)+'...</h5>'+
@@ -169,7 +187,7 @@
                                         '<p class="card-text">Лайки: '+response.posts[key].like_count+'</p>'+
                                         '<p class="card-text">Комментарии: '+response.posts[key].comment_count+'</p>'+
                                         '<p class="card-text">Дата публикации: <br> '+ new Date(response.posts[key].updated_at).toLocaleDateString("ru", options) +'</p>'+
-                                        '<p class="card-text">Комментарии: '+response.posts[key].get_moderation_display+'</p>'+
+                                        '<p class="card-text">Статус: '+response.posts[key].get_moderation_display+'</p>'+
                                         '<a href="'+ response.posts[key].get_absolute_url + '"class="btn btn-primary" id="btn-post">Посмотреть</a>'+
                                     '</div>'+
                                 '</div>'+
@@ -190,6 +208,7 @@
               return false;
          });
       });
+
 </script>
 
 <script type="text/javascript" src="{% static 'js/main.js' %}"></script>

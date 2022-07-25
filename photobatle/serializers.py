@@ -10,8 +10,6 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('__all__')
 
 
-
-
 class PhotoSerializer(serializers.ModelSerializer):
     '''Сериализатор для модели Photo'''
     user = UserSerializer()
@@ -19,10 +17,10 @@ class PhotoSerializer(serializers.ModelSerializer):
     comment_count = serializers.IntegerField()
     checking_the_existence = serializers.CharField()
     get_absolute_url = serializers.CharField()
-    get_moderation_display=serializers.CharField()
-    photo_imagekit_medium=serializers.SerializerMethodField()
+    get_moderation_display = serializers.CharField()
+    photo_imagekit_medium = serializers.SerializerMethodField()
 
-    def get_photo_imagekit_medium(self,obj):
+    def get_photo_imagekit_medium(self, obj):
         return obj.photo_imagekit_medium.url
 
     class Meta:

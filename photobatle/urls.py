@@ -8,6 +8,8 @@ urlpatterns = [
 
     path('photo/patch', views.AddPhoto.as_view(), name='create_photo'),
     path('photo/put/<slug:slug_id>', views.UpdatePhoto.as_view(), name='update_photo'),
+    path('photo/delete/<slug:slug_id>', views.DeletePhoto.as_view(), name='delete_photo'),
+    path('photo/recovery/<slug:slug_id>', views.RecoveryPhoto.as_view(), name='recovery_photo'),
     path('photo/get/personal_list_photo', views.PersonalListPosts.as_view(), name='personal_list_posts'),
     path('photo/get/<slug:slug_id>', views.DetailPost.as_view(), name='detail_post'),
 

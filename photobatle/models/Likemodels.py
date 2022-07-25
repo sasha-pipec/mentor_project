@@ -2,6 +2,7 @@ from django.db import models
 
 
 class Like(models.Model):
+    """Like model"""
     photo = models.ForeignKey('Photo', on_delete=models.CASCADE, verbose_name='Фото',
                               related_name='like_photo')
 

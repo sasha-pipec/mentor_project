@@ -16,6 +16,9 @@ gunicorn = "*"
 django-heroku = "*"
 django-imagekit = "*"
 transliterate = "*"
+celery = "*"
+redis = "*"
+eventlet = "*"
 
 [dev-packages]
 
