@@ -26,7 +26,11 @@
         <div class="image-user-navbar">
             <a href="{% url 'user_page'%}">
                 {% if user.photo|check_photo_admin %}
-                <img src="{{user.photo.url}}" class="photo-user-navbar" alt="">
+                    {% if user.photo.url|check_photo %}
+                    <img src="{{user.photo.url}}" class="photo-user-navbar" alt="">
+                    {% else%}
+                    <img src="/static/image/default-photo-post.jpeg" class="photo-user-navbar" alt="">
+                    {% endif %}
                 {% else %}
                 <img src="/static/image/default-photo-post.jpeg" class="photo-user-navbar" alt="">
                 {% endif %}

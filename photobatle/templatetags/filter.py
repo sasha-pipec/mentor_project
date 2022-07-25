@@ -19,6 +19,7 @@ def first_letters(value):
 def check_photo(value):
     return os.path.exists(str(value)[1::])
 
+
 @register.filter
 def check_photo_admin(value):
     return bool(value)
@@ -27,6 +28,7 @@ def check_photo_admin(value):
 @register.filter
 def comment_count(value):
     return models.Commentmodels.Comment.objects.filter(photo=value.pk).count()
+
 
 @register.filter
 def like_count(value):
@@ -58,9 +60,11 @@ def check_answer(value):
     else:
         return False
 
+
 @register.filter
 def all_likes(value):
     return models.Likemodels.Like.objects.filter(user_id=value).count()
+
 
 @register.filter
 def all_comments(value):

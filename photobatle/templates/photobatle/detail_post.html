@@ -26,7 +26,11 @@
                         <div class="col">
                             <div class="comment-content-detail">
                                 {% if comment.user.photo|check_photo_admin %}
-                                <img class="comment-image" src='{{comment.user.photo.url}}' alt="avatar">
+                                    {% if user.photo.url|check_photo %}
+                                    <img class="comment-image" src='{{comment.user.photo.url}}' alt="avatar">
+                                    {% else%}
+                                    <img src="/static/image/default-photo-post.jpeg" class="photo-user-navbar" alt="">
+                                    {% endif %}
                                 {% else %}
                                 <img class="comment-image" src="/static/image/default-photo-post.jpeg"
                                      alt="Card image cap">
@@ -103,7 +107,11 @@
                             <div class="col">
                                 <div class="comment-content-detail" id="answer-comment-detail-content">
                                     {% if answer.user.photo|check_photo_admin %}
-                                    <img class="comment-image" src='{{answer.user.photo.url}}' alt="avatar">
+                                        {% if user.photo.url|check_photo %}
+                                        <img class="comment-image" src='{{answer.user.photo.url}}' alt="avatar">
+                                        {% else%}
+                                        <img src="/static/image/default-photo-post.jpeg" class="photo-user-navbar" alt="">
+                                        {% endif %}
                                     {% else %}
                                     <img class="comment-image" src="/static/image/default-photo-post.jpeg"
                                          alt="Card image cap">
@@ -240,9 +248,9 @@
         </div>
     </div>
 </div>
-    {% endblock %}
+{% endblock %}
 
-    {% block script %}
-    <script type="text/javascript" src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
-    {% endblock %}
+{% block script %}
+<script type="text/javascript" src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/main.js' %}"></script>
+{% endblock %}
