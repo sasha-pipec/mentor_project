@@ -29,7 +29,7 @@
                                     {% if user.photo.url|check_photo %}
                                     <img class="comment-image" src='{{comment.user.photo.url}}' alt="avatar">
                                     {% else%}
-                                    <img src="/static/image/default-photo-post.jpeg" class="photo-user-navbar" alt="">
+                                    <img src="/static/image/default-photo-post.jpeg" class="comment-image" alt="">
                                     {% endif %}
                                 {% else %}
                                 <img class="comment-image" src="/static/image/default-photo-post.jpeg"
@@ -110,7 +110,7 @@
                                         {% if user.photo.url|check_photo %}
                                         <img class="comment-image" src='{{answer.user.photo.url}}' alt="avatar">
                                         {% else%}
-                                        <img src="/static/image/default-photo-post.jpeg" class="photo-user-navbar" alt="">
+                                        <img src="/static/image/default-photo-post.jpeg" class="comment-image" alt="">
                                         {% endif %}
                                     {% else %}
                                     <img class="comment-image" src="/static/image/default-photo-post.jpeg"
