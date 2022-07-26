@@ -49,8 +49,9 @@ INSTALLED_APPS = [
     # allauth providers
     'allauth.socialaccount.providers.vk',
 
-    # Приложение фото батла
+    # Photobatle
     'photobatle.apps.PhotobatleConfig',
+    'service_objects',
 
     # DRF
     'rest_framework',

@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "874066746fb7eb49d88dbb580c6f78332695a07892968d9a4f534bbfd9823461"
+            "sha256": "7566d62a2bdc4b037c51d68a316701d5780940315228277c033f819f0877147f"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -153,7 +153,7 @@
                 "sha256:a0713dc7a1de3f06bc0df5a9567ad19ead2d3d5689b434768a6145bff77c0667",
                 "sha256:f184f0d851d96b6d29297354ed981b7dd71df7ff500d82fa6d11f0856bee8035"
             ],
-            "markers": "python_full_version >= '3.6.2' and python_full_version < '4.0.0'",
+            "markers": "python_version < '4' and python_full_version >= '3.6.2'",
             "version": "==0.3.0"
         },
         "click-plugins": {
@@ -275,6 +275,14 @@
             "index": "pypi",
             "version": "==4.1.0"
         },
+        "django-service-objects": {
+            "hashes": [
+                "sha256:9c14c383149f7369c2306439a8b1fec3d6c85c129e8e22479c131efab1530eb1",
+                "sha256:c13961062f35c68d8f59a98f75e970636aa8d4fc7e9dad85d222a39c13151449"
+            ],
+            "index": "pypi",
+            "version": "==0.7.1"
+        },
         "djangorestframework": {
             "hashes": [
                 "sha256:0c33407ce23acc68eca2a6e46424b008c9c02eceb8cf18581921d0092bc1f2ee",
@@ -288,7 +296,7 @@
                 "sha256:0f7569a4a6ff151958b64304071d370daa3243d15941a7beedf0c9fe5105603e",
                 "sha256:a851e51367fb93e9e1361732c1d60dab63eff98712e503ea7d92e6eccb109b4f"
             ],
-            "markers": "python_version >= '3.6' and python_full_version < '4.0.0'",
+            "markers": "python_version >= '3.6' and python_version < '4'",
             "version": "==2.2.1"
         },
         "eventlet": {
@@ -556,7 +564,7 @@
                 "sha256:7c5599b102feddaa661c826c56ab4fee28bfd17f5abca1ebbe3e7f19d7c97983",
                 "sha256:8fefa2a1a1365bf5520aac41836fbee479da67864514bdb821f31ce07ce65349"
             ],
-            "markers": "python_version >= '3.7' and python_full_version < '4.0.0'",
+            "markers": "python_version >= '3.7' and python_version < '4'",
             "version": "==2.28.1"
         },
         "requests-oauthlib": {
@@ -625,11 +633,11 @@
         },
         "urllib3": {
             "hashes": [
-                "sha256:8298d6d56d39be0e3bc13c1c97d133f9b45d797169a0e11cdd0e0489d786f7ec",
-                "sha256:879ba4d1e89654d9769ce13121e0f94310ea32e8d2f8cf587b77c08bbcdb30d6"
+                "sha256:c33ccba33c819596124764c23a97d25f32b28433ba0dedeb77d873a38722c9bc",
+                "sha256:ea6e8fb210b19d950fab93b60c9009226c63a28808bc8386e05301e25883ac0a"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4, 3.5' and python_full_version < '4.0.0'",
-            "version": "==1.26.10"
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4, 3.5' and python_version < '4'",
+            "version": "==1.26.11"
         },
         "vine": {
             "hashes": [

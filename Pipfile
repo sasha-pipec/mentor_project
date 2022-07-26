@@ -19,6 +19,7 @@ transliterate = "*"
 celery = "*"
 redis = "*"
 eventlet = "*"
+django-service-objects = "*"
 
 [dev-packages]
 

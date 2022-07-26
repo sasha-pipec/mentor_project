@@ -3,11 +3,12 @@ from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView, TemplateView, View, CreateView
 from rest_framework.views import APIView
 from django.contrib.auth import logout
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.http import JsonResponse
 from transliterate import translit
 from photobatle.celery import app
 
+from photobatle.Service import *
 from . import models
 from . import forms
 from . import serializers
@@ -183,33 +184,29 @@ class PersonalSortingFormAjax(APIView):
         return JsonResponse({'posts': serializers.PhotoSerializer(posts, many=True).data}, status=200)
 
 
-class AddPhoto(CreateView):
+class AddPhoto(View):
     """Class for adding photos"""
-    form_class = forms.AddPhotoForm
-    template_name = 'photobatle/add_photo_form.html'
-    success_url = reverse_lazy('home')
 
-    def slug_russian_word(self, word):
+    def get(self, *args, **kwargs):
+        form = forms.AddPhotoForm()
+        return render(self.request, 'photobatle/add_photo_form.html', context={'form': form})
 
-        # Making a slug of Russian words
-        russia = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя'
-        slug = ''
-        for i in word:
-            if i.lower() in russia:
-                slug += translit(i, language_code='ru', reversed=True)
-            else:
-                if i == ' ':
-                    slug += '-'
-                else:
-                    slug += i
-        return slug
+    def post(self, *args, **kwargs):
+        form = forms.AddPhotoForm(self.request.POST, self.request.FILES)
+        if form.is_valid():
+            try:
+                AddPhotoService.execute({
+                    'photo_name': self.request.POST['photo_name'],
+                    'photo_content': self.request.POST['photo_content'],
+                    'photo': self.request.FILES['photo'],
+                    'user_id': self.request.user.id,
+                })
+            except Exception:
+                raise Exception('Cant create photo')
+            return redirect('home')
+        else:
+            return render(self.request, 'photobatle/add_photo_form.html', context={'form': form})
 
-    def form_valid(self, form):
-        fields = form.save(commit=False)
-        fields.user_id = self.request.user.id
-        fields.slug = self.slug_russian_word(self.request.POST['photo_name'])
-        fields.save()
-        return super().form_valid(form)
 
 
 class PersonalListPosts(ListView):
