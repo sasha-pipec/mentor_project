@@ -14,4 +14,5 @@ class CreateLikeService(Service):
         user_id = self.cleaned_data['user_id']
 
         models.Likemodels.Like.objects.create(photo_id=photo_id, user_id=user_id)
+        return (models.Photomodels.Photo.objects.get(pk=photo_id)).slug
 

@@ -45,10 +45,10 @@ class CreatingCommentForPhoto(View):
 
     def post(self, request, *args, **kwargs):
         try:
-            CreateCommentService.execute(request.POST.dict() | kwargs | {'user_id': request.user.id})
+            slug = CreateCommentService.execute(request.POST.dict() | kwargs | {'user_id': request.user.id})
         except Exception as error:
             return HttpResponse(error)
-        return redirect('detail_post', slug_id=(models.Photomodels.Photo.objects.get(pk=request.POST['pk'])).slug)
+        return redirect('detail_post', slug_id=slug)
 
 
 class DeletingCommentForPhoto(View):
@@ -78,10 +78,10 @@ class CreatingLikeForPhoto(View):
 
     def get(self, request, *args, **kwargs):
         try:
-            CreateLikeService.execute(kwargs | {'user_id': request.user.id})
+            slug=CreateLikeService.execute(kwargs | {'user_id': request.user.id})
         except Exception as error:
             return HttpResponse(error)
-        return redirect('detail_post', slug_id=(models.Photomodels.Photo.objects.get(pk=kwargs['photo_id'])).slug)
+        return redirect('detail_post', slug_id=slug)
 
 
 class DeletingLikeForPhoto(View):
@@ -89,10 +89,10 @@ class DeletingLikeForPhoto(View):
 
     def get(self, request, *args, **kwargs):
         try:
-            DeleteLikeService.execute(kwargs | {'user_id': request.user.id})
+            slug=DeleteLikeService.execute(kwargs | {'user_id': request.user.id})
         except Exception as error:
             return HttpResponse(error)
-        return redirect('detail_post', slug_id=(models.Photomodels.Photo.objects.get(pk=kwargs['photo_id'])).slug)
+        return redirect('detail_post', slug_id=slug)
 
 
 class DetailPost(DataMixin, DetailView):

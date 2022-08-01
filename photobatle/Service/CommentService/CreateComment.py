@@ -16,15 +16,17 @@ class CreateCommentService(Service):
         parent_comment_id = self.cleaned_data['parent_comment_id']
         pk = self.cleaned_data['pk']
         user_id = self.cleaned_data['user_id']
+
         if comment:
             if parent_comment_id == 'none':
                 # Creating a comment entry in the database
-                return models.Commentmodels.Comment.objects.create(photo=models.Photomodels.Photo(pk=pk),
-                                                                   user_id=user_id, content=comment)
+                models.Commentmodels.Comment.objects.create(photo=models.Photomodels.Photo(pk=pk),
+                                                            user_id=user_id, content=comment)
             else:
                 # Creating a record of a response to a comment in the database
-                return models.Commentmodels.Comment.objects.create(photo=models.Photomodels.Photo(pk=pk),
-                                                                   user_id=user_id,
-                                                                   parent_id=parent_comment_id,
-                                                                   content=comment)
+                models.Commentmodels.Comment.objects.create(photo=models.Photomodels.Photo(pk=pk),
+                                                            user_id=user_id,
+                                                            parent_id=parent_comment_id,
+                                                            content=comment)
 
+        return (models.Photomodels.Photo.objects.get(pk=pk)).slug
