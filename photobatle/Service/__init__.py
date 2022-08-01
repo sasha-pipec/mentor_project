@@ -7,3 +7,6 @@ from .LikeService.DeleteLike import *
 from .CommentService.CreateComment import *
 from .CommentService.DeleteComment import *
 from .CommentService.UpdateComment import *
+from .AjaxService.SortingForm import *
+from .AjaxService.SearchForm import *
+from .AjaxService.PersonalSortingForm import *

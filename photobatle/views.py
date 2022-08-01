@@ -1,4 +1,3 @@
-from django.db.models import *
 from django.views.generic import DetailView, ListView, TemplateView, View
 from rest_framework.views import APIView
 from django.contrib.auth import logout
@@ -78,7 +77,7 @@ class CreatingLikeForPhoto(View):
 
     def get(self, request, *args, **kwargs):
         try:
-            slug=CreateLikeService.execute(kwargs | {'user_id': request.user.id})
+            slug = CreateLikeService.execute(kwargs | {'user_id': request.user.id})
         except Exception as error:
             return HttpResponse(error)
         return redirect('detail_post', slug_id=slug)
@@ -89,7 +88,7 @@ class DeletingLikeForPhoto(View):
 
     def get(self, request, *args, **kwargs):
         try:
-            slug=DeleteLikeService.execute(kwargs | {'user_id': request.user.id})
+            slug = DeleteLikeService.execute(kwargs | {'user_id': request.user.id})
         except Exception as error:
             return HttpResponse(error)
         return redirect('detail_post', slug_id=slug)
@@ -119,41 +118,34 @@ class DetailPost(DataMixin, DetailView):
 class SortingFormAjax(APIView):
     """Class for AJAX request sorting"""
 
-    def post(self, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         # We get the value of the form by which we will sort
-        field = self.request.POST['form'].split('=')[-1]
-        query = self.request.POST['name']
-        posts = models.Photomodels.Photo.objects.annotate(comment_count=Count('comment_photo', distinct=True),
-                                                          like_count=Count('like_photo', distinct=True)).filter(
-            Q(user__username__icontains=query) |
-            Q(photo_name__icontains=query) |
-            Q(photo_content__icontains=query),
-            moderation='3').order_by(f"-{field}")
+        try:
+            posts = SortingFormService.execute(request.POST)
+        except Exception as error:
+            return HttpResponse(error)
         return JsonResponse({'posts': serializers.PhotoSerializer(posts, many=True).data}, status=200)
 
 
 class SearchFormAjax(APIView):
     """Class for AJAX query"""
 
-    def post(self, *args, **kwargs):
-        query = self.request.POST['name']
-        posts = models.Photomodels.Photo.objects.annotate(comment_count=Count('comment_photo', distinct=True),
-                                                          like_count=Count('like_photo', distinct=True)).filter(
-            Q(user__username__icontains=query) |
-            Q(photo_name__icontains=query) |
-            Q(photo_content__icontains=query), moderation='3')
+    def post(self, request, *args, **kwargs):
+        try:
+            posts = SearchFormService.execute(request.POST)
+        except Exception as error:
+            return HttpResponse(error)
         return JsonResponse({'posts': serializers.PhotoSerializer(posts, many=True).data}, status=200)
 
 
 class PersonalSortingFormAjax(APIView):
     """Class for AJAX request sorting personal list posts"""
 
-    def post(self, *args, **kwargs):
-        # We get the value of the form by which we will sort
-        field = self.request.POST['form'].split('=')[-1]
-        posts = models.Photomodels.Photo.objects.annotate(comment_count=Count('comment_photo', distinct=True),
-                                                          like_count=Count('like_photo', distinct=True)).filter(
-            moderation=field, user_id=self.request.user)
+    def post(self, request, *args, **kwargs):
+        try:
+            posts = PersonalSortingFormService.execute(request.POST | {'user_id': request.user.id})
+        except Exception as error:
+            return HttpResponse(error)
         return JsonResponse({'posts': serializers.PhotoSerializer(posts, many=True).data}, status=200)
 
 
