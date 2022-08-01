@@ -111,8 +111,8 @@
                 </p>
                 {{i.errors}}
                 <div class="edit_personal_post">
-                    <a class="btn-danger" id="cancel-photo-button"
-                       onclick="close_edit_a_photo(id='post.pk')">Отмена</a>
+                    <a class="btn-danger btn-primary btn-post-personal-account" id="cancel-photo-button"
+                       onclick="close_edit_a_photo()">Отмена</a>
                     <button type="submit" class="btn btn-primary btn-post-personal-account"
                             id="add-photo-button">
                         Сохранить
@@ -210,7 +210,6 @@
       });
 
 </script>
-
 <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
 {% endblock %}

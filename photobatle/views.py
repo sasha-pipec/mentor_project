@@ -1,18 +1,14 @@
 from django.db.models import *
-from django.urls import reverse_lazy
-from django.views.generic import DetailView, ListView, TemplateView, View, CreateView
+from django.views.generic import DetailView, ListView, TemplateView, View
 from rest_framework.views import APIView
 from django.contrib.auth import logout
 from django.shortcuts import redirect, render
-from django.http import JsonResponse
-from transliterate import translit
-from photobatle.celery import app
+from django.http import JsonResponse, HttpResponse
 
 from photobatle.Service import *
 from . import models
 from . import forms
 from . import serializers
-from . import tasks
 
 
 # Create your views here.
@@ -89,22 +85,24 @@ class UpdatingCommentForPhoto(View):
 class CreatingLikeForPhoto(View):
     """Class for creating a like"""
 
-    def get(self, *args, **kwargs):
-        photo = models.Photomodels.Photo.objects.get(pk=kwargs['photo_id'])
-        user_id = self.request.user.id
-        models.Likemodels.Like.objects.create(photo_id=kwargs['photo_id'], user_id=user_id)
-        return redirect('detail_post', slug_id=photo.slug)
+    def get(self, request, *args, **kwargs):
+        try:
+            CreateLikeService.execute(kwargs | {'user_id': request.user.id})
+        except Exception as error:
+            return HttpResponse(error)
+        return redirect('detail_post', slug_id=(models.Photomodels.Photo.objects.get(pk=kwargs['photo_id'])).slug)
 
 
 class DeletingLikeForPhoto(View):
     """Class for removing likes"""
 
-    def get(self, *args, **kwargs):
-        photo = models.Photomodels.Photo.objects.get(pk=kwargs['photo_id'])
-        user_id = self.request.user.id
-        like = models.Likemodels.Like.objects.get(photo_id=kwargs['photo_id'], user_id=user_id)
-        like.delete()
-        return redirect('detail_post', slug_id=photo.slug)
+    def get(self,request, *args, **kwargs):
+        try:
+            DeleteLikeService.execute(kwargs | {'user_id': request.user.id})
+        except Exception as error:
+            return HttpResponse(error)
+        return redirect('detail_post', slug_id=(models.Photomodels.Photo.objects.get(pk=kwargs['photo_id'])).slug)
+
 
 
 class DetailPost(DetailView):
@@ -188,25 +186,14 @@ class AddPhoto(View):
     """Class for adding photos"""
 
     def get(self, *args, **kwargs):
-        form = forms.AddPhotoForm()
-        return render(self.request, 'photobatle/add_photo_form.html', context={'form': form})
+        return render(self.request, 'photobatle/add_photo_form.html', context={'form': forms.AddPhotoForm()})
 
-    def post(self, *args, **kwargs):
-        form = forms.AddPhotoForm(self.request.POST, self.request.FILES)
-        if form.is_valid():
-            try:
-                AddPhotoService.execute({
-                    'photo_name': self.request.POST['photo_name'],
-                    'photo_content': self.request.POST['photo_content'],
-                    'photo': self.request.FILES['photo'],
-                    'user_id': self.request.user.id,
-                })
-            except Exception:
-                raise Exception('Cant create photo')
-            return redirect('home')
-        else:
-            return render(self.request, 'photobatle/add_photo_form.html', context={'form': form})
-
+    def post(self, request, *args, **kwargs):
+        try:
+            AddPhotoService.execute(request.FILES.dict() | request.POST.dict() | {'user_id': request.user.id})
+        except Exception as error:
+            return HttpResponse(error)
+        return redirect('home')
 
 
 class PersonalListPosts(ListView):
@@ -226,31 +213,25 @@ class PersonalListPosts(ListView):
         return posts.filter(user_id=self.request.user)
 
 
-class UpdatePhoto(AddPhoto):
+class UpdatePhoto(View):
     """Class for updating photos"""
 
-    def __init__(self):
-        super().__init__()
-
-    def post(self, *args, **kwargs):
-        post = models.Photomodels.Photo.objects.get(slug=kwargs['slug_id'])
-        if self.request.FILES.keys() & {'photo'}:
-            post.photo = self.request.FILES['photo']
-        post.slug = self.slug_russian_word(self.request.POST['photo_name'])
-        post.photo_name = self.request.POST['photo_name']
-        post.photo_content = self.request.POST['photo_content']
-        post.save()
+    def post(self, request, *args, **kwargs):
+        try:
+            UpdatePhotoService.execute(request.FILES.dict() | request.POST.dict() | kwargs)
+        except Exception as error:
+            return HttpResponse(error)
         return redirect('personal_list_posts')
 
 
 class DeletePhoto(View):
     """Class for deleting photos"""
 
-    def get(self, *args, **kwargs):
-        photo = models.Photomodels.Photo.objects.get(slug=kwargs['slug_id'])
-        photo.moderation = '1'
-        tasks.delete_photo.s(slug=kwargs['slug_id']).apply_async(countdown=20, task_id=photo.slug)
-        photo.save()
+    def get(self, request, *args, **kwargs):
+        try:
+            DeletePhotoService.execute(kwargs)
+        except ValidationError as error:
+            return HttpResponse(error)
         return redirect('personal_list_posts')
 
 
@@ -258,8 +239,8 @@ class RecoveryPhoto(View):
     """Class for recovery photos"""
 
     def get(self, *args, **kwargs):
-        app.control.revoke(kwargs['slug_id'])
-        photo = models.Photomodels.Photo.objects.get(slug=kwargs['slug_id'])
-        photo.moderation = '2'
-        photo.save()
+        try:
+            RecoveryPhotoService.execute(kwargs)
+        except ValidationError as error:
+            return HttpResponse(error)
         return redirect('personal_list_posts')

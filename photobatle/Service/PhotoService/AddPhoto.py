@@ -1,32 +1,22 @@
 from django import forms
-from django.core.exceptions import ValidationError
-
 from service_objects.services import Service
 from photobatle import models
-from transliterate import translit
+from photobatle.utils import *
+from django.core.exceptions import ValidationError
 
 
-class AddPhotoService(Service):
+class AddPhotoService(DataMixin, Service):
     """Service class for add photo"""
+
+    def get_type_of_photo(self):
+        if (self.content_type).split('/')[1] != 'jpeg':
+            raise ValidationError(('Тип загружаемого файла не JPEG, повторите попытку'), code='invalid')
+        return self
 
     photo_name = forms.CharField()
     photo_content = forms.CharField()
-    photo = forms.Field()
+    photo = forms.Field(validators=[get_type_of_photo])
     user_id = forms.IntegerField()
-
-    def slug_russian_word(self, word):
-        # Making a slug of Russian words
-        russia = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя'
-        slug = ''
-        for i in word:
-            if i.lower() in russia:
-                slug += translit(i, language_code='ru', reversed=True)
-            else:
-                if i == ' ':
-                    slug += '-'
-                else:
-                    slug += i
-        return slug
 
     def process(self):
         photo_name = self.cleaned_data['photo_name']
