@@ -5,7 +5,7 @@ from photobatle import tasks
 
 
 class DeletePhotoService(Service):
-    """Service class for update photo"""
+    """Service class for delete photo"""
 
     slug_id = forms.SlugField()
 

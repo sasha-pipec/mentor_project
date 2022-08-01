@@ -5,7 +5,7 @@ from photobatle.celery import app
 
 
 class RecoveryPhotoService(Service):
-    """Service class for update photo"""
+    """Service class for recovery photo"""
 
     slug_id = forms.SlugField()
 

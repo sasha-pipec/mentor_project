@@ -4,3 +4,6 @@ from .PhotoService.DeletePhoto import *
 from .PhotoService.RecoveryPhoto import *
 from .LikeService.CreateLike import *
 from .LikeService.DeleteLike import *
+from .CommentService.CreateComment import *
+from .CommentService.DeleteComment import *
+from .CommentService.UpdateComment import *

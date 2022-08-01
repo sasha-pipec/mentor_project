@@ -43,43 +43,34 @@ class RenderingUserPage(TemplateView):
 class CreatingCommentForPhoto(View):
     """Class for creating a comment"""
 
-    def post(self, *args, **kwargs):
-        comment = self.request.POST['comment']
-        photo_slug = self.request.POST['slug']
-        user = self.request.user.id
-        if len(comment) != 0:
-            photo_id = models.Photomodels.Photo(pk=self.request.POST['pk'])
-            if kwargs['parent_comment_id'] == 'none':
-                # Creating a comment entry in the database
-                models.Commentmodels.Comment.objects.create(photo=photo_id, user_id=user, content=comment)
-            else:
-                # Creating a record of a response to a comment in the database
-                models.Commentmodels.Comment.objects.create(photo=photo_id, user_id=user,
-                                                            parent_id=kwargs['parent_comment_id'],
-                                                            content=comment)
-        return redirect('detail_post', slug_id=photo_slug)
+    def post(self, request, *args, **kwargs):
+        try:
+            CreateCommentService.execute(request.POST.dict() | kwargs | {'user_id': request.user.id})
+        except Exception as error:
+            return HttpResponse(error)
+        return redirect('detail_post', slug_id=(models.Photomodels.Photo.objects.get(pk=request.POST['pk'])).slug)
 
 
 class DeletingCommentForPhoto(View):
     """Class for deleting a comment"""
 
-    def get(self, *args, **kwargs):
-        comment = models.Commentmodels.Comment.objects.get(pk=kwargs['comment_pk'])
-        photo_slug = models.Photomodels.Photo.objects.get(pk=comment.photo_id)
-        comment.delete()
-        return redirect('detail_post', slug_id=photo_slug.slug)
+    def get(self, request, *args, **kwargs):
+        try:
+            photo_id = DeleteCommentService.execute(kwargs)
+        except Exception as error:
+            return HttpResponse(error)
+        return redirect('detail_post', slug_id=photo_id.slug)
 
 
 class UpdatingCommentForPhoto(View):
     """Class for changing the comment"""
 
-    def post(self, *args, **kwargs):
-        comment_content = self.request.POST['comment']
-        comment = models.Commentmodels.Comment.objects.get(pk=kwargs['comment_pk'])
-        comment.content = comment_content
-        comment.save()
-        photo_slug = models.Photomodels.Photo.objects.get(pk=comment.photo_id)
-        return redirect('detail_post', slug_id=photo_slug.slug)
+    def post(self, request, *args, **kwargs):
+        try:
+            photo_id = UpdateCommentService.execute(request.POST.dict() | kwargs)
+        except Exception as error:
+            return HttpResponse(error)
+        return redirect('detail_post', slug_id=photo_id.slug)
 
 
 class CreatingLikeForPhoto(View):
@@ -96,7 +87,7 @@ class CreatingLikeForPhoto(View):
 class DeletingLikeForPhoto(View):
     """Class for removing likes"""
 
-    def get(self,request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         try:
             DeleteLikeService.execute(kwargs | {'user_id': request.user.id})
         except Exception as error:
@@ -104,28 +95,12 @@ class DeletingLikeForPhoto(View):
         return redirect('detail_post', slug_id=(models.Photomodels.Photo.objects.get(pk=kwargs['photo_id'])).slug)
 
 
-
-class DetailPost(DetailView):
+class DetailPost(DataMixin, DetailView):
     """Detailed view of the post"""
     model = models.Photomodels.Photo
     template_name = 'photobatle/detail_post.html'
     slug_url_kwarg = 'slug_id'
     context_object_name = 'post'
-
-    def all_comments_for_post(self, parent_id=None, photo_id=None):
-        # function for getting all the answers under the comment
-        comments = models.Commentmodels.Comment.objects.filter(photo_id=photo_id, parent_id=parent_id)
-        all_answer_for_comment = []
-        if len(comments) != 0:
-            for comment in comments:
-                all_answer_for_comment.append(comment)
-                childs = self.all_comments_for_post(parent_id=comment.pk, photo_id=comment.photo_id, )
-                if len(childs) != 0:
-                    for child in childs:
-                        all_answer_for_comment.append(child)
-        else:
-            return all_answer_for_comment
-        return all_answer_for_comment
 
     def get_context_data(self, parent_id=None, *args, oject_list=None, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -196,23 +171,6 @@ class AddPhoto(View):
         return redirect('home')
 
 
-class PersonalListPosts(ListView):
-    """A class for rendering the my photos personal page"""
-    model = models.Photomodels.Photo
-    template_name = 'photobatle/personal_list_posts.html'
-    context_object_name = 'posts'
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['form'] = forms.PersonalSortForm()
-        context['change_form'] = forms.AddPhotoForm()
-        return context
-
-    def get_queryset(self, *, object_list=None, **kwargs):
-        posts = super().get_queryset(**kwargs)
-        return posts.filter(user_id=self.request.user)
-
-
 class UpdatePhoto(View):
     """Class for updating photos"""
 
@@ -244,3 +202,20 @@ class RecoveryPhoto(View):
         except ValidationError as error:
             return HttpResponse(error)
         return redirect('personal_list_posts')
+
+
+class PersonalListPosts(ListView):
+    """A class for rendering the my photos personal page"""
+    model = models.Photomodels.Photo
+    template_name = 'photobatle/personal_list_posts.html'
+    context_object_name = 'posts'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = forms.PersonalSortForm()
+        context['change_form'] = forms.AddPhotoForm()
+        return context
+
+    def get_queryset(self, *, object_list=None, **kwargs):
+        posts = super().get_queryset(**kwargs)
+        return posts.filter(user_id=self.request.user)

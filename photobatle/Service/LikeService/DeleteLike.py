@@ -4,7 +4,7 @@ from photobatle import models
 
 
 class DeleteLikeService(Service):
-    """Service class for add photo"""
+    """Service class for delete like"""
 
     photo_id = forms.IntegerField()
     user_id = forms.IntegerField()
