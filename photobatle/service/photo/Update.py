@@ -22,6 +22,7 @@ class UpdatePhotoService(DataMixin, Service):
         post = models.Photomodels.Photo.objects.get(slug=self.cleaned_data['slug_id'])
 
         if self.cleaned_data['photo']:
+            post.previous_photo = post.photo
             post.photo = self.cleaned_data['photo']
         post.photo_name = self.cleaned_data['photo_name']
         post.photo_content = self.cleaned_data['photo_content']

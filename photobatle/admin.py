@@ -1,7 +1,7 @@
 from datetime import date
 from django.contrib import admin
 from django.utils.safestring import mark_safe
-from django.shortcuts import redirect
+from imagekit.admin import AdminThumbnail
 from django.http import HttpResponse
 
 from photobatle.service import *
@@ -23,7 +23,7 @@ class UserAdmin(admin.ModelAdmin):
 
 class PhotoAdmin(admin.ModelAdmin):
     list_display = (
-        'user', 'get_html_photo', 'photo_name', 'create_at', 'updated_at',
+        'user', 'get_html_photo', 'get_previous_html_photo', 'photo_name', 'create_at', 'updated_at',
         'moderation')
     list_filter = ('moderation', 'user')
     ordering = ('create_at', 'photo_name', 'user')
@@ -34,6 +34,10 @@ class PhotoAdmin(admin.ModelAdmin):
     def get_html_photo(self, object):
         if object.photo:
             return mark_safe(f"<img src='{object.photo.url}' width=50>")
+
+    def get_previous_html_photo(self, object):
+        if object.previous_photo:
+            return mark_safe(f"<img src='{object.previous_photo.url}' width=50>")
 
     def get_readonly_fields(self, request, obj):
         if obj.moderation == "APR":
@@ -58,6 +62,7 @@ class PhotoAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
     get_html_photo.short_description = 'фото'
+    get_previous_html_photo.short_description = 'старое фото'
 
 
 class CommentAdmin(admin.ModelAdmin):

@@ -22,6 +22,7 @@ class Photo(models.Model):
                                            processors=[ResizeToFill(350, 350)],
                                            format='JPEG',
                                            options={'quality': 60})
+    previous_photo = models.ImageField(blank=True, verbose_name='Предыдущее фото')
     photo_name = models.CharField(max_length=255, blank=False, unique=True, verbose_name='Имя фото')
     photo_content = models.TextField(blank=False, verbose_name='Описание фото')
     create_at = models.DateField(null=True, auto_now_add=True, verbose_name='Дата создания')
