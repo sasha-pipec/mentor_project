@@ -1,6 +1,10 @@
 from datetime import date
 from django.contrib import admin
 from django.utils.safestring import mark_safe
+from django.shortcuts import redirect
+from django.http import HttpResponse
+
+from photobatle.service import *
 
 from . import models
 
@@ -31,6 +35,23 @@ class PhotoAdmin(admin.ModelAdmin):
     def get_html_photo(self, object):
         if object.photo:
             return mark_safe(f"<img src='{object.photo.url}' width=50>")
+
+    def formfield_for_choice_field(self, db_field, request, **kwargs):
+        if request.user.is_superuser:
+            kwargs['choices'] = (
+                ('MOD', 'На модерации'),
+                ('REJ', 'Отклоненно'),
+                ('APR', 'Одобренно'),
+            )
+        return super(PhotoAdmin, self).formfield_for_choice_field(db_field, request, **kwargs)
+
+    def save_model(self, request, obj, form, change):
+        if obj.moderation == 'REJ':
+            try:
+                DeletePhotoService.execute({'slug_id': obj.slug})
+            except ValidationError as error:
+                return HttpResponse(error)
+        super().save_model(request, obj, form, change)
 
     get_html_photo.short_description = 'фото'
 

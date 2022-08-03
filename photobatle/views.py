@@ -31,7 +31,7 @@ class RenderingHomePage(ListView):
 
     def get_queryset(selfю, *, object_list=None, **kwargs):
         posts = super().get_queryset(**kwargs)
-        return posts.filter(moderation='3')
+        return posts.filter(moderation='APR')
 
 
 class RenderingUserPage(TemplateView):

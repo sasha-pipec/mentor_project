@@ -11,6 +11,6 @@ class DeletePhotoService(Service):
 
     def process(self):
         photo = models.Photomodels.Photo.objects.get(slug=self.cleaned_data['slug_id'])
-        photo.moderation = '1'
+        photo.moderation = 'DEL'
         tasks.delete_photo.s(slug=self.cleaned_data['slug_id']).apply_async(countdown=20, task_id=photo.slug)
         photo.save()

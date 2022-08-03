@@ -16,4 +16,4 @@ class SortingFormService(Service):
             Q(user__username__icontains=self.cleaned_data['name']) |
             Q(photo_name__icontains=self.cleaned_data['name']) |
             Q(photo_content__icontains=self.cleaned_data['name']),
-            moderation='3').order_by(f"-{self.cleaned_data['form'].split('=')[-1]}")
+            moderation='APR').order_by(f"-{self.cleaned_data['form'].split('=')[-1]}")

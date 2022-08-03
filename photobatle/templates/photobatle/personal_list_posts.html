@@ -48,7 +48,7 @@
             {% endif %}
 
             <div class="card-body" id="card-body">
-                {% if post.moderation != '1'%}
+                {% if post.moderation != 'DEL' and post.moderation != 'REJ' %}
                 <a href="{% url 'delete_photo' post.slug%}"><img src="/static/image/удалить.png"
                                                                  style="margin-right:10%;" alt=""></a>
                     {% if post.photo.url|check_photo%}
@@ -166,7 +166,7 @@
                                     "<img id='foo' class='card-img-top' src='"+url_photo+"'alt='Не загрузилось :('>"+
                                 '</a>'+
                                     '<div class="card-body" id="card-body">';
-                                    if(response.posts[key].moderation != "1"){
+                                    if(response.posts[key].moderation != "DEL" && response.posts[key].moderation != "REJ"){
                                     var content=content+'<a href="'+ photo_delete+'"><img src="/static/image/удалить.png" style="margin-right:10%;"></a>'+
                                     '<a onclick="'+"edit_a_photo(id='"+response.posts[key].id+"',content='"+response.posts[key].photo_content+"',name='"+response.posts[key].photo_name+"',photo='"+response.posts[key]['photo_imagekit_medium']+"')"+'">'+
                                     '<img src="/static/image/изменение.png" style="margin-left:75%; cursor:pointer;" alt=""></a>';

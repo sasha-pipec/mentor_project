@@ -1,6 +1,5 @@
 import datetime
 import os
-
 from django.db import models
 from django.urls import reverse
 from imagekit.models import ImageSpecField
@@ -28,20 +27,21 @@ class Photo(models.Model):
     create_at = models.DateField(null=True, auto_now_add=True, verbose_name='Дата создания')
     updated_at = models.DateField(auto_now=True, verbose_name='Дата обновления')
 
+    ON_DELETION = 'DEL'
+    ON_MODERATION = 'MOD'
+    APPROVED = 'APR'
+    REJECTED = 'REJ'
+
     STATUS_CHOICES = (
-        ('1', 'На удалении'),
-        ('2', 'На модерации'),
-        ('3', 'Одобренно'),
+        (ON_DELETION, 'На удалении'),
+        (ON_MODERATION, 'На модерации'),
+        (APPROVED, 'Одобренно'),
+        (REJECTED, 'Отклоненно'),
     )
-    moderation = models.CharField(max_length=1, choices=STATUS_CHOICES, verbose_name='Статус', default='2')
+    moderation = models.CharField(max_length=3, choices=STATUS_CHOICES, verbose_name='Статус', default=ON_MODERATION)
 
     def __str__(self):
         return self.photo_name
-
-    def save(self, *args, **kwargs):
-        if self.moderation == '3':
-            self.updated_at = datetime.datetime.now()
-        super(Photo, self).save(*args, **kwargs)
 
     def checking_the_existence(self):
         return os.path.exists(str(self.photo.url)[1::])

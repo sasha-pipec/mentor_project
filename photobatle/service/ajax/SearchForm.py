@@ -14,4 +14,4 @@ class SearchFormService(Service):
                                                          like_count=Count('like_photo', distinct=True)).filter(
             Q(user__username__icontains=self.cleaned_data['name']) |
             Q(photo_name__icontains=self.cleaned_data['name']) |
-            Q(photo_content__icontains=self.cleaned_data['name']), moderation='3')
+            Q(photo_content__icontains=self.cleaned_data['name']), moderation='APR')

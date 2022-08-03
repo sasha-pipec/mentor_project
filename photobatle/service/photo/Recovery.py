@@ -12,5 +12,5 @@ class RecoveryPhotoService(Service):
     def process(self):
         app.control.revoke(self.cleaned_data['slug_id'])
         photo = models.Photomodels.Photo.objects.get(slug=self.cleaned_data['slug_id'])
-        photo.moderation = '2'
+        photo.moderation = 'MOD'
         photo.save()

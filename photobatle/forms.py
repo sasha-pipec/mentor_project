@@ -8,10 +8,16 @@ FRUIT_CHOICES = [
     ('updated_at', 'Сортировка по дате'),
 ]
 
+ON_DELETION = 'DEL'
+ON_MODERATION = 'MOD'
+APPROVED = 'APR'
+REJECTED = 'REJ'
+
 STATUS_CHOICES = (
-    ('1', 'На удалении'),
-    ('2', 'На модерации'),
-    ('3', 'Одобренно'),
+    (ON_DELETION, 'На удалении'),
+    (ON_MODERATION, 'На модерации'),
+    (APPROVED, 'Одобренно'),
+    (REJECTED, 'Отклоненно'),
 )
 
 
