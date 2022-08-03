@@ -26,7 +26,6 @@ class PhotoAdmin(admin.ModelAdmin):
         'user', 'get_html_photo', 'photo_name', 'create_at', 'updated_at',
         'moderation')
     list_filter = ('moderation', 'user')
-    list_editable = ('moderation',)
     ordering = ('create_at', 'photo_name', 'user')
     readonly_fields = ('create_at', 'updated_at',)
     search_fields = ('photo_name',)
@@ -35,6 +34,11 @@ class PhotoAdmin(admin.ModelAdmin):
     def get_html_photo(self, object):
         if object.photo:
             return mark_safe(f"<img src='{object.photo.url}' width=50>")
+
+    def get_readonly_fields(self, request, obj):
+        if obj.moderation == "APR":
+            return self.readonly_fields + ('moderation',)
+        return super().get_readonly_fields(request, obj)
 
     def formfield_for_choice_field(self, db_field, request, **kwargs):
         if request.user.is_superuser:
