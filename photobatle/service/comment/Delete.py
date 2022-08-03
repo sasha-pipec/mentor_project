@@ -9,9 +9,8 @@ class DeleteCommentService(Service):
     comment_pk = forms.IntegerField()
 
     def process(self):
-        comment_pk = self.cleaned_data['comment_pk']
 
-        comment = models.Commentmodels.Comment.objects.get(pk=comment_pk)
+        comment = models.Commentmodels.Comment.objects.get(pk=self.cleaned_data['comment_pk'])
         comment.delete()
 
         return models.Photomodels.Photo.objects.get(pk=comment.photo_id)

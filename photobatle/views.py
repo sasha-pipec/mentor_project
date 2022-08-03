@@ -4,7 +4,7 @@ from django.contrib.auth import logout
 from django.shortcuts import redirect, render
 from django.http import JsonResponse, HttpResponse
 
-from photobatle.Service import *
+from photobatle.service import *
 from . import models
 from . import forms
 from . import serializers

@@ -10,10 +10,7 @@ class DeleteLikeService(Service):
     user_id = forms.IntegerField()
 
     def process(self):
-        photo_id = self.cleaned_data['photo_id']
-        user_id = self.cleaned_data['user_id']
-
-        like = models.Likemodels.Like.objects.get(photo_id=photo_id, user_id=user_id)
+        like = models.Likemodels.Like.objects.get(photo_id=self.cleaned_data['photo_id'],
+                                                  user_id=self.cleaned_data['user_id'])
         like.delete()
-        return (models.Photomodels.Photo.objects.get(pk=photo_id)).slug
-
+        return (models.Photomodels.Photo.objects.get(pk=self.cleaned_data['photo_id'])).slug
