@@ -10,3 +10,4 @@ from .comment.Update import *
 from .ajax.SortingForm import *
 from .ajax.SearchForm import *
 from .ajax.PersonalSortingForm import *
+from .apitoken.Create import *

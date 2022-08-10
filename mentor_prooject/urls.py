@@ -19,11 +19,11 @@ from django.urls import path, include
 from . import settings
 from django.conf.urls.static import static
 
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
     path('', include('photobatle.urls')),
+    path('api/v1/', include('api.urls')),
 
 ]
 

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from photobatle.models import Usermodels, Photomodels
+from photobatle.models import Usermodels, Photomodels, Commentmodels
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -26,3 +26,4 @@ class PhotoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Photomodels.Photo
         fields = ('__all__')
+

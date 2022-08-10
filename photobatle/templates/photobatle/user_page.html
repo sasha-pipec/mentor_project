@@ -12,11 +12,11 @@
         <div class="col-12 col-sm-12">
             <div class="personal-account-user-image">
                 {% if user.photo|check_photo_admin %}
-                    {% if user.photo.url|check_photo %}
-                     <img src="{{user.photo_imagekit_medium.url}} " alt="Card image cap" class="personal-account-user-photo">
-                    {% else%}
-                    <img src="/static/image/default-photo-post.jpeg" class="personal-account-user-photo" alt="">
-                    {% endif %}
+                {% if user.photo.url|check_photo %}
+                <img src="{{user.photo_imagekit_medium.url}} " alt="Card image cap" class="personal-account-user-photo">
+                {% else%}
+                <img src="/static/image/default-photo-post.jpeg" class="personal-account-user-photo" alt="">
+                {% endif %}
                 {% else %}
                 <img src="/static/image/default-photo-post.jpeg" alt="Card image cap"
                      class="personal-account-user-photo">
@@ -69,7 +69,10 @@
                 </div>
                 <div class="private-item">
                     <h5 class="personal-info-item">API token</h5>
-                    <a href=""><p>Сгенерировать</p></a>
+                    <a href="{% url 'api_token' user.id %}"><p>Сгенерировать</p></a>
+                    {% if api_token %}
+                    <p>{{api_token.0}}</p>
+                    {%endif%}
                     <hr>
                 </div>
                 <div class="private-item">

@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from django.contrib.auth import logout
 from django.shortcuts import redirect, render
 from django.http import JsonResponse, HttpResponse
+from rest_framework.authtoken.models import Token
 
 from photobatle.service import *
 from . import models
@@ -38,16 +39,21 @@ class RenderingUserPage(TemplateView):
     """The user's personal account will be generated here """
     template_name = 'photobatle/user_page.html'
 
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['api_token'] = Token.objects.filter(user=self.request.user.id)
+        return context
+
 
 class CreatingCommentForPhoto(View):
     """Class for creating a comment"""
 
     def post(self, request, *args, **kwargs):
         try:
-            slug = CreateCommentService.execute(request.POST.dict() | kwargs | {'user_id': request.user.id})
+            CreateCommentService.execute(request.POST.dict() | kwargs | {'user_id': request.user.id})
         except Exception as error:
             return HttpResponse(error)
-        return redirect('detail_post', slug_id=slug)
+        return redirect('detail_post', slug_id=request.POST['photo_slug'])
 
 
 class DeletingCommentForPhoto(View):
@@ -211,3 +217,12 @@ class PersonalListPosts(ListView):
     def get_queryset(self, *, object_list=None, **kwargs):
         posts = super().get_queryset(**kwargs)
         return posts.filter(user_id=self.request.user)
+
+
+class GeneratingAPIToken(View):
+    def get(self, *args, **kwargs):
+        try:
+            CreateAPITokenService.execute(kwargs)
+        except ValidationError as error:
+            return HttpResponse(error)
+        return redirect('user_page')

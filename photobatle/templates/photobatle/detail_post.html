@@ -66,7 +66,7 @@
                                                           class="md-textarea form-control answer-comment-textarea"
                                                           rows="3" id="input-answer-comment"></textarea>
                                                 <input name="pk" type="hidden" value="{{post.pk}}">
-                                                <input name="slug" type="hidden" value="{{post.slug}}">
+                                                <input name="photo_slug" type="hidden" value="{{post.slug}}">
                                                 <a class="btn-danger" onclick="close_answer_comment()">Отмена</a>
                                                 {% if user.is_authenticated %}
                                                 <button class="btn-success" type="submit">Отправить</button>
@@ -85,8 +85,7 @@
                                                           class="md-textarea form-control answer-comment-textarea"
                                                           rows="3" id="edit-comment-{{comment.pk}}-textarea"></textarea>
                                                 <input name="pk" type="hidden" value="{{post.pk}}">
-                                                <input name="slug" type="hidden" value="{{post.slug}}">
-                                                <a class="btn-danger"
+                                                <input name="photo_slug" type="hidden" value="{{post.slug}}"><a class="btn-danger"
                                                    onclick="close_edit_comment(id={{comment.pk}},content='{{comment.content}}')">Отмена</a>
                                                 <button class="btn-success" type="submit">Сохранить</button>
                                             </form>
@@ -101,7 +100,7 @@
                     {% if forloop.counter < 3%}
                     <div class="row comment-content-detail" id="answer-comment-detail-content">
                         {% else %}
-                        <div class="row comment-content-detail other-answer-to-comments"
+                        <div class="row comment-content-detail other-answer-to-comments-{{comment.pk}}"
                              id="answer-comment-detail-content" style="display:none;">
                             {% endif %}
                             <div class="col">
@@ -151,7 +150,7 @@
                                                               rows="3" id="input-answer-comment"
                                                               style="margin-left:-50px;"></textarea>
                                                     <input name="pk" type="hidden" value="{{post.pk}}">
-                                                    <input name="slug" type="hidden" value="{{post.slug}}">
+                                                    <input name="photo_slug" type="hidden" value="{{post.slug}}">
                                                     <a class="btn-danger" onclick="close_answer_comment()">Отмена</a>
                                                     {% if user.is_authenticated %}
                                                     <button class="btn-success" type="submit">Отправить</button>
@@ -172,7 +171,7 @@
                                                               rows="3"
                                                               id="edit-comment-{{answer.pk}}-textarea"></textarea>
                                                     <input name="pk" type="hidden" value="{{post.pk}}">
-                                                    <input name="slug" type="hidden" value="{{post.slug}}">
+                                                    <input name="photo_slug" type="hidden" value="{{post.slug}}">
                                                     <a class="btn-danger"
                                                        onclick="close_edit_comment(id={{answer.pk}},content='{{answer.content}}')">Отмена</a>
                                                     <button class="btn-success" type="submit">Сохранить</button>
@@ -180,11 +179,11 @@
                                             </div>
                                         </div>
                                         {% if forloop.counter == 2 and not forloop.last %}
-                                        <a onclick="open_all_answer_for_comment()" id="all-answer-for-comment"
+                                        <a onclick="open_all_answer_for_comment(idd='{{comment.pk}}')" id="open-all-answer-for-comment-{{comment.pk}}"
                                            style="cursor:pointer; color:pink;">Показать больше</a>
                                         {% endif %}
                                         {% if forloop.last and forloop.counter >= 3 %}
-                                        <a onclick="close_all_answer_for_comment()" id="all-answer-for-comment"
+                                        <a onclick="close_all_answer_for_comment(idd='{{comment.pk}}')"
                                            style="cursor:pointer; color:pink;">Скрыть</a>
                                         {% endif %}
                                     </div>
@@ -195,10 +194,10 @@
 
                         {% endfor%}
                     </div>
-                    <form method="POST" action="{% url 'create_comment' parent_comment_id='none' %}">
+                    <form method="POST" action="{% url 'create_comment' parent_comment_id=None %}">
                         {% csrf_token %}
                         <input type="hidden" name="pk" value="{{post.pk}}">
-                        <input type="hidden" name="slug" value="{{post.slug}}">
+                        <input type="hidden" name="photo_slug" value="{{post.slug}}">
                         <div class="input-group">
                         <textarea onblur="default_text()" onclick="click_text()" name="comment" type="text"
                                   id="input-comment"

@@ -53,8 +53,12 @@ INSTALLED_APPS = [
     'photobatle.apps.PhotobatleConfig',
     'service_objects',
 
+    # api
+    'api.apps.ApiConfig',
+
     # DRF
     'rest_framework',
+    'rest_framework.authtoken',
 
     'imagekit'
 ]

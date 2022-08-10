@@ -20,6 +20,8 @@ urlpatterns = [
     path('like/patch/<photo_id>', views.CreatingLikeForPhoto.as_view(), name='create_like'),
     path('like/delete/<photo_id>', views.DeletingLikeForPhoto.as_view(), name='delete_like'),
 
+    path('token/put/<user_id>', views.GeneratingAPIToken.as_view(), name='api_token'),
+
     # Функции предствавления
     path('logout_user/', views.Logouting_user, name='logout_user'),
 

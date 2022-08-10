@@ -16,14 +16,14 @@ function close_answer_comment(){
     $(".answer-for-comment").css({'display':'none'});
 }
 
-function open_all_answer_for_comment(){
-    $(".comment-content-detail").css({'display':'inline-flex'});
-    $("#all-answer-for-comment").css({'display':'none'});
+function open_all_answer_for_comment(idd){
+    $(".other-answer-to-comments-"+idd).css({'display':'inline-flex'});
+    $("#open-all-answer-for-comment-"+idd).css({'display':'none'});
 }
 
-function close_all_answer_for_comment(){
-    $(".other-answer-to-comments").css({'display':'none'});
-    $("#all-answer-for-comment").css({'display':'block'});
+function close_all_answer_for_comment(idd){
+    $(".other-answer-to-comments-"+idd).css({'display':'none'});
+    $("#open-all-answer-for-comment-"+idd).css({'display':'block'});
 }
 
 function edit_a_comment(id,content){
