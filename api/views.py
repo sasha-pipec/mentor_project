@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from photobatle import serializers
 from photobatle.service import *
 from photobatle import models
+from rest_framework import status
 
 
 class HomePostListAPI(APIView):
@@ -17,9 +18,9 @@ class HomePostListAPI(APIView):
 class CreatingCommentAPI(APIView):
     def post(self, request, *args, **kwargs):
         try:
-            CreateCommentService.execute(request.data)
+            CreateCommentService.execute(request.data.dict() | {'user_id': request.user.id})
         except Exception:
-            return Response(status=404)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=201)
 
     # Create your views here.
