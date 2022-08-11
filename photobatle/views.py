@@ -61,7 +61,7 @@ class DeletingCommentForPhoto(View):
 
     def get(self, request, *args, **kwargs):
         try:
-            photo_id = DeleteCommentService.execute(kwargs)
+            photo_id = DeleteCommentService.execute(kwargs | {'user_id': request.user.id})
         except Exception as error:
             return HttpResponse(error)
         return redirect('detail_post', slug_id=photo_id.slug)

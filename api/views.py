@@ -7,6 +7,7 @@ from rest_framework import status
 
 
 class HomePostListAPI(APIView):
+
     def get(self, *args, **kwargs):
         serializer = serializers.PhotoSerializer(
             models.Photomodels.Photo.objects.annotate(comment_count=Count('comment_photo', distinct=True),
@@ -16,9 +17,20 @@ class HomePostListAPI(APIView):
 
 
 class CreatingCommentAPI(APIView):
+
     def post(self, request, *args, **kwargs):
         try:
             CreateCommentService.execute(request.data.dict() | {'user_id': request.user.id})
+        except Exception:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=201)
+
+
+class DeletingCommentAPI(APIView):
+
+    def post(self, request, *args, **kwargs):
+        try:
+            DeleteCommentService.execute(kwargs | {'user_id': request.user.id})
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=201)
