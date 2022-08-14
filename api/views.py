@@ -34,7 +34,7 @@ class ModifiedPhotoAPI(APIView):
 
     def patch(self, request, *args, **kwargs):
         try:
-            UpdateCommentService.execute(request.data.dict() | kwargs | {'user_id': request.user.id})
+            UpdatePhotoService.execute(request.data.dict() | kwargs | {'user_id': request.user.id})
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=201)
