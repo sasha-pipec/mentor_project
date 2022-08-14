@@ -27,7 +27,7 @@ class ModifiedPhotoAPI(APIView):
 
     def delete(self, request, *args, **kwargs):
         try:
-            DeleteCommentService.execute(kwargs | {'user_id': request.user.id})
+            DeletePhotoService.execute(kwargs | {'user_id': request.user.id})
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=204)
