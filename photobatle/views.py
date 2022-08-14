@@ -72,7 +72,7 @@ class UpdatingCommentForPhoto(View):
 
     def post(self, request, *args, **kwargs):
         try:
-            photo_id = UpdateCommentService.execute(request.POST.dict() | kwargs)
+            photo_id = UpdateCommentService.execute(request.POST.dict() | kwargs | {'user_id': request.user.id})
         except Exception as error:
             return HttpResponse(error)
         return redirect('detail_post', slug_id=photo_id.slug)
