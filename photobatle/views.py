@@ -3,7 +3,6 @@ from rest_framework.views import APIView
 from django.contrib.auth import logout
 from django.shortcuts import redirect, render
 from django.http import JsonResponse, HttpResponse
-from rest_framework.authtoken.models import Token
 
 from photobatle.service import *
 from . import models
@@ -149,7 +148,7 @@ class PersonalSortingFormAjax(APIView):
 
     def post(self, request, *args, **kwargs):
         try:
-            posts = PersonalSortingFormService.execute(request.POST | {'user_id': request.user.id})
+            posts = PersonalSortingFormService.execute(request.POST)
         except Exception as error:
             return HttpResponse(error)
         return JsonResponse({'posts': serializers.PhotoSerializer(posts, many=True).data}, status=200)
@@ -174,7 +173,7 @@ class UpdatePhoto(View):
 
     def post(self, request, *args, **kwargs):
         try:
-            UpdatePhotoService.execute(request.FILES.dict() | request.POST.dict() | kwargs)
+            UpdatePhotoService.execute(request.FILES.dict() | request.POST.dict() | kwargs |{'user_id': request.user.id})
         except Exception as error:
             return HttpResponse(error)
         return redirect('personal_list_posts')

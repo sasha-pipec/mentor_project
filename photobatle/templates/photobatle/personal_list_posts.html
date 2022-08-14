@@ -140,7 +140,8 @@
             };
               $.ajax({
                   data: {'form':$(this).serialize(),
-                  'csrfmiddlewaretoken': '{{csrf_token}}',},
+                  'csrfmiddlewaretoken': '{{csrf_token}}',
+                  'user_id': '{{user.pk}}',},
                   type: $(this).attr('method'),
                   url: "{% url 'personal_sort_form' %}",
                   success: function (response) {
