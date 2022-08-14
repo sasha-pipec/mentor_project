@@ -185,7 +185,7 @@ class DeletePhoto(View):
 
     def get(self, request, *args, **kwargs):
         try:
-            DeletePhotoService.execute(kwargs)
+            DeletePhotoService.execute(kwargs | {'user_id': request.user.id})
         except ValidationError as error:
             return HttpResponse(error)
         return redirect('personal_list_posts')
