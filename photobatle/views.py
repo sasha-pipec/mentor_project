@@ -173,7 +173,8 @@ class UpdatePhoto(View):
 
     def post(self, request, *args, **kwargs):
         try:
-            UpdatePhotoService.execute(request.FILES.dict() | request.POST.dict() | kwargs |{'user_id': request.user.id})
+            UpdatePhotoService.execute(
+                request.FILES.dict() | request.POST.dict() | kwargs | {'user_id': request.user.id})
         except Exception as error:
             return HttpResponse(error)
         return redirect('personal_list_posts')
@@ -195,7 +196,7 @@ class RecoveryPhoto(View):
 
     def get(self, *args, **kwargs):
         try:
-            RecoveryPhotoService.execute(kwargs)
+            RecoveryPhotoService.execute(kwargs | {'user_id': self.request.user.id})
         except ValidationError as error:
             return HttpResponse(error)
         return redirect('personal_list_posts')
