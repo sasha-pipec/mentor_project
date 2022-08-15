@@ -40,6 +40,19 @@ class ModifiedPhotoAPI(APIView):
         return Response(status=201)
 
 
+class SortAndSearchPhotoApi(APIView):
+
+    def get(self, request, *args, **kwargs):
+        try:
+            if 'form' in request.data:
+                serializer = serializers.PhotoSerializer(SortingFormService.execute(request.data.dict()), many=True)
+            else:
+                serializer = serializers.PhotoSerializer(SearchFormService.execute(request.data.dict()), many=True)
+            return Response(serializer.data, status=201)
+        except Exception as e:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
 class CommentAPI(APIView):
 
     def get(self, *args, **kwargs):
