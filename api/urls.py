@@ -9,6 +9,10 @@ urlpatterns = [
     path('photo', views.PhotoAPI.as_view()),
     path('photo/<slug:slug_id>', views.ModifiedPhotoAPI.as_view()),
 
+    # Personal photo
+    # Get method have 1 required params: api_token in headers
+    path('photo/personal/', views.PersonalPhotoAPI.as_view()),
+
     # Sort and search photo
     # Get method have 1 required params: form; 1 not required params name if you use sort photo
     # Get method have 1 required params: name if you use search photo

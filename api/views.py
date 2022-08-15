@@ -22,6 +22,19 @@ class PhotoAPI(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=201)
 
+class PersonalPhotoAPI(APIView):
+
+    def get(self, request,  *args, **kwargs):
+        try:
+            serializer = serializers.PhotoSerializer(
+                models.Photomodels.Photo.objects.annotate(comment_count=Count('comment_photo', distinct=True),
+                                                          like_count=Count('like_photo', distinct=True)).filter(
+                    user_id=request.user.id), many=True)
+        except Exception:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.data)
+
+
 
 class ModifiedPhotoAPI(APIView):
 
