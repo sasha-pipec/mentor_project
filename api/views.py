@@ -47,6 +47,15 @@ class PersonalPhotoAPI(APIView):
 
 
 class ModifiedPhotoAPI(APIView):
+    def get(self, *args, **kwargs):
+        try:
+            serializer = serializers.PhotoSerializer(
+                models.Photomodels.Photo.objects.annotate(comment_count=Count('comment_photo', distinct=True),
+                                                          like_count=Count('like_photo', distinct=True)).filter(
+                    moderation='APR', slug=kwargs['slug_id']), many=True)
+        except Exception:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.data)
 
     def delete(self, request, *args, **kwargs):
         try:
