@@ -3,7 +3,7 @@ from photobatle.models import Usermodels, Photomodels, Commentmodels
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    '''Сериализатор для модели User'''
+    '''Comment serializer'''
 
     class Meta:
         model = Commentmodels.Comment
@@ -11,7 +11,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    '''Сериализатор для модели User'''
+    '''User serializer'''
 
     class Meta:
         model = Usermodels.User
@@ -19,7 +19,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class PhotoSerializer(serializers.ModelSerializer):
-    '''Сериализатор для модели Photo'''
+    '''Photo serializer'''
     user = UserSerializer()
     like_count = serializers.IntegerField()
     comment_count = serializers.IntegerField()

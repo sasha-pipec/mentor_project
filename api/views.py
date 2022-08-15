@@ -6,6 +6,16 @@ from photobatle import models
 from rest_framework import status
 
 
+class UserAPI(APIView):
+
+    def get(self, request, *args, **kwargs):
+        serializer = serializers.UserSerializer(
+            models.Usermodels.User.objects.filter(pk=request.user.id), many=True)
+        if not serializer.data:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.data, status=201)
+
+
 class PhotoAPI(APIView):
 
     def get(self, *args, **kwargs):
@@ -22,9 +32,10 @@ class PhotoAPI(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=201)
 
+
 class PersonalPhotoAPI(APIView):
 
-    def get(self, request,  *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         try:
             serializer = serializers.PhotoSerializer(
                 models.Photomodels.Photo.objects.annotate(comment_count=Count('comment_photo', distinct=True),
@@ -33,7 +44,6 @@ class PersonalPhotoAPI(APIView):
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.data)
-
 
 
 class ModifiedPhotoAPI(APIView):

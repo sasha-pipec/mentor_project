@@ -2,6 +2,10 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    # User
+    # Get method have 1 required params: api_token in headers
+    path('user', views.UserAPI.as_view()),
+
     # Photo
     # Post method have 4 required params: photo, photo_name, photo_content, api_token in headers
     # Delete method have 2 required params: slug_id, api_token in headers
