@@ -130,4 +130,23 @@ class ModifiedCommentAPI(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=201)
 
+
+class LikeAPI(APIView):
+
+    def post(self, request, *args, **kwargs):
+        try:
+            CreateLikeService.execute(request.data.dict() | {'user_id': request.user.id})
+        except Exception:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=201)
+
+
+class ModifiedLikeAPI(APIView):
+    def delete(self, request, *args, **kwargs):
+        try:
+            DeleteLikeService.execute(kwargs | {'user_id': request.user.id})
+        except Exception:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=204)
+
     # Create your views here.

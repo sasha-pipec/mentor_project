@@ -35,4 +35,10 @@ urlpatterns = [
     # Delete method have 2 required params: comment_pk,comment, api_token in headers
     path('comment', views.CommentAPI.as_view()),
     path('comment/<comment_pk>', views.ModifiedCommentAPI.as_view()),
+
+    # Like
+    # Post method have 2 required params: photo_id api_token in headers;
+    # Delete method have 2 required params: photo_id api_token in headers;
+    path('like', views.LikeAPI.as_view()),
+    path('like/<photo_id>', views.ModifiedLikeAPI.as_view()),
 ]
