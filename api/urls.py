@@ -14,6 +14,10 @@ urlpatterns = [
     # Get method have 1 required params: name if you use search photo
     path('photo/sort/', views.SortAndSearchPhotoApi.as_view()),
 
+    # Personal sort photo
+    # Get method have 2 required params: form, api_token in headers
+    path('photo/personal-sort/', views.PersonalSortPhotoApi.as_view()),
+
     # Comment
     # Post method have 2 required params: comment_pk api_token in headers;
     # 2 not required params: parent_comment_id,comment
