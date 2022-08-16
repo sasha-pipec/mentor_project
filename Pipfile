@@ -20,6 +20,7 @@ celery = "*"
 redis = "*"
 eventlet = "*"
 django-service-objects = "*"
+drf-yasg = "*"
 
 [dev-packages]
 

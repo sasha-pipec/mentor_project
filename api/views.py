@@ -1,13 +1,20 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import status
+
 from photobatle import serializers
 from photobatle.service import *
 from photobatle import models
-from rest_framework import status
+
+from .custom_schema import *
+
+from drf_yasg.utils import swagger_auto_schema
 
 
 class UserAPI(APIView):
 
+    @swagger_auto_schema(manual_parameters=user_parameters,
+                         responses=user_response)
     def get(self, request, *args, **kwargs):
         serializer = serializers.UserSerializer(
             models.Usermodels.User.objects.filter(pk=request.user.id), many=True)

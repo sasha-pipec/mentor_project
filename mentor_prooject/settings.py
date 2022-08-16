@@ -60,6 +60,10 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
 
+    # Swagger
+    'drf_yasg',
+
+    # Imagekit
     'imagekit'
 ]
 

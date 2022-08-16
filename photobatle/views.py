@@ -122,6 +122,7 @@ class DetailPost(DataMixin, DetailView):
 
 class SortingFormAjax(APIView):
     """Class for AJAX request sorting"""
+    swagger_schema = None
 
     def post(self, request, *args, **kwargs):
         # We get the value of the form by which we will sort
@@ -134,6 +135,7 @@ class SortingFormAjax(APIView):
 
 class SearchFormAjax(APIView):
     """Class for AJAX query"""
+    swagger_schema = None
 
     def post(self, request, *args, **kwargs):
         try:
@@ -145,6 +147,7 @@ class SearchFormAjax(APIView):
 
 class PersonalSortingFormAjax(APIView):
     """Class for AJAX request sorting personal list posts"""
+    swagger_schema = None
 
     def post(self, request, *args, **kwargs):
         try:
