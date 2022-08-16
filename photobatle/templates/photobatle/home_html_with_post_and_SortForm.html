@@ -32,6 +32,37 @@
 </div>
 {% endblock %}
 
+{% block animation %}
+<div class="animation">
+    <h2 id="photobatle">Photo<br>Batle</h2>
+    <script>
+        function circle(){
+        let amount=30;
+        let body=document.querySelector('div.animation')
+        let score=0;
+        while(score<amount){
+        let element=document.createElement('score');
+
+        let posX=Math.floor(Math.random() * window.innerWidth);
+        let delay=Math.random() * -20;
+        let duration=Math.random() * 10;
+
+
+        let size=Math.random() * 250;
+        element.style.width=10+size+'px';
+        element.style.height=10+size+'px';
+        element.style.left=posX + 'px';
+        element.style.animationDelay=delay + 's';
+        element.style.animationDuration=5 + duration + 's';
+        body.appendChild(element);
+        score++;
+        }
+
+        }
+        circle()
+    </script>
+</div>
+{%endblock%}
 
 <!-- Динамический блок контента home_page-->
 {% block content %}
