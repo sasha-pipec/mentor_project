@@ -96,15 +96,18 @@ class ModifiedPhotoAPI(APIView):
 
 class SortAndSearchPhotoApi(APIView):
 
+    @swagger_auto_schema(manual_parameters=get_sort_photo_parameters, responses=get_sort_photo_response,
+                         operation_description=get_sort_photo_operation_description)
     def get(self, request, *args, **kwargs):
         try:
-            if 'form' in request.data:
-                serializer = serializers.PhotoSerializer(SortingFormService.execute(request.data.dict()), many=True)
+            data = request.data.dict() if request.data else request.query_params
+            if 'form' in data:
+                serializer = serializers.PhotoSerializer(SortingFormService.execute(data), many=True)
             else:
-                serializer = serializers.PhotoSerializer(SearchFormService.execute(request.data.dict()), many=True)
+                serializer = serializers.PhotoSerializer(SearchFormService.execute(data), many=True)
             return Response(serializer.data, status=201)
         except Exception as e:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(status=status.HTTP_409_CONFLICT)
 
 
 class PersonalSortPhotoApi(APIView):
