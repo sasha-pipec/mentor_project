@@ -19,6 +19,9 @@ class UpdatePhotoService(DataMixin, Service):
     photo = forms.Field(required=False, validators=[get_type_of_photo])
     user_id = forms.IntegerField()
 
+    def get_new_photo_name(self):
+        self.cleaned_data['photo'].name = self.cleaned_data['photo_name']
+
     @property
     def validate_slug_id(self):
         try:
@@ -32,12 +35,13 @@ class UpdatePhotoService(DataMixin, Service):
         if self.validate_slug_id:
             post = models.Photomodels.Photo.objects.get(slug=self.cleaned_data['slug_id'])
 
-            if self.cleaned_data['photo']:
+            if self.cleaned_data['photo'] and self.cleaned_data['photo'] != post.photo:
+                self.get_new_photo_name()
                 post.previous_photo = post.photo
                 post.photo = self.cleaned_data['photo']
-            elif self.cleaned_data['photo_name']:
+            if self.cleaned_data['photo_name'] and self.cleaned_data['photo_name'] != post.photo_name:
                 post.photo_name = self.cleaned_data['photo_name']
                 post.slug = self.slug_russian_word(self.cleaned_data['photo_name'])
-            elif self.cleaned_data['photo_content']:
+            if self.cleaned_data['photo_content'] and self.cleaned_data['photo_content'] != post.photo_content:
                 post.photo_content = self.cleaned_data['photo_content']
             return post.save()
