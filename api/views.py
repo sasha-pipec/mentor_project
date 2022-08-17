@@ -45,6 +45,7 @@ class PhotoAPI(APIView):
 
 class PersonalPhotoAPI(APIView):
 
+    @swagger_auto_schema(manual_parameters=get_personal_photo_parameters, responses=get_personal_photo_response)
     def get(self, request, *args, **kwargs):
         try:
             serializer = serializers.PhotoSerializer(
