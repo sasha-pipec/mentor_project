@@ -28,8 +28,8 @@ urlpatterns = [
     path('photo/personal-sort/', views.PersonalSortPhotoApi.as_view()),
 
     # Comment
-    # Post method have 2 required params: comment_pk api_token in headers;
-    # 2 not required params: parent_comment_id,comment
+    # Post method have 3 required params:slug_id comment api_token in headers;
+    # 2 not required params: parent_comment_id
 
     # Patch method have 3 required params: comment_pk,comment, api_token in headers
     # Delete method have 2 required params: comment_pk,comment, api_token in headers
