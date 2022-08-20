@@ -9,3 +9,5 @@ from api.custom_schema.sort_personal_photo.get import *
 from api.custom_schema.comment.post import *
 from api.custom_schema.comment.patch import *
 from api.custom_schema.comment.delete import *
+from api.custom_schema.like.post import *
+from api.custom_schema.like.delete import *
