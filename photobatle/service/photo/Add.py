@@ -19,7 +19,7 @@ class AddPhotoService(DataMixin, Service):
 
 
     def get_new_photo_name(self):
-        self.cleaned_data['photo'].name = self.cleaned_data['photo_name']
+        self.cleaned_data['photo'].name = self.slug_russian_word(self.cleaned_data['photo_name'])
 
     @property
     def validate_photo_name(self):

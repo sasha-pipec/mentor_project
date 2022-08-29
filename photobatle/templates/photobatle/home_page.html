@@ -26,11 +26,11 @@
         <div class="image-user-navbar">
             <a href="{% url 'user_page'%}">
                 {% if user.photo|check_photo_admin %}
-                    {% if user.photo.url|check_photo %}
-                    <img src="{{user.photo.url}}" class="photo-user-navbar" alt="">
-                    {% else%}
-                    <img src="/static/image/default-photo-post.jpeg" class="photo-user-navbar" alt="">
-                    {% endif %}
+                {% if user.photo.url|check_photo %}
+                <img src="{{user.photo.url}}" class="photo-user-navbar" alt="">
+                {% else%}
+                <img src="/static/image/default-photo-post.jpeg" class="photo-user-navbar" alt="">
+                {% endif %}
                 {% else %}
                 <img src="/static/image/default-photo-post.jpeg" class="photo-user-navbar" alt="">
                 {% endif %}
@@ -65,6 +65,9 @@
     {% block content %}
     {% endblock %}
 </div>
+
+<div id="test"></div>
+
 <footer class="bg-light text-center text-lg-start">
     <div class="text-center p-3">
         © 2022 Copyright:
@@ -82,5 +85,25 @@
         crossorigin="anonymous"></script>
 {% block script%}
 {% endblock %}
+<script type="text/javascript">
+    const socket = new WebSocket('ws://127.0.0.1:8000/ws/test/');
+
+    socket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            console.log(data);
+            let message =document.getElementById('test');
+            let id = Math.random()+ Math.random();
+            message.insertAdjacentHTML('beforeend',
+                                                  '<div class="notification" id="notification '+id+'">'+
+                                                        '<h3 class="info-notification">'+data.message+'</h3>'+
+                                                        '<a class="close-notification" id="'+id+'">x</a>'+
+                                                  '</div>');
+            let close =document.getElementById(id);
+            close.onclick = function(){
+                var elem=document.getElementById('notification '+id).remove();
+            }
+        };
+
+</script>
 </body>
 </html>

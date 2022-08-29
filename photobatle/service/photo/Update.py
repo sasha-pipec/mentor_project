@@ -20,7 +20,7 @@ class UpdatePhotoService(DataMixin, Service):
     user_id = forms.IntegerField()
 
     def get_new_photo_name(self):
-        self.cleaned_data['photo'].name = self.cleaned_data['photo_name']
+        self.cleaned_data['photo'].name = self.slug_russian_word(self.cleaned_data['photo_name'])
 
     @property
     def validate_slug_id(self):
@@ -44,4 +44,5 @@ class UpdatePhotoService(DataMixin, Service):
                 post.slug = self.slug_russian_word(self.cleaned_data['photo_name'])
             if self.cleaned_data['photo_content'] and self.cleaned_data['photo_content'] != post.photo_content:
                 post.photo_content = self.cleaned_data['photo_content']
+            post.moderation = 'MOD'
             return post.save()

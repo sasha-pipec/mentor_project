@@ -21,6 +21,8 @@ redis = "*"
 eventlet = "*"
 django-service-objects = "*"
 drf-yasg = "*"
+channels = "*"
+channels-redis = "*"
 
 [dev-packages]
 

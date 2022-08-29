@@ -1,7 +1,7 @@
-from datetime import date
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 from django.contrib import admin
 from django.utils.safestring import mark_safe
-from imagekit.admin import AdminThumbnail
 from django.http import HttpResponse
 
 from photobatle.service import *
@@ -54,11 +54,26 @@ class PhotoAdmin(admin.ModelAdmin):
         return super(PhotoAdmin, self).formfield_for_choice_field(db_field, request, **kwargs)
 
     def save_model(self, request, obj, form, change):
+        channel_layer = get_channel_layer()
         if obj.moderation == 'REJ':
             try:
-                DeletePhotoService.execute({'slug_id': obj.slug})
+                async_to_sync(channel_layer.group_send)(
+                    str(obj.user), {
+                        'type': 'chat_message',
+                        'message': f"Ваше фото '{obj.photo_name}' отклонили"
+                    }
+                )
+                DeletePhotoService.execute({'slug_id': obj.slug, 'user_id': obj.user.pk})
             except ValidationError as error:
                 return HttpResponse(error)
+        elif obj.moderation == 'APR':
+            async_to_sync(channel_layer.group_send)(
+                str(obj.user), {
+                    'type': 'chat_message',
+                    'message': f"Ваше фото '{obj.photo_name}' одобрили"
+                }
+            )
+
         super().save_model(request, obj, form, change)
 
     get_html_photo.short_description = 'фото'

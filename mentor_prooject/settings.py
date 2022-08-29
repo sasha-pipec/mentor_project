@@ -49,6 +49,9 @@ INSTALLED_APPS = [
     # allauth providers
     'allauth.socialaccount.providers.vk',
 
+    # Channels
+    'channels',
+
     # Photobatle
     'photobatle.apps.PhotobatleConfig',
     'service_objects',
@@ -64,7 +67,7 @@ INSTALLED_APPS = [
     'drf_yasg',
 
     # Imagekit
-    'imagekit'
+    'imagekit',
 ]
 
 MIDDLEWARE = [
@@ -83,6 +86,16 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ]
+}
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('127.0.0.1', 6379)]
+        }
+    }
+
 }
 
 TEMPLATES = [
@@ -109,6 +122,8 @@ AUTHENTICATION_BACKENDS = [
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 WSGI_APPLICATION = 'mentor_prooject.wsgi.application'
+
+ASGI_APPLICATION = 'mentor_prooject.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases

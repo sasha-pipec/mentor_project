@@ -567,13 +567,37 @@ animation-play-state: paused;
 border-radius:50px;
 }
 
+#test{
+display:grid;
+position:fixed;
+left:0;
+right:0;
+bottom:0;
+z-index:9999;
+}
 
+.notification{
+display:inline-flex;
+justify-content:space-between;
+border-radius:15px;
+width:40%;
+margin-bottom:10px;
+}
 
+.info-notification{
+margin-left:5%;
+}
 
+.close-notification{
+margin-right:5%;
+cursor:pointer;
+}
 
+.close-notification:hover{
+color:red;
+}
 
-
-
-
-
-
+.notification{
+background: rgb(0, 255, 255);
+background: linear-gradient(90deg, rgba(123, 104, 238) 0%, rgba(30, 144, 255) 100%);
+}
