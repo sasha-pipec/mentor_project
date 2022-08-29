@@ -36,7 +36,7 @@ class CreateLikeService(Service):
         username = str(models.Usermodels.User.objects.get(pk=self.cleaned_data['user_id']))
         async_to_sync(channel_layer.group_send)(
             str(photo.user), {
-                'type': 'chat_message',
+                'type': 'message',
                 'message': f"Ваше фото '{photo.photo_name}' "
                            f"понравилось пользователю {username}. "
                            f"Всего голосов:{photo.like_count}"

@@ -45,7 +45,7 @@ class WSTest(AsyncWebsocketConsumer):
         await self.channel_layer.group_send(
             self.personal_room,
             {
-                'type': 'chat_message',
+                'type': 'message',
                 'message': message
             }
         )
@@ -53,12 +53,12 @@ class WSTest(AsyncWebsocketConsumer):
         await self.channel_layer.group_send(
             self.general_room,
             {
-                'type': 'chat_message',
+                'type': 'message',
                 'message': 'message'
             }
         )
 
-    async def chat_message(self, event):
+    async def message(self, event):
         message = event['message']
 
         await self.send(text_data=json.dumps({
