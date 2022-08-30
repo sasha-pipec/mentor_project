@@ -95,7 +95,7 @@
             let id = Math.random()+ Math.random();
             message.insertAdjacentHTML('beforeend',
                                                   '<div class="notification" id="notification '+id+'">'+
-                                                        '<h3 class="info-notification">'+data.message+'</h3>'+
+                                                        '<p class="info-notification">'+data.message+'</p>'+
                                                         '<a class="close-notification" id="'+id+'">x</a>'+
                                                   '</div>');
             let close =document.getElementById(id);
