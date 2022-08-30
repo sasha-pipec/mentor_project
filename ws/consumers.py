@@ -26,7 +26,6 @@ class WSTest(AsyncWebsocketConsumer):
             await self.accept()
 
     async def disconnect(self, close_code):
-
         await self.channel_layer.group_discard(
             self.personal_room,
             self.channel_name
@@ -40,28 +39,30 @@ class WSTest(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
-        print(message)
+        admin = text_data_json['admin']
+
+        if admin == 'no':
+            await self.channel_layer.group_send(
+                self.personal_room,
+                {
+                    'type': 'message',
+                    'message': message
+                }
+            )
 
         await self.channel_layer.group_send(
-            self.personal_room,
+            self.general_room,
             {
                 'type': 'message',
                 'message': message
             }
         )
 
-        await self.channel_layer.group_send(
-            self.general_room,
-            {
-                'type': 'message',
-                'message': 'message'
-            }
-        )
-
     async def message(self, event):
         message = event['message']
+        admin = event['admin'] if 'admin' in event.keys() else 'no'
 
         await self.send(text_data=json.dumps({
-            'message': message
+            'message': message,
+            'admin': admin
         }))
-

@@ -21,6 +21,15 @@
     <a class="navbar-brand" href="{% url 'home'%}"><h5>Главная</h5></a>
     {%block navbar%}
     {% endblock %}
+    {% if user.is_superuser %}
+        <form>
+            {% csrf_token %}
+            <div class="form-group">
+                <input class="form-control" type="text" placeholder="Уведомление для пользователей" id="spam">
+            </div>
+            <a  class="btn btn-primary test" id="send">Отправить</a>
+        </form>
+    {% endif %}
     {% if user.is_authenticated %}
     <div class="user-navbar">
         <div class="image-user-navbar">
@@ -103,6 +112,16 @@
                 var elem=document.getElementById('notification '+id).remove();
             }
         };
+
+        let spam_message =document.getElementById('send');
+            spam_message.onclick = function(){
+                var elem=document.getElementById('spam');
+                socket.send(JSON.stringify({
+                'message': 'Admin: '+elem.value,
+                'admin': 'yes',
+            }));
+
+            }
 
 </script>
 </body>
