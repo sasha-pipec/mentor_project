@@ -6,7 +6,7 @@ from . import models
 
 
 def social_signal(request, user, **kwargs):
-    '''Сигнал после успешной авторизаци через vk/ контроль фотографии'''
+    """Signal after successes authorization from vl / control photo"""
     list_data = kwargs['sociallogin'].account.extra_data
     name = urlparse(list_data['photo']).path.split('/')[-1]
     response = requests.get(list_data['photo'])
