@@ -7,7 +7,7 @@ patch_comment_parameters = [
                                   "account",
                       type=openapi.TYPE_STRING,
                       required=True),
-    openapi.Parameter('comment_pk', openapi.IN_PATH,
+    openapi.Parameter('comment_id', openapi.IN_PATH,
                       description="The pk of comment",
                       type=openapi.TYPE_STRING,
                       required=True),
@@ -20,5 +20,5 @@ patch_comment_parameters = [
 patch_comment_response = {
     status.HTTP_201_CREATED: 'Successes',
     status.HTTP_401_UNAUTHORIZED: 'Incorrect value of Api_token',
-    status.HTTP_409_CONFLICT: 'Incorrect comment_pk values',
+    status.HTTP_409_CONFLICT: 'Incorrect comment_id values',
 }

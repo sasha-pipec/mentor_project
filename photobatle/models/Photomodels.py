@@ -48,7 +48,7 @@ class Photo(models.Model):
         return os.path.exists(str(self.photo.url)[1::])
 
     def get_absolute_url(self):
-        return reverse('detail_post', kwargs={'slug_id': self.slug})
+        return reverse('detail_post', kwargs={'slug': self.slug})
 
     class Meta:
         app_label = 'photobatle'

@@ -7,21 +7,21 @@ from photobatle import models
 class SortingFormService(Service):
     """Service class for sorting form"""
 
-    form = forms.CharField()
-    name = forms.CharField(required=False)
+    sort_value = forms.CharField()
+    search_value = forms.CharField(required=False)
 
     @property
     def validate_form(self):
         sort_list = ['like_count', 'comment_count', 'updated_at']
-        if self.cleaned_data['form'].split('=')[-1] in sort_list:
+        if self.cleaned_data['sort_value'].split('=')[-1] in sort_list:
             return True
-        raise Exception(f"Incorrect form value")
+        raise Exception(f"Incorrect sort_value")
 
     def process(self):
         if self.validate_form:
             return models.Photomodels.Photo.objects.annotate(comment_count=Count('comment_photo', distinct=True),
                                                              like_count=Count('like_photo', distinct=True)).filter(
-                Q(user__username__icontains=self.cleaned_data['name']) |
-                Q(photo_name__icontains=self.cleaned_data['name']) |
-                Q(photo_content__icontains=self.cleaned_data['name']),
-                moderation='APR').order_by(f"-{self.cleaned_data['form'].split('=')[-1]}")
+                Q(user__username__icontains=self.cleaned_data['search_value']) |
+                Q(photo_name__icontains=self.cleaned_data['search_value']) |
+                Q(photo_content__icontains=self.cleaned_data['search_value']),
+                moderation='APR').order_by(f"-{self.cleaned_data['sort_value'].split('=')[-1]}")

@@ -2,7 +2,7 @@ from drf_yasg import openapi
 from rest_framework import status
 
 get_sort_personal_photo_parameters = [
-    openapi.Parameter('form', openapi.IN_QUERY,
+    openapi.Parameter('sort_value', openapi.IN_QUERY,
                       description="You can choice one of the all parameters for sorting posts. form take: "
                                   "'DEL',  'MOD', 'APR' , 'REJ'",
                       type=openapi.TYPE_STRING),

@@ -7,15 +7,15 @@ urlpatterns = [
     path('user/', views.RenderingUserPage.as_view(), name='user_page'),
 
     path('photo/post', views.AddPhoto.as_view(), name='create_photo'),
-    path('photo/patch/<slug:slug_id>', views.UpdatePhoto.as_view(), name='update_photo'),
-    path('photo/delete/<slug:slug_id>', views.DeletePhoto.as_view(), name='delete_photo'),
-    path('photo/recovery/<slug:slug_id>', views.RecoveryPhoto.as_view(), name='recovery_photo'),
+    path('photo/patch/<slug:slug>', views.UpdatePhoto.as_view(), name='update_photo'),
+    path('photo/delete/<slug:slug>', views.DeletePhoto.as_view(), name='delete_photo'),
+    path('photo/recovery/<slug:slug>', views.RecoveryPhoto.as_view(), name='recovery_photo'),
     path('photo/get/personal_list_photo', views.PersonalListPosts.as_view(), name='personal_list_posts'),
-    path('photo/get/<slug:slug_id>', views.DetailPost.as_view(), name='detail_post'),
+    path('photo/get/<slug:slug>', views.DetailPost.as_view(), name='detail_post'),
 
     path('comment/post/<parent_comment_id>', views.CreatingCommentForPhoto.as_view(), name='create_comment'),
-    path('comment/delete/<comment_pk>', views.DeletingCommentForPhoto.as_view(), name='delete_comment'),
-    path('comment/patch/<comment_pk>', views.UpdatingCommentForPhoto.as_view(), name='update_comment'),
+    path('comment/delete/<comment_id>', views.DeletingCommentForPhoto.as_view(), name='delete_comment'),
+    path('comment/patch/<comment_id>', views.UpdatingCommentForPhoto.as_view(), name='update_comment'),
 
     path('like/post/<photo_id>', views.CreatingLikeForPhoto.as_view(), name='create_like'),
     path('like/delete/<photo_id>', views.DeletingLikeForPhoto.as_view(), name='delete_like'),

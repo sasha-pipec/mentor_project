@@ -15,17 +15,15 @@ class DeleteLikeService(Service):
     @property
     def validate_photo_id(self):
         try:
-            models.Photomodels.Photo.objects.get(pk=self.cleaned_data['photo_id'])
+            return models.Photomodels.Photo.objects.get(pk=self.cleaned_data['photo_id'])
         except Exception:
             raise Exception(f"Incorrect photo_id value")
-        return True
 
     @property
     def get_like(self):
         try:
-            models.Likemodels.Like.objects.get(photo_id=self.cleaned_data['photo_id'],
-                                               user_id=self.cleaned_data['user_id'])
-            return True
+            return models.Likemodels.Like.objects.get(photo_id=self.cleaned_data['photo_id'],
+                                                      user_id=self.cleaned_data['user_id'])
         except Exception:
             raise Exception(f"Photo dont have like from this user")
 

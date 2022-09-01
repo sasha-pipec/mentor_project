@@ -6,26 +6,24 @@ from photobatle import tasks
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 
-from photobatle.celery import app
-
 
 class DeletePhotoService(Service):
     """Service class for delete photo"""
 
-    slug_id = forms.SlugField()
+    slug = forms.SlugField()
     user_id = forms.IntegerField()
 
     @property
     def validate_slug_id(self):
         try:
-            return models.Photomodels.Photo.objects.get(slug=self.cleaned_data['slug_id'],
+            return models.Photomodels.Photo.objects.get(slug=self.cleaned_data['slug'],
                                                         user_id=self.cleaned_data['user_id'])
         except:
-            raise Exception(f"Incorrect slug_id value")
+            raise Exception(f"Incorrect slug value")
 
     def send_notification(self):
         channel_layer = get_channel_layer()
-        photo = models.Photomodels.Photo.objects.get(slug=self.cleaned_data['slug_id'])
+        photo = models.Photomodels.Photo.objects.get(slug=self.cleaned_data['slug'])
         list_user_id = models.Commentmodels.Comment.objects.values('user_id').filter(
             photo_id=photo.pk).distinct()
         for user_id in list_user_id:
@@ -41,7 +39,7 @@ class DeletePhotoService(Service):
     def process(self):
         if self.validate_slug_id:
             self.send_notification()
-            photo = models.Photomodels.Photo.objects.get(slug=self.cleaned_data['slug_id'])
+            photo = models.Photomodels.Photo.objects.get(slug=self.cleaned_data['slug'])
             photo.moderation = 'DEL'
             task = tasks.delete_photo.s(photo.slug).apply_async(countdown=20)
             photo.task_id = task.id

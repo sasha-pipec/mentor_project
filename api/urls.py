@@ -12,7 +12,7 @@ urlpatterns = [
     # Patch method have 2 required params: slug_id, api_token in headers; not required photo, photo_name, photo_content
     # Get method have 1 required params: slug_id
     path('photo', views.PhotoAPI.as_view()),
-    path('photo/<slug:slug_id>', views.ModifiedPhotoAPI.as_view()),
+    path('photo/<slug:slug>', views.ModifiedPhotoAPI.as_view()),
 
     # Personal photo
     # Get method have 1 required params: api_token in headers
@@ -34,7 +34,7 @@ urlpatterns = [
     # Patch method have 3 required params: comment_pk,comment, api_token in headers
     # Delete method have 2 required params: comment_pk,comment, api_token in headers
     path('comment', views.CommentAPI.as_view()),
-    path('comment/<comment_pk>', views.ModifiedCommentAPI.as_view()),
+    path('comment/<comment_id>', views.ModifiedCommentAPI.as_view()),
 
     # Like
     # Post method have 2 required params: photo_id api_token in headers;

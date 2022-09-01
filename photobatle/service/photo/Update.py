@@ -8,12 +8,10 @@ class UpdatePhotoService(DataMixin, Service):
     """Service class for update photo"""
 
     def get_type_of_photo(self):
-        if self.file:
-            if self.content_type.split('/')[1] != 'jpeg':
-                raise ValidationError('Тип загружаемого файла не JPEG, повторите попытку', code='invalid')
-        return None
+        if self.file and self.content_type.split('/')[1] != 'jpeg':
+            raise ValidationError('Type of file is not jpeg, try again', code='invalid')
 
-    slug_id = forms.SlugField()
+    slug = forms.SlugField()
     photo_name = forms.CharField(required=False)
     photo_content = forms.CharField(required=False)
     photo = forms.Field(required=False, validators=[get_type_of_photo])
@@ -25,15 +23,14 @@ class UpdatePhotoService(DataMixin, Service):
     @property
     def validate_slug_id(self):
         try:
-            models.Photomodels.Photo.objects.get(slug=self.cleaned_data['slug_id'],
-                                                 user_id=self.cleaned_data['user_id'])
-            return True
+            return models.Photomodels.Photo.objects.get(slug=self.cleaned_data['slug'],
+                                                        user_id=self.cleaned_data['user_id'])
         except:
-            raise ValidationError(f"Incorrect slug_id value", code='invalid')
+            raise ValidationError(f"Incorrect slug value", code='invalid')
 
     def process(self):
         if self.validate_slug_id:
-            post = models.Photomodels.Photo.objects.get(slug=self.cleaned_data['slug_id'])
+            post = models.Photomodels.Photo.objects.get(slug=self.cleaned_data['slug'])
 
             if self.cleaned_data['photo'] and self.cleaned_data['photo'] != post.photo:
                 self.get_new_photo_name(post.photo_name)

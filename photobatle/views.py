@@ -52,7 +52,7 @@ class CreatingCommentForPhoto(View):
             CreateCommentService.execute(request.POST.dict() | kwargs | {'user_id': request.user.id})
         except Exception as error:
             return HttpResponse(error)
-        return redirect('detail_post', slug_id=request.POST['photo_slug'])
+        return redirect('detail_post', slug=request.POST['photo_slug'])
 
 
 class DeletingCommentForPhoto(View):
@@ -63,7 +63,7 @@ class DeletingCommentForPhoto(View):
             photo_id = DeleteCommentService.execute(kwargs | {'user_id': request.user.id})
         except Exception as error:
             return HttpResponse(error)
-        return redirect('detail_post', slug_id=photo_id.slug)
+        return redirect('detail_post', slug=photo_id.slug)
 
 
 class UpdatingCommentForPhoto(View):
@@ -74,7 +74,7 @@ class UpdatingCommentForPhoto(View):
             photo_id = UpdateCommentService.execute(request.POST.dict() | kwargs | {'user_id': request.user.id})
         except Exception as error:
             return HttpResponse(error)
-        return redirect('detail_post', slug_id=photo_id.slug)
+        return redirect('detail_post', slug=photo_id.slug)
 
 
 class CreatingLikeForPhoto(View):
@@ -85,7 +85,7 @@ class CreatingLikeForPhoto(View):
             slug = CreateLikeService.execute(kwargs | {'user_id': request.user.id})
         except Exception as error:
             return HttpResponse(error)
-        return redirect('detail_post', slug_id=slug)
+        return redirect('detail_post', slug=slug)
 
 
 class DeletingLikeForPhoto(View):
@@ -96,14 +96,14 @@ class DeletingLikeForPhoto(View):
             slug = DeleteLikeService.execute(kwargs | {'user_id': request.user.id})
         except Exception as error:
             return HttpResponse(error)
-        return redirect('detail_post', slug_id=slug)
+        return redirect('detail_post', slug=slug)
 
 
 class DetailPost(DataMixin, DetailView):
     """Detailed view of the post"""
     model = models.Photomodels.Photo
     template_name = 'photobatle/detail_post.html'
-    slug_url_kwarg = 'slug_id'
+    slug_url_kwarg = 'slug'
     context_object_name = 'post'
 
     def get_context_data(self, parent_id=None, *args, oject_list=None, **kwargs):

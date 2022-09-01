@@ -139,7 +139,7 @@
               day: 'numeric',
             };
               $.ajax({
-                  data: {'form':$(this).serialize(),
+                  data: {'sort_value':$(this).serialize(),
                   'csrfmiddlewaretoken': '{{csrf_token}}',
                   'user_id': '{{user.pk}}',},
                   type: $(this).attr('method'),

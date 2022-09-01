@@ -60,7 +60,7 @@
                                     <div class="answer-for-comment" id="answer-for-comment-{{comment.pk}}">
                                         <div class="answer-comment-button">
                                             <form method="post"
-                                                  action="{% url 'create_comment' parent_comment_id=comment.pk %}">
+                                                  action="{% url 'create_comment' comment.pk %}">
                                                 {% csrf_token %}
                                                 <textarea name="comment" type="text"
                                                           class="md-textarea form-control answer-comment-textarea"
@@ -79,7 +79,7 @@
                                     <div class="edit-comment" id="edit-comment-{{comment.pk}}" style="display:none;">
                                         <div class="answer-comment-button">
                                             <form method="post"
-                                                  action="{% url 'update_comment' comment_pk=comment.pk %}">
+                                                  action="{% url 'update_comment' comment.pk %}">
                                                 {% csrf_token %}
                                                 <textarea name="comment" type="text"
                                                           class="md-textarea form-control answer-comment-textarea"
@@ -143,7 +143,7 @@
                                         <div class="answer-for-comment" id="answer-for-comment-{{answer.pk}}">
                                             <div class="answer-comment-button">
                                                 <form method="post"
-                                                      action="{% url 'create_comment' parent_comment_id=answer.pk %}">
+                                                      action="{% url 'create_comment' answer.pk %}">
                                                     {% csrf_token %}
                                                     <textarea name="comment" type="text"
                                                               class="md-textarea form-control answer-comment-textarea"
@@ -164,7 +164,7 @@
                                         <div class="edit-comment" id="edit-comment-{{answer.pk}}" style="display:none;">
                                             <div class="answer-comment-button">
                                                 <form method="post"
-                                                      action="{% url 'update_comment' comment_pk=answer.pk %}">
+                                                      action="{% url 'update_comment' answer.pk %}">
                                                     {% csrf_token %}
                                                     <textarea name="comment" type="text"
                                                               class="md-textarea form-control answer-comment-textarea"

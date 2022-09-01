@@ -123,8 +123,8 @@
               day: 'numeric',
             };
               $.ajax({
-                  data: {'form':$(this).serialize(),
-                  'name':contentInput,
+                  data: {'sort_value':$(this).serialize(),
+                  'search_value':contentInput,
                   'csrfmiddlewaretoken': '{{csrf_token}}',},
                   type: $(this).attr('method'),
                   url: "{% url 'ajax' %}",
@@ -190,7 +190,7 @@
               day: 'numeric',
             };
               $.ajax({
-                  data: {'name':contentInput,
+                  data: {'search_value':contentInput,
                   'csrfmiddlewaretoken': '{{csrf_token}}',},
                   type: 'post',
                   url: "{% url 'ajax_second' %}",

@@ -7,11 +7,11 @@ from photobatle import models
 class SearchFormService(Service):
     """Service class for search form"""
 
-    name = forms.CharField()
+    search_value = forms.CharField()
 
     def process(self):
         return models.Photomodels.Photo.objects.annotate(comment_count=Count('comment_photo', distinct=True),
                                                          like_count=Count('like_photo', distinct=True)).filter(
-            Q(user__username__icontains=self.cleaned_data['name']) |
-            Q(photo_name__icontains=self.cleaned_data['name']) |
-            Q(photo_content__icontains=self.cleaned_data['name']), moderation='APR')
+            Q(user__username__icontains=self.cleaned_data['search_value']) |
+            Q(photo_name__icontains=self.cleaned_data['search_value']) |
+            Q(photo_content__icontains=self.cleaned_data['search_value']), moderation='APR')
