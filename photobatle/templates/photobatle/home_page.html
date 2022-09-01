@@ -96,11 +96,11 @@
 {% endblock %}
 <script type="text/javascript">
 
+    if('{{user.is_authenticated}}'==='True'){
     const socket = new WebSocket('ws://127.0.0.1:8000/ws/test/');
 
     socket.onmessage = function(e) {
             const data = JSON.parse(e.data);
-            console.log(data);
             let message =document.getElementById('test');
             let id = Math.random()+ Math.random();
             message.insertAdjacentHTML('beforeend',
@@ -123,6 +123,7 @@
             }));
 
             }
+    };
 
 </script>
 </body>
