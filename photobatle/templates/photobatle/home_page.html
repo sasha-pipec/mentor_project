@@ -95,6 +95,7 @@
 {% block script%}
 {% endblock %}
 <script type="text/javascript">
+
     const socket = new WebSocket('ws://127.0.0.1:8000/ws/test/');
 
     socket.onmessage = function(e) {

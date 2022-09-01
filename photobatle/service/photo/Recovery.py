@@ -22,7 +22,7 @@ class RecoveryPhotoService(Service):
 
     def process(self):
         if self.validate_slug_id:
-            app.control.revoke(self.cleaned_data['slug_id'])
             photo = models.Photomodels.Photo.objects.get(slug=self.cleaned_data['slug_id'])
+            app.control.revoke(photo.task_id)
             photo.moderation = 'MOD'
             photo.save()

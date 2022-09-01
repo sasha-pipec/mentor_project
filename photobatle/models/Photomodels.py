@@ -1,4 +1,3 @@
-import datetime
 import os
 from django.db import models
 from django.urls import reverse
@@ -27,6 +26,7 @@ class Photo(models.Model):
     photo_content = models.TextField(blank=False, verbose_name='Описание фото')
     create_at = models.DateField(null=True, auto_now_add=True, verbose_name='Дата создания')
     updated_at = models.DateField(auto_now=True, verbose_name='Дата обновления')
+    task_id = models.TextField(null=True, blank=True)
 
     ON_DELETION = 'DEL'
     ON_MODERATION = 'MOD'

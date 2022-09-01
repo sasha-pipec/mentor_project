@@ -1,19 +1,17 @@
 import json
-from time import sleep
-from asgiref.sync import sync_to_async
 
 from channels.generic.websocket import AsyncWebsocketConsumer
-from photobatle.serializers import *
 
 
 class WSTest(AsyncWebsocketConsumer):
 
     async def connect(self):
-        user = self.scope['user'] if self.scope['user'] != 'AnonymousUser' else None
-        if user:
-            self.personal_room = str(user)
-            self.general_room = 'general_room'
+        self.scope['user'] = None if self.scope['user'].pk is None else self.scope['user']
+        self.personal_room = str(self.scope['user'])
+        self.general_room = 'general_room'
+        self.anonymous_room = 'anonymous_room'
 
+        if self.scope['user']:
             await self.channel_layer.group_add(
                 self.personal_room,
                 self.channel_name
@@ -23,7 +21,12 @@ class WSTest(AsyncWebsocketConsumer):
                 self.general_room,
                 self.channel_name
             )
-            await self.accept()
+        else:
+            await self.channel_layer.group_add(
+                self.anonymous_room,
+                self.channel_name
+            )
+        await self.accept()
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(
@@ -33,6 +36,11 @@ class WSTest(AsyncWebsocketConsumer):
 
         await self.channel_layer.group_discard(
             self.general_room,
+            self.channel_name
+        )
+
+        await self.channel_layer.group_discard(
+            self.anonymous_room,
             self.channel_name
         )
 

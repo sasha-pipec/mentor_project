@@ -59,7 +59,7 @@ class PhotoAdmin(admin.ModelAdmin):
             try:
                 async_to_sync(channel_layer.group_send)(
                     str(obj.user), {
-                        'type': 'chat_message',
+                        'type': 'message',
                         'message': f"Ваше фото '{obj.photo_name}' отклонили"
                     }
                 )
@@ -69,7 +69,7 @@ class PhotoAdmin(admin.ModelAdmin):
         elif obj.moderation == 'APR':
             async_to_sync(channel_layer.group_send)(
                 str(obj.user), {
-                    'type': 'chat_message',
+                    'type': 'message',
                     'message': f"Ваше фото '{obj.photo_name}' одобрили"
                 }
             )

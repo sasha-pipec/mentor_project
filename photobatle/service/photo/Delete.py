@@ -1,11 +1,12 @@
 from django import forms
-from django.db.models import Count
 
 from photobatle import models
 from service_objects.services import Service
 from photobatle import tasks
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+
+from photobatle.celery import app
 
 
 class DeletePhotoService(Service):
@@ -42,5 +43,6 @@ class DeletePhotoService(Service):
             self.send_notification()
             photo = models.Photomodels.Photo.objects.get(slug=self.cleaned_data['slug_id'])
             photo.moderation = 'DEL'
-            tasks.delete_photo.s(slug=self.cleaned_data['slug_id']).apply_async(countdown=20, task_id=photo.slug)
+            task = tasks.delete_photo.s(photo.slug).apply_async(countdown=20)
+            photo.task_id = task.id
             photo.save()

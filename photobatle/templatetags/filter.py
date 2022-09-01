@@ -42,7 +42,7 @@ def check_like(value, arg):
 
 @register.filter
 def list_answer_comment(value, arg):
-    # возвращаем список ответов к определенному комментарию
+    # return list answers for certain comment
     return value[arg - 1]
 
 
