@@ -1,9 +1,9 @@
 from django import forms
 from service_objects.services import Service
-from photobatle import models
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.db.models import Count
+from photobatle.models import *
 
 
 class CreateCommentService(Service):
@@ -16,23 +16,23 @@ class CreateCommentService(Service):
 
     @property
     def validate_parent_comment_id(self):
-        if not models.Commentmodels.Comment.objects.filter(
-                photo_id=(models.Photomodels.Photo.objects.get(slug=self.cleaned_data['photo_slug'])).id,
+        if not Comment.objects.filter(
+                photo_id=(Photo.objects.get(slug=self.cleaned_data['photo_slug'])).id,
                 pk=self.cleaned_data['parent_comment_id']):
             raise Exception(f"Incorrect parent_comment_id value")
         return True
 
     @property
     def validate_photo_slug(self):
-        if not models.Photomodels.Photo.objects.filter(slug=self.cleaned_data['photo_slug']):
+        if not Photo.objects.filter(slug=self.cleaned_data['photo_slug']):
             raise Exception(f"Incorrect photo_slug value")
         return True
 
     def send_notification(self):
         channel_layer = get_channel_layer()
-        photo = models.Photomodels.Photo.objects.annotate(comment_count=Count('comment_photo')).get(
+        photo = Photo.objects.annotate(comment_count=Count('comment_photo')).get(
             slug=self.cleaned_data['photo_slug'])
-        username = str(models.Usermodels.User.objects.get(pk=self.cleaned_data['user_id']))
+        username = str(User.objects.get(pk=self.cleaned_data['user_id']))
         async_to_sync(channel_layer.group_send)(
             str(photo.user), {
                 'type': 'message',
@@ -44,20 +44,19 @@ class CreateCommentService(Service):
 
     def process(self):
         if self.validate_photo_slug:
-            photo = models.Photomodels.Photo.objects.get(slug=self.cleaned_data['photo_slug'])
+            photo = Photo.objects.get(slug=self.cleaned_data['photo_slug'])
             if self.cleaned_data['comment']:
                 if self.cleaned_data['parent_comment_id'] is None or self.cleaned_data['parent_comment_id'] == 'None':
                     # Creating a comment entry in the database
-
-                    models.Commentmodels.Comment.objects.create(
-                        photo=models.Photomodels.Photo(pk=photo.id),
+                    Comment.objects.create(
+                        photo=Photo(pk=photo.id),
                         user_id=self.cleaned_data['user_id'],
                         content=self.cleaned_data['comment'])
                 else:
                     # Creating a record of a response to a comment in the database
                     if self.validate_parent_comment_id:
-                        models.Commentmodels.Comment.objects.create(
-                            photo=models.Photomodels.Photo(pk=photo.id),
+                        Comment.objects.create(
+                            photo=Photo(pk=photo.id),
                             user_id=self.cleaned_data['user_id'],
                             parent_id=self.cleaned_data['parent_comment_id'],
                             content=self.cleaned_data['comment'])

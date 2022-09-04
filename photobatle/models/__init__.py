@@ -1,11 +1,4 @@
-from .Photomodels import Photo
-from .Usermodels import User
-from .Commentmodels import Comment
-from .Likemodels import Like
-
-__all__ = [
-    'Photo',
-    'User',
-    'Comment',
-    'Like'
-]
+from photobatle.models.comment.models import *
+from photobatle.models.like.models import *
+from photobatle.models.photo.models import *
+from photobatle.models.user.models import *

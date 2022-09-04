@@ -2,6 +2,7 @@ from django import forms
 from service_objects.services import Service
 from photobatle.utils import *
 from django.core.exceptions import ValidationError
+from photobatle.models import *
 
 
 class AddPhotoService(DataMixin, Service):
@@ -21,7 +22,7 @@ class AddPhotoService(DataMixin, Service):
 
     def process(self):
         self.get_new_photo_name()
-        models.Photomodels.Photo.objects.create(
+        Photo.objects.create(
             photo_name=self.cleaned_data['photo_name'],
             photo_content=self.cleaned_data['photo_content'],
             photo=self.cleaned_data['photo'],

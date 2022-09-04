@@ -1,6 +1,6 @@
 from django import forms
 from service_objects.services import Service
-from photobatle import models
+from photobatle.models import *
 
 
 class DeleteCommentService(Service):
@@ -12,15 +12,15 @@ class DeleteCommentService(Service):
     @property
     def validate_comment_pk(self):
         try:
-            if models.Commentmodels.Comment.objects.filter(parent_id=self.cleaned_data['comment_id']):
+            if Comment.objects.filter(parent_id=self.cleaned_data['comment_id']):
                 raise Exception(f"Comment have children")
-            return models.Commentmodels.Comment.objects.get(pk=self.cleaned_data['comment_id'],
-                                                            user_id=self.cleaned_data['user_id'])
+            return Comment.objects.get(pk=self.cleaned_data['comment_id'],
+                                       user_id=self.cleaned_data['user_id'])
         except:
             raise Exception(f"Incorrect comment_id value")
 
     def process(self):
         if self.validate_comment_pk:
-            comment = models.Commentmodels.Comment.objects.get(pk=self.cleaned_data['comment_id'])
+            comment = Comment.objects.get(pk=self.cleaned_data['comment_id'])
             comment.delete()
-            return models.Photomodels.Photo.objects.get(pk=comment.photo_id)
+            return Photo.objects.get(pk=comment.photo_id)

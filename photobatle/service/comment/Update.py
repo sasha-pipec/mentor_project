@@ -1,6 +1,6 @@
 from django import forms
 from service_objects.services import Service
-from photobatle import models
+from photobatle.models import *
 
 
 class UpdateCommentService(Service):
@@ -13,14 +13,14 @@ class UpdateCommentService(Service):
     @property
     def validate_comment_pk(self):
         try:
-            return models.Commentmodels.Comment.objects.get(pk=self.cleaned_data['comment_id'],
-                                                            user_id=self.cleaned_data['user_id'])
+            return Comment.objects.get(pk=self.cleaned_data['comment_id'],
+                                       user_id=self.cleaned_data['user_id'])
         except:
             raise Exception(f"Incorrect comment_id value")
 
     def process(self):
         if self.validate_comment_pk:
-            user_comment = models.Commentmodels.Comment.objects.get(pk=self.cleaned_data['comment_id'])
+            user_comment = Comment.objects.get(pk=self.cleaned_data['comment_id'])
             user_comment.content = self.cleaned_data['comment']
             user_comment.save()
-            return models.Photomodels.Photo.objects.get(pk=user_comment.photo_id)
+            return Photo.objects.get(pk=user_comment.photo_id)

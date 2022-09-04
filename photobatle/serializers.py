@@ -1,12 +1,12 @@
 from rest_framework import serializers
-from photobatle.models import Usermodels, Photomodels, Commentmodels
+from photobatle.models import *
 
 
 class CommentSerializer(serializers.ModelSerializer):
     '''Comment serializer'''
 
     class Meta:
-        model = Commentmodels.Comment
+        model = Comment
         fields = ('__all__')
 
 
@@ -14,7 +14,7 @@ class UserSerializer(serializers.ModelSerializer):
     '''User serializer'''
 
     class Meta:
-        model = Usermodels.User
+        model = User
         fields = ('__all__')
 
 
@@ -33,9 +33,9 @@ class PhotoSerializer(serializers.ModelSerializer):
         return obj.photo_imagekit_medium.url
 
     def get_all_comments(self, obj):
-        return (CommentSerializer(Commentmodels.Comment.objects.select_related('photo').filter(
+        return (CommentSerializer(Comment.objects.select_related('photo').filter(
             photo_id=obj.id), many=True)).data
 
     class Meta:
-        model = Photomodels.Photo
+        model = Photo
         fields = ('__all__')

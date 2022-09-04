@@ -1,5 +1,5 @@
 from transliterate import translit
-from . import models
+from photobatle.models import *
 
 
 class DataMixin:
@@ -19,7 +19,7 @@ class DataMixin:
 
     def all_comments_for_post(self, parent_id=None, photo_id=None):
         # function for getting all the answers under the comment
-        comments = models.Commentmodels.Comment.objects.filter(photo_id=photo_id, parent_id=parent_id)
+        comments = Comment.objects.filter(photo_id=photo_id, parent_id=parent_id)
         all_answer_for_comment = []
         if len(comments) != 0:
             for comment in comments:

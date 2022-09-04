@@ -2,6 +2,7 @@ from django import forms
 from service_objects.services import Service
 from photobatle.utils import *
 from django.core.exceptions import ValidationError
+from photobatle.models import *
 
 
 class UpdatePhotoService(DataMixin, Service):
@@ -23,14 +24,14 @@ class UpdatePhotoService(DataMixin, Service):
     @property
     def validate_slug_id(self):
         try:
-            return models.Photomodels.Photo.objects.get(slug=self.cleaned_data['slug'],
-                                                        user_id=self.cleaned_data['user_id'])
+            return Photo.objects.get(slug=self.cleaned_data['slug'],
+                                     user_id=self.cleaned_data['user_id'])
         except:
             raise ValidationError(f"Incorrect slug value", code='invalid')
 
     def process(self):
         if self.validate_slug_id:
-            post = models.Photomodels.Photo.objects.get(slug=self.cleaned_data['slug'])
+            post = Photo.objects.get(slug=self.cleaned_data['slug'])
 
             if self.cleaned_data['photo'] and self.cleaned_data['photo'] != post.photo:
                 self.get_new_photo_name(post.photo_name)

@@ -1,4 +1,4 @@
-from .photo.Add import *
+from .photo.Create import *
 from .photo.Update import *
 from .photo.Delete import *
 from .photo.Recovery import *

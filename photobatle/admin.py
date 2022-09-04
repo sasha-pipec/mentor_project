@@ -1,12 +1,9 @@
-from asgiref.sync import async_to_sync
-from channels.layers import get_channel_layer
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 from django.http import HttpResponse
 
 from photobatle.service import *
-
-from . import models
+from photobatle.models import *
 
 
 class UserAdmin(admin.ModelAdmin):
@@ -107,8 +104,8 @@ class LikeAdmin(admin.ModelAdmin):
     get_html_photo.short_description = 'фото'
 
 
-admin.site.register(models.Usermodels.User, UserAdmin)
-admin.site.register(models.Photomodels.Photo, PhotoAdmin)
-admin.site.register(models.Commentmodels.Comment, CommentAdmin)
-admin.site.register(models.Likemodels.Like, LikeAdmin)
+admin.site.register(User, UserAdmin)
+admin.site.register(Photo, PhotoAdmin)
+admin.site.register(Comment, CommentAdmin)
+admin.site.register(Like, LikeAdmin)
 # Register your models here.

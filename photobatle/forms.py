@@ -1,6 +1,5 @@
 from django import forms
-
-from . import models
+from photobatle.models import *
 
 FRUIT_CHOICES = [
     ('like_count', 'Сортировка по лайкам'),
@@ -31,7 +30,7 @@ class PersonalSortForm(forms.Form):
 
 class AddPhotoForm(forms.ModelForm):
     class Meta:
-        model = models.Photomodels.Photo
+        model = Photo
         fields = ['photo', 'photo_name', 'photo_content']
         widgets = {
             'photo_name': forms.TextInput(attrs={'class': 'form-field'}),

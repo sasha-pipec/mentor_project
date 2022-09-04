@@ -10,7 +10,7 @@ def social_signal(request, user, **kwargs):
     list_data = kwargs['sociallogin'].account.extra_data
     name = urlparse(list_data['photo']).path.split('/')[-1]
     response = requests.get(list_data['photo'])
-    path_photo=str(models.User.objects.get(username=list_data['screen_name']).photo).split('/')[-1]
+    path_photo = str(models.User.objects.get(username=list_data['screen_name']).photo).split('/')[-1]
     if path_photo != name:
         models.User.objects.get(username=list_data['screen_name']).photo.save(name, ContentFile(response.content),
                                                                               save=True)
