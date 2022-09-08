@@ -1,6 +1,5 @@
 .idea/
 __pycache__/
-/__pycache__/
 /media/
 .env
 celerybeat-schedule
