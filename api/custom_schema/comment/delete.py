@@ -15,7 +15,6 @@ delete_comment_parameters = [
 
 delete_comment_response = {
     status.HTTP_204_NO_CONTENT: 'Successes',
-    status.HTTP_400_BAD_REQUEST: 'Comment have children',
     status.HTTP_401_UNAUTHORIZED: 'Incorrect value of Api_token',
-    status.HTTP_409_CONFLICT: 'Incorrect comment_id values',
+    status.HTTP_409_CONFLICT: 'Incorrect comment_id values or Comment have children',
 }

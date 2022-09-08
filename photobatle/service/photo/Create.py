@@ -8,24 +8,31 @@ from photobatle.models import *
 class AddPhotoService(DataMixin, Service):
     """Service class for add photo"""
 
-    def get_type_of_photo(self):
-        if self.content_type.split('/')[1] != 'jpeg':
-            raise ValidationError(f"Incorrect type of photo,try jpeg", code='invalid')
-
     photo_name = forms.CharField()
     photo_content = forms.CharField()
-    photo = forms.Field(validators=[get_type_of_photo])
+    photo = forms.Field()
     user_id = forms.IntegerField()
+
+    @property
+    def validate_type_of_photo(self):
+        if self.cleaned_data['photo'].content_type.split('/')[1] != 'jpeg':
+            raise ValidationError(f"Incorrect type of photo,try jpeg", code='invalid')
+        return True
+
+    @property
+    def validate_photo_name(self):
+        if Photo.objects.filter(photo_name=self.cleaned_data['photo_name']):
+            raise ValidationError(f"Photo with that name already exists", code='invalid')
+        return True
 
     def get_new_photo_name(self):
         self.cleaned_data['photo'].name = self.slug_russian_word(self.cleaned_data['photo_name'])
 
     def process(self):
-        self.get_new_photo_name()
-        Photo.objects.create(
-            photo_name=self.cleaned_data['photo_name'],
-            photo_content=self.cleaned_data['photo_content'],
-            photo=self.cleaned_data['photo'],
-            user_id=self.cleaned_data['user_id'],
-            slug=self.slug_russian_word(self.cleaned_data['photo_name'])
-        )
+        if self.validate_type_of_photo:
+            if self.validate_photo_name:
+                self.get_new_photo_name()
+                self.cleaned_data['slug'] = self.slug_russian_word(self.cleaned_data['photo_name'])
+                Photo.objects.create(
+                    **self.cleaned_data
+                )

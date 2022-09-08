@@ -23,5 +23,5 @@ post_comment_parameters = [
 post_comment_response = {
     status.HTTP_201_CREATED: 'Successes',
     status.HTTP_401_UNAUTHORIZED: 'Incorrect value of Api_token',
-    status.HTTP_409_CONFLICT: 'Incorrect slug_id values',
+    status.HTTP_409_CONFLICT: 'Incorrect slug or parent_comment_id values',
 }

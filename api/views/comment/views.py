@@ -35,7 +35,7 @@ class ModifiedCommentAPI(APIView):
         try:
             DeleteCommentService.execute(kwargs | {'user_id': request.user.id})
         except Exception:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(status=status.HTTP_409_CONFLICT)
         return Response(status=204)
 
     @swagger_auto_schema(manual_parameters=patch_comment_parameters,

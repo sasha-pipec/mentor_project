@@ -24,7 +24,7 @@ patch_photo_parameters = [
 
 patch_photo_response = {
     status.HTTP_204_NO_CONTENT: 'Successes',
-    status.HTTP_409_CONFLICT: 'Incorrect value of slug',
+    status.HTTP_409_CONFLICT: 'Incorrect value of slug or not required parameters',
     status.HTTP_401_UNAUTHORIZED: 'Incorrect value of Api_token',
 }
 

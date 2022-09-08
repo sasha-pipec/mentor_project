@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 from django.http import HttpResponse
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 
 from photobatle.service import *
 from photobatle.models import *
@@ -24,7 +26,7 @@ class PhotoAdmin(admin.ModelAdmin):
         'moderation')
     list_filter = ('moderation', 'user')
     ordering = ('create_at', 'photo_name', 'user')
-    readonly_fields = ('create_at', 'updated_at',)
+    readonly_fields = ('create_at', 'updated_at', 'task_id', 'previous_photo')
     search_fields = ('photo_name',)
     prepopulated_fields = {'slug': ('photo_name',)}
 
@@ -37,8 +39,9 @@ class PhotoAdmin(admin.ModelAdmin):
             return mark_safe(f"<img src='{object.previous_photo.url}' width=50>")
 
     def get_readonly_fields(self, request, obj):
-        if obj.moderation == "APR":
-            return self.readonly_fields + ('moderation',)
+        if obj:
+            if obj.moderation == "APR":
+                return self.readonly_fields + ('moderation',)
         return super().get_readonly_fields(request, obj)
 
     def formfield_for_choice_field(self, db_field, request, **kwargs):
@@ -96,6 +99,11 @@ class LikeAdmin(admin.ModelAdmin):
     list_filter = ('user',)
     ordering = ('user',)
     search_fields = ('user__username',)
+
+    @receiver(pre_save, sender=Like)
+    def pre_save_handler(sender, instance, *args, **kwargs):
+        if instance.photo.user == instance.user:
+            raise Exception('It is your photo, you cant create like')
 
     def get_html_photo(self, object):
         if object.photo:

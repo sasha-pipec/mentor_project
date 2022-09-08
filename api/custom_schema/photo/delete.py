@@ -14,7 +14,7 @@ delete_photo_parameters = [
 ]
 
 delete_photo_response = {
-    status.HTTP_201_CREATED: 'Successes',
+    status.HTTP_204_NO_CONTENT: 'Successes',
     status.HTTP_409_CONFLICT: 'Incorrect value of slug',
     status.HTTP_401_UNAUTHORIZED: 'Incorrect value of Api_token',
 }

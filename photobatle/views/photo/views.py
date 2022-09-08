@@ -18,7 +18,8 @@ class AddPhoto(View):
         try:
             AddPhotoService.execute(request.FILES.dict() | request.POST.dict() | {'user_id': request.user.id})
         except Exception as error:
-            return HttpResponse(error)
+            return render(request, 'photobatle/add_photo_form.html',
+                          context={'form': AddPhotoForm(), 'error_message': error.message})
         return redirect('home')
 
 
@@ -30,7 +31,7 @@ class UpdatePhoto(View):
             UpdatePhotoService.execute(
                 request.FILES.dict() | request.POST.dict() | kwargs | {'user_id': request.user.id})
         except Exception as error:
-            return HttpResponse(error)
+            return HttpResponse(error.message)
         return redirect('personal_list_posts')
 
 
