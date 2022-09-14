@@ -85,7 +85,11 @@
     </div>
     {% endfor %}
     {% else %}
-    <h1>Вы еще не загружали фото</h1>
+        {% if error_message %}
+            <h1>{{ error_message }}</h1>
+        {% else %}
+            <h1>Вы еще не загружали фото</h1>
+        {% endif %}
     {% endif %}
     <!-- Конец цикла -->
 </div>

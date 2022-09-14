@@ -31,7 +31,7 @@ class UpdatePhoto(View):
             UpdatePhotoService.execute(
                 request.FILES.dict() | request.POST.dict() | kwargs | {'user_id': request.user.id})
         except Exception as error:
-            return HttpResponse(error.message)
+            return render(request, 'photobatle/personal_list_posts.html', context={'error_message': error.message})
         return redirect('personal_list_posts')
 
 
