@@ -34,6 +34,8 @@ class UpdatePhotoService(DataMixin, Service):
     def validate_photo_name(self):
         if Photo.objects.filter(photo_name=self.cleaned_data['photo_name']):
             raise ValidationError(f"Photo with that name already exists", code='invalid')
+        if Photo.objects.filter(slug=self.slug_russian_word(self.cleaned_data['photo_name'])):
+            raise ValidationError(f"Photo with that slug already exists, try new photo name", code='invalid')
         return True
 
     def process(self):

@@ -5,7 +5,7 @@ from photobatle.models import *
 class DataMixin:
     def slug_russian_word(self, word):
         # Making a slug of Russian words
-        russia = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя'
+        russia = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя1234567890'
         slug = ''
         for i in word:
             if i.lower() in russia:
@@ -13,8 +13,6 @@ class DataMixin:
             else:
                 if i == ' ':
                     slug += '-'
-                else:
-                    slug += i
         return slug
 
     def all_comments_for_post(self, parent_id=None, photo_id=None):
