@@ -62,6 +62,7 @@ class PersonalListPosts(ListView):
     model = Photo
     template_name = 'photobatle/personal_list_posts.html'
     context_object_name = 'posts'
+    paginate_by = 2
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)

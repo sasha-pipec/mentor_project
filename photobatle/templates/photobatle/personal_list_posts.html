@@ -128,6 +128,9 @@
     {% endfor %}
 </div>
 {% endblock %}
+{% block pagination %}
+    {% include 'photobatle/pagination.html' %}
+{% endblock %}
 
 
 {% block script %}
@@ -137,6 +140,7 @@
       $(document).ready(function () {
       <!--  AJAX для фильтрации     -->
         $('#SortForm').change(function () {
+            var pagination = document.getElementsByClassName('pagination__item');
          var options = {
               year: 'numeric',
               month: 'long',
@@ -145,64 +149,79 @@
               $.ajax({
                   data: {'sort_value':$(this).serialize(),
                   'csrfmiddlewaretoken': '{{csrf_token}}',
-                  'user_id': '{{user.pk}}',},
+                  'user_id': '{{user.pk}}',
+                   'page':'1'},
                   type: $(this).attr('method'),
                   url: "{% url 'personal_sort_form' %}",
                   success: function (response) {
                       $('.row-personal-photo').empty();
                       if((response.posts).length!=0){
-                      for(var key in response.posts)
-                      {
-                      var name_photo=response.posts[key].photo_name;
-                      var url_photo=response.posts[key].checking_the_existence;
-                      var slug=response.posts[key].slug;
-                      var photo_delete='{% url "delete_photo" 0 %}'.replace('0',slug);
-                      var photo_recovery='{% url "recovery_photo" 0 %}'.replace('0',slug);
-                      if(url_photo!='True'){
-                      var url_photo='/static/image/default-photo-post.jpeg';
-                      }else{
-                      var url_photo=response.posts[key].photo;
-                      }
+                      for(var key in response.posts) {
+                          var name_photo = response.posts[key].photo_name;
+                          var url_photo = response.posts[key].checking_the_existence;
+                          var slug = response.posts[key].slug;
+                          var photo_delete = '{% url "delete_photo" 0 %}'.replace('0', slug);
+                          var photo_recovery = '{% url "recovery_photo" 0 %}'.replace('0', slug);
+                          if (url_photo != 'True') {
+                              var url_photo = '/static/image/default-photo-post.jpeg';
+                          } else {
+                              var url_photo = response.posts[key].photo;
+                          }
 
-                      var content=
-                        '<div class="col">'+
-                                '<div class="card" style="width: 18rem;" id="card">'+
-                                '<a href="' + response.posts[key].get_absolute_url + '">'+
-                                    "<img id='foo' class='card-img-top' src='"+url_photo+"'alt='Не загрузилось :('>"+
-                                '</a>'+
-                                    '<div class="card-body" id="card-body">';
-                                    if(response.posts[key].moderation != "DEL" && response.posts[key].moderation != "REJ"){
-                                    var content=content+'<a href="'+ photo_delete+'"><img src="/static/image/удалить.png" style="margin-right:10%;"></a>'+
-                                    '<a onclick="'+"edit_a_photo(id='"+response.posts[key].id+"',content='"+response.posts[key].photo_content+"',name='"+response.posts[key].photo_name+"',photo='"+response.posts[key]['photo_imagekit_medium']+"')"+'">'+
-                                    '<img src="/static/image/изменение.png" style="margin-left:75%; cursor:pointer;" alt=""></a>';
-                                    }else{
-                                    var content=content+'<a href="'+photo_recovery+'" ><img src="/static/image/востановление.png" style="margin-right:10%;"></a>';
-                                    }
+                          var content =
+                              '<div class="col">' +
+                              '<div class="card" style="width: 18rem;" id="card">' +
+                              '<a href="' + response.posts[key].get_absolute_url + '">' +
+                              "<img id='foo' class='card-img-top' src='" + url_photo + "'alt='Не загрузилось :('>" +
+                              '</a>' +
+                              '<div class="card-body" id="card-body">';
+                          if (response.posts[key].moderation != "DEL" && response.posts[key].moderation != "REJ") {
+                              var content = content + '<a href="' + photo_delete + '"><img src="/static/image/удалить.png" style="margin-right:10%;"></a>' +
+                                  '<a onclick="' + "edit_a_photo(id='" + response.posts[key].id + "',content='" + response.posts[key].photo_content + "',name='" + response.posts[key].photo_name + "',photo='" + response.posts[key]['photo_imagekit_medium'] + "')" + '">' +
+                                  '<img src="/static/image/изменение.png" style="margin-left:75%; cursor:pointer;" alt=""></a>';
+                          } else {
+                              var content = content + '<a href="' + photo_recovery + '" ><img src="/static/image/востановление.png" style="margin-right:10%;"></a>';
+                          }
 
-                                    if(name_photo.length>=11){
-                                    var content=content+'<h5 class="card-title" id="first_letters">Название: '+name_photo.substr(0,8)+'...</h5>'+
-                                    '<h5 class="card-title" id="full_letters">Название: '+name_photo+'</h5>';
-                                    }else{
-                                    var content=content+'<h5 class="card-title">Название: '+name_photo+'</h5>';
-                                    }
+                          if (name_photo.length >= 11) {
+                              var content = content + '<h5 class="card-title" id="first_letters">Название: ' + name_photo.substr(0, 8) + '...</h5>' +
+                                  '<h5 class="card-title" id="full_letters">Название: ' + name_photo + '</h5>';
+                          } else {
+                              var content = content + '<h5 class="card-title">Название: ' + name_photo + '</h5>';
+                          }
 
-                                      var content=content +
-                                        '<p class="card-text" id="post_content">Описание: '+response.posts[key].photo_content+'</p>'+
-                                        '<p class="card-text">Автор: '+ response.posts[key].user.username +'</p>'+
-                                        '<p class="card-text">Лайки: '+response.posts[key].like_count+'</p>'+
-                                        '<p class="card-text">Комментарии: '+response.posts[key].comment_count+'</p>'+
-                                        '<p class="card-text">Дата публикации: <br> '+ new Date(response.posts[key].updated_at).toLocaleDateString("ru", options) +'</p>'+
-                                        '<p class="card-text">Статус: '+response.posts[key].get_moderation_display+'</p>'+
-                                        '<a href="'+ response.posts[key].get_absolute_url + '"class="btn btn-primary" id="btn-post">Посмотреть</a>'+
-                                    '</div>'+
-                                '</div>'+
-                        '</div>'
-                      ;
-                      $('.row-personal-photo').append(content);
+                          var content = content +
+                              '<p class="card-text" id="post_content">Описание: ' + response.posts[key].photo_content + '</p>' +
+                              '<p class="card-text">Автор: ' + response.posts[key].user.username + '</p>' +
+                              '<p class="card-text">Лайки: ' + response.posts[key].like_count + '</p>' +
+                              '<p class="card-text">Комментарии: ' + response.posts[key].comment_count + '</p>' +
+                              '<p class="card-text">Дата публикации: <br> ' + new Date(response.posts[key].updated_at).toLocaleDateString("ru", options) + '</p>' +
+                              '<p class="card-text">Статус: ' + response.posts[key].get_moderation_display + '</p>' +
+                              '<a href="' + response.posts[key].get_absolute_url + '"class="btn btn-primary" id="btn-post">Посмотреть</a>' +
+                              '</div>' +
+                              '</div>' +
+                              '</div>'
+                          ;
+                          $('.row-personal-photo').append(content);
+                          for (var i = 0; i < pagination.length; i++) {
+                              pagination[i].style.display = 'inline-flex';
+                              if (Number(pagination[i].id) <= Number(response['max_page'])) {
+                                  if (pagination[i].id == response['active_page']) {
+                                      pagination[i].classList.add('active');
+                                      continue;
+                                  }
+                                  pagination[i].classList.remove('active');
+                                  continue;
+                              }
+                              pagination[i].style.display = 'none';
+                          }
                       }
                       }else{
                       var content='<h1>Ничего не найдено</h1>';
                       $('.row-personal-photo').append(content);
+                      for (var i = 0; i < pagination.length; i++) {
+                              pagination[i].style.display='none';
+                      };
                       }
 
                   },
@@ -212,6 +231,97 @@
                   });
               return false;
          });
+
+
+        <!--  AJAX для пагинации     -->
+        $('.pagination__link').click(function () {
+            var sort_value=document.querySelector('input[name="choice"]:checked');
+        if(sort_value){
+            sort_value=sort_value.value
+        }
+        var options = {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            };
+              $.ajax({
+                  data: {'csrfmiddlewaretoken': '{{csrf_token}}',
+                        'page':$(this).attr('id'),
+                      'user_id':'{{user.pk}}',
+                  'sort_value': sort_value,},
+                  type: 'get',
+                  url: "{% url 'pagination' %}",
+                  success: function (response) {
+                      $('.row-personal-photo').empty();
+                      if((response.posts).length>0){
+                      for(var key in response.posts) {
+                          var name_photo = response.posts[key].photo_name;
+                          var url_photo = response.posts[key].checking_the_existence;
+                          var slug = response.posts[key].slug;
+                          var photo_delete = '{% url "delete_photo" 0 %}'.replace('0', slug);
+                          var photo_recovery = '{% url "recovery_photo" 0 %}'.replace('0', slug);
+                          if (url_photo != 'True') {
+                              var url_photo = '/static/image/default-photo-post.jpeg';
+                          } else {
+                              var url_photo = response.posts[key].photo;
+                          }
+
+                          var content =
+                              '<div class="col">' +
+                              '<div class="card" style="width: 18rem;" id="card">' +
+                              '<a href="' + response.posts[key].get_absolute_url + '">' +
+                              "<img id='foo' class='card-img-top' src='" + url_photo + "'alt='Не загрузилось :('>" +
+                              '</a>' +
+                              '<div class="card-body" id="card-body">';
+                          if (response.posts[key].moderation != "DEL" && response.posts[key].moderation != "REJ") {
+                              var content = content + '<a href="' + photo_delete + '"><img src="/static/image/удалить.png" style="margin-right:10%;"></a>' +
+                                  '<a onclick="' + "edit_a_photo(id='" + response.posts[key].id + "',content='" + response.posts[key].photo_content + "',name='" + response.posts[key].photo_name + "',photo='" + response.posts[key]['photo_imagekit_medium'] + "')" + '">' +
+                                  '<img src="/static/image/изменение.png" style="margin-left:75%; cursor:pointer;" alt=""></a>';
+                          } else {
+                              var content = content + '<a href="' + photo_recovery + '" ><img src="/static/image/востановление.png" style="margin-right:10%;"></a>';
+                          }
+
+                          if (name_photo.length >= 11) {
+                              var content = content + '<h5 class="card-title" id="first_letters">Название: ' + name_photo.substr(0, 8) + '...</h5>' +
+                                  '<h5 class="card-title" id="full_letters">Название: ' + name_photo + '</h5>';
+                          } else {
+                              var content = content + '<h5 class="card-title">Название: ' + name_photo + '</h5>';
+                          }
+
+                          var content = content +
+                              '<p class="card-text" id="post_content">Описание: ' + response.posts[key].photo_content + '</p>' +
+                              '<p class="card-text">Автор: ' + response.posts[key].user.username + '</p>' +
+                              '<p class="card-text">Лайки: ' + response.posts[key].like_count + '</p>' +
+                              '<p class="card-text">Комментарии: ' + response.posts[key].comment_count + '</p>' +
+                              '<p class="card-text">Дата публикации: <br> ' + new Date(response.posts[key].updated_at).toLocaleDateString("ru", options) + '</p>' +
+                              '<p class="card-text">Статус: ' + response.posts[key].get_moderation_display + '</p>' +
+                              '<a href="' + response.posts[key].get_absolute_url + '"class="btn btn-primary" id="btn-post">Посмотреть</a>' +
+                              '</div>' +
+                              '</div>' +
+                              '</div>'
+                          ;
+                          $('.row-personal-photo').append(content);
+                          var pagination = document.getElementsByClassName('pagination__item');
+                          for (var i = 0; i < pagination.length; i++) {
+                                  if (pagination[i].id == response['active_page']) {
+                                      pagination[i].classList.add('active');
+                                      continue;
+                                  }
+                                  pagination[i].classList.remove('active');
+                          }
+                      }
+                      }else{
+                      var content='<h1>Ничего не найдено</h1>';
+                      $('.row').append(content);
+                      }
+                  },
+                  error: function (response) {
+                      alert('vopros')
+                  }
+                  });
+              return false;
+        });
+
       });
 
 </script>

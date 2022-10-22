@@ -1,7 +1,7 @@
-{% load static%}
+{% load static %}
 {% load socialaccount %}
 {% providers_media_js %}
-{% load filter%}
+{% load filter %}
 <!doctype html>
 <html lang="en">
 <head>
@@ -18,8 +18,8 @@
 <body>
 <!--Навигация-->
 <nav class="navbar navbar-expand-lg navbar-light" style="z-index: 999999;">
-    <a class="navbar-brand" href="{% url 'home'%}"><h5>Главная</h5></a>
-    {%block navbar%}
+    <a class="navbar-brand" href="{% url 'home' %}"><h5>Главная</h5></a>
+    {% block navbar %}
     {% endblock %}
     {% if user.is_superuser %}
         <form>
@@ -27,53 +27,56 @@
             <div class="form-group">
                 <input class="form-control" type="text" placeholder="Уведомление для пользователей" id="spam">
             </div>
-            <a  class="btn btn-primary test" id="send">Отправить</a>
+            <a class="btn btn-primary test" id="send">Отправить</a>
         </form>
     {% endif %}
     {% if user.is_authenticated %}
-    <div class="user-navbar">
-        <div class="image-user-navbar">
-            <a href="{% url 'user_page'%}">
-                {% if user.photo|check_photo_admin %}
-                {% if user.photo.url|check_photo %}
-                <img src="{{user.photo.url}}" class="photo-user-navbar" alt="">
-                {% else%}
-                <img src="/static/image/default-photo-post.jpeg" class="photo-user-navbar" alt="">
-                {% endif %}
-                {% else %}
-                <img src="/static/image/default-photo-post.jpeg" class="photo-user-navbar" alt="">
-                {% endif %}
-            </a>
-        </div>
-        <div class="info-user-navbar">
-            <div class="name-user-navbar">
-                {%if user.first_name%}
-                <h5>{{user.first_name}} {{user.last_name}}</h5>
-                {% else %}
-                <h5>{{user.username}}</h5>
-                {% endif %}
+        <div class="user-navbar">
+            <div class="image-user-navbar">
+                <a href="{% url 'user_page' %}">
+                    {% if user.photo|check_photo_admin %}
+                        {% if user.photo.url|check_photo %}
+                            <img src="{{ user.photo.url }}" class="photo-user-navbar" alt="">
+                        {% else %}
+                            <img src="/static/image/default-photo-post.jpeg" class="photo-user-navbar" alt="">
+                        {% endif %}
+                    {% else %}
+                        <img src="/static/image/default-photo-post.jpeg" class="photo-user-navbar" alt="">
+                    {% endif %}
+                </a>
             </div>
-            <div class="email-user-navbar">
-                <p>{{user.email}}</p>
+            <div class="info-user-navbar">
+                <div class="name-user-navbar">
+                    {% if user.first_name %}
+                        <h5>{{ user.first_name }} {{ user.last_name }}</h5>
+                    {% else %}
+                        <h5>{{ user.username }}</h5>
+                    {% endif %}
+                </div>
+                <div class="email-user-navbar">
+                    <p>{{ user.email }}</p>
+                </div>
+            </div>
+            <div class="logout-user-navbar">
+                <a href="{% url 'logout_user' %}">
+                    <img src="/static/image/logout.png" alt="">
+                </a>
             </div>
         </div>
-        <div class="logout-user-navbar">
-            <a href="{% url 'logout_user'%}">
-                <img src="/static/image/logout.png" alt="">
-            </a>
-        </div>
-    </div>
     {% else %}
-    <a class="navbar-brand" href="{% provider_login_url 'vk' method='oauth2'%}"><h5>Вход</h5></a>
+        <a class="navbar-brand" href="{% provider_login_url 'vk' method='oauth2' %}"><h5>Вход</h5></a>
     {% endif %}
 </nav>
 <!--Конец навигации-->
 {% block animation %}
-{%endblock%}
+{% endblock %}
 <div class="container-fluid">
     {% block content %}
     {% endblock %}
 </div>
+{% block pagination %}
+{% endblock %}
+
 
 <div id="test"></div>
 
@@ -92,38 +95,39 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
-{% block script%}
+{% block script %}
 {% endblock %}
 <script type="text/javascript">
 
-    if('{{user.is_authenticated}}'==='True'){
-    const socket = new WebSocket('ws://127.0.0.1:8000/ws/test/');
+    if ('{{user.is_authenticated}}' === 'True') {
+        const socket = new WebSocket('ws://127.0.0.1:8000/ws/test/');
 
-    socket.onmessage = function(e) {
+        socket.onmessage = function (e) {
             const data = JSON.parse(e.data);
-            let message =document.getElementById('test');
-            let id = Math.random()+ Math.random();
+            let message = document.getElementById('test');
+            let id = Math.random() + Math.random();
             message.insertAdjacentHTML('beforeend',
-                                                  '<div class="notification" id="notification '+id+'">'+
-                                                        '<p class="info-notification">'+data.message+'</p>'+
-                                                        '<a class="close-notification" id="'+id+'">x</a>'+
-                                                  '</div>');
-            let close =document.getElementById(id);
-            close.onclick = function(){
-                var elem=document.getElementById('notification '+id).remove();
+                '<div class="notification" id="notification ' + id + '">' +
+                '<p class="info-notification">' + data.message + '</p>' +
+                '<a class="close-notification" id="' + id + '">x</a>' +
+                '</div>');
+            let close = document.getElementById(id);
+            close.onclick = function () {
+                var elem = document.getElementById('notification ' + id).remove();
             }
         };
 
-        let spam_message =document.getElementById('send');
-            spam_message.onclick = function(){
-                var elem=document.getElementById('spam');
-                socket.send(JSON.stringify({
-                'message': 'Admin: '+elem.value,
+        let spam_message = document.getElementById('send');
+        spam_message.onclick = function () {
+            var elem = document.getElementById('spam');
+            socket.send(JSON.stringify({
+                'message': 'Admin: ' + elem.value,
                 'admin': 'yes',
             }));
 
-            }
-    };
+        }
+    }
+    ;
 
 </script>
 </body>

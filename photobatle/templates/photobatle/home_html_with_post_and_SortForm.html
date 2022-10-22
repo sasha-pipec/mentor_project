@@ -105,6 +105,9 @@
     <!-- Конец цикла -->
 </div>
 {% endblock %}
+{% block pagination %}
+    {% include 'photobatle/pagination.html' %}
+{% endblock %}
 
 
 {% block script %}
@@ -125,7 +128,8 @@
               $.ajax({
                   data: {'sort_value':$(this).serialize(),
                   'search_value':contentInput,
-                  'csrfmiddlewaretoken': '{{csrf_token}}',},
+                  'csrfmiddlewaretoken': '{{csrf_token}}',
+                  'page':'1',},
                   type: $(this).attr('method'),
                   url: "{% url 'ajax' %}",
                   success: function (response) {
@@ -168,6 +172,14 @@
                         '</div>'
                       ;
                       $('.row').append(content);
+                      var pagination = document.getElementsByClassName('pagination__item');
+                      for(var i=0;i<pagination.length;i++){
+                          if(pagination[i].id==response['active_page']){
+                              pagination[i].classList.add('active');
+                              continue;
+                          }
+                          pagination[i].classList.remove('active');
+                      }
                       }
                       }else{
                       var content='<h1>Ничего не найдено</h1>';
@@ -184,6 +196,7 @@
         <!--  AJAX для поиска по слову      -->
         $('#serchForm').submit(function () {
         var contentInput=$('input[name="content"]').val().trim();
+        var pagination = document.getElementsByClassName('pagination__item');
         var options = {
               year: 'numeric',
               month: 'long',
@@ -191,7 +204,8 @@
             };
               $.ajax({
                   data: {'search_value':contentInput,
-                  'csrfmiddlewaretoken': '{{csrf_token}}',},
+                  'csrfmiddlewaretoken': '{{csrf_token}}',
+                  'page':'1'},
                   type: 'post',
                   url: "{% url 'ajax_second' %}",
                   success: function (response) {
@@ -235,10 +249,25 @@
                         '</div>'
                       ;
                       $('.row').append(content);
+                      for(var i=0;i<pagination.length;i++){
+                          pagination[i].style.display='inline-flex';
+                          if(Number(pagination[i].id)<=Number(response['max_page'])) {
+                              if (pagination[i].id == response['active_page']) {
+                                  pagination[i].classList.add('active');
+                                  continue;
+                              }
+                              pagination[i].classList.remove('active');
+                              continue;
+                          }
+                          pagination[i].style.display='none';
+                      }
                       }
                       }else{
                       var content='<h1>Ничего не найдено</h1>';
                       $('.row').append(content);
+                      for (var i = 0; i < pagination.length; i++) {
+                              pagination[i].style.display='none';
+                      };
                       }
                   },
                   error: function (response) {
@@ -247,10 +276,89 @@
                   });
               return false;
         });
+
+
+        <!--  AJAX для пагинации     -->
+        $('.pagination__link').click(function () {
+        var sort_value=document.querySelector('input[name="choice"]:checked');
+        var contentInput=$('input[name="content"]').val().trim();
+        if(sort_value){
+            sort_value=sort_value.value
+        }
+        var options = {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            };
+              $.ajax({
+                  data: {'csrfmiddlewaretoken': '{{csrf_token}}',
+                  'page':$(this).attr('id'),
+                  'sort_value': sort_value,
+                  'search_value':contentInput},
+                  type: 'get',
+                  url: "{% url 'pagination' %}",
+                  success: function (response) {
+                      $('.row').empty();
+                      if((response.posts).length>0){
+                      for(var key in response.posts)
+                      {
+
+                      var name_photo=response.posts[key].photo_name;
+                      var url_photo=response.posts[key].checking_the_existence;
+                      if(url_photo!='True'){
+                      var url_photo='/static/image/default-photo-post.jpeg';
+                      }else{
+                      var url_photo=response.posts[key].photo;
+                      }
+
+                      var content=
+                        '<div class="col">'+
+                                '<div class="card" style="width: 18rem;" id="card">'+
+                                '<a href="' + response.posts[key].get_absolute_url + '">'+
+                                    "<img class='card-img-top' src='"+url_photo+"' alt='Card image cap'>"+
+                                '</a>'+
+                                    '<div class="card-body" id="card-body">';
+
+                                    if(name_photo.length>=11){
+                                    var content=content+'<h5 class="card-title" id="first_letters">Название: '+name_photo.substr(0,8)+'...</h5>'+
+                                    '<h5 class="card-title" id="full_letters">Название: '+name_photo+'</h5>';
+                                    }else{
+                                    var content=content+'<h5 class="card-title">Название: '+name_photo+'</h5>';
+                                    }
+                                      var content=content +
+                                        '<p class="card-text" id="post_content">Описание: '+response.posts[key].photo_content+'</p>'+
+                                        '<p class="card-text">Автор: '+ response.posts[key].user.username +'</p>'+
+                                        '<p class="card-text">Лайки: '+response.posts[key].like_count +'</p>'+
+                                        '<p class="card-text">Комментарии: '+response.posts[key].comment_count +'</p>'+
+                                        '<p class="card-text">Дата публикации: <br> '+ new Date(response.posts[key].updated_at).toLocaleDateString("ru", options) +'</p>'+
+                                        '<a href="' + response.posts[key].get_absolute_url + '"class="btn btn-primary" id="btn-post">Посмотреть</a>'+
+                                    '</div>'+
+                                '</div>'+
+                        '</div>'
+                      ;
+                      $('.row').append(content);
+                      var pagination = document.getElementsByClassName('pagination__item');
+                      for(var i=0;i<pagination.length;i++){
+                          if(pagination[i].id==response['active_page']){
+                              pagination[i].classList.add('active');
+                              continue;
+                          }
+                          pagination[i].classList.remove('active');
+                      }
+                      }
+                      }else{
+                      var content='<h1>Ничего не найдено</h1>';
+                      $('.row').append(content);
+                      }
+                  },
+                  error: function (response) {
+                      alert('vopros')
+                  }
+                  });
+              return false;
+        });
+
+
       });
-
-
-
-
 </script>
 {% endblock %}

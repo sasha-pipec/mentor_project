@@ -603,3 +603,55 @@ score:nth-child(5n+5) {
     background: rgb(0, 255, 255);
     background: linear-gradient(90deg, rgba(123, 104, 238) 0%, rgba(30, 144, 255) 100%);
 }
+
+.pagination {
+    width: auto;
+    margin: 0 auto;
+    justify-content: center;
+}
+
+.pagination__link {
+    display: flex;
+    justify-content: center;
+    align-items: center
+}
+
+.pagination__link {
+    position: relative;
+    left: -1px;
+    top: 1px;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    font-size: 16px;
+    color: black;
+}
+
+.pagination__item {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    z-index: 1;
+    position: relative;
+    margin: 0 2px;
+    display: flex;
+    justify-content: center;
+    align-items: center
+}
+
+.pagination__item:first-child {
+    margin-left: 0
+}
+
+.pagination__item:last-child {
+    margin-right: 0
+}
+
+.pagination__item.active .pagination__link {
+    color: #fff;
+    background: plum;
+}
+
+.pagination__item--dots .pagination__link {
+    color: black
+}

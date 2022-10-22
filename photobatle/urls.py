@@ -29,4 +29,5 @@ urlpatterns = [
     path('sort_form_ajax/', SortingFormAjax.as_view(), name='ajax'),
     path('serch_form_ajax/', SearchFormAjax.as_view(), name='ajax_second'),
     path('personal_sort_form_ajax/', PersonalSortingFormAjax.as_view(), name='personal_sort_form'),
+    path('pagination_ajax/', PaginationAjax.as_view(), name='pagination'),
 ]

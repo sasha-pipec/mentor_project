@@ -17,6 +17,9 @@ class UserAdmin(admin.ModelAdmin):
         if object.photo:
             return mark_safe(f"<img src='{object.photo.url}' width=50>")
 
+    def has_delete_permission(self, request, obj=None):
+        return False
+
     get_html_photo.short_description = 'фото'
 
 
@@ -63,7 +66,7 @@ class PhotoAdmin(admin.ModelAdmin):
                         'message': f"Ваше фото '{obj.photo_name}' отклонили"
                     }
                 )
-                DeletePhotoService.execute({'slug_id': obj.slug, 'user_id': obj.user.pk})
+                DeletePhotoService.execute({'slug': obj.slug, 'user_id': obj.user.pk})
             except ValidationError as error:
                 return HttpResponse(error)
         elif obj.moderation == 'APR':
