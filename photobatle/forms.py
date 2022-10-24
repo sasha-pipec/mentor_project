@@ -25,7 +25,7 @@ class SortForm(forms.Form):
 
 
 class PersonalSortForm(forms.Form):
-    choice = forms.CharField(label='Сортировка', widget=forms.RadioSelect(choices=STATUS_CHOICES))
+    choice = forms.CharField(label='Фильтрация', widget=forms.RadioSelect(choices=STATUS_CHOICES))
 
 
 class AddPhotoForm(forms.ModelForm):
