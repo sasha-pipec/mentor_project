@@ -655,3 +655,9 @@ score:nth-child(5n+5) {
 .pagination__item--dots .pagination__link {
     color: black
 }
+
+#up_or_down{
+    cursor: pointer;
+    margin-top: 5px;
+    height: 45px;
+}

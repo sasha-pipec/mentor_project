@@ -10,18 +10,21 @@ class PaginationService(Service):
 
     sort_value = forms.CharField(required=False)
     search_value = forms.CharField(required=False)
+    direction = forms.CharField()
     page = forms.CharField()
 
     @property
     def validate_sort_value(self):
-        sort_list = ['like_count', 'comment_count', 'updated_at']
+        sort_list = ['like_count', 'comment_count', 'updated_at', 'id']
         if not self.cleaned_data['sort_value']:
             self.cleaned_data['sort_value'] = 'id'
-            return
-        if self.cleaned_data['sort_value'] in sort_list:
+        if self.cleaned_data['sort_value'] not in sort_list:
+            raise Exception(f"Incorrect sort_value")
+
+    @property
+    def validate_direction(self):
+        if self.cleaned_data['direction'] == 'desc':
             self.cleaned_data['sort_value'] = '-' + self.cleaned_data['sort_value']
-            return
-        raise Exception(f"Incorrect sort_value")
 
     def validate_page(self, page_range):
         if int(self.cleaned_data['page']) > page_range.stop:
@@ -29,12 +32,13 @@ class PaginationService(Service):
 
     def process(self):
         self.validate_sort_value
+        self.validate_direction
         all_photos = Photo.objects.annotate(comment_count=Count('comment_photo', distinct=True),
                                             like_count=Count('like_photo', distinct=True)).filter(
             Q(user__username__icontains=self.cleaned_data['search_value']) |
             Q(photo_name__icontains=self.cleaned_data['search_value']) |
             Q(photo_content__icontains=self.cleaned_data['search_value']),
-            moderation='APR').order_by(f"{self.cleaned_data['sort_value']}")
+            moderation='APR').order_by(self.cleaned_data['sort_value'])
         paginator = Paginator(all_photos, 2)
         self.validate_page(paginator.page_range)
         photos_on_page = (paginator.page(int(self.cleaned_data['page']))).object_list
