@@ -47,11 +47,11 @@ class UpdatePhotoService(DataMixin, Service):
                     self.get_new_photo_name(post.photo_name)
                     post.previous_photo = post.photo
                     post.photo = self.cleaned_data['photo']
+                    post.moderation = 'MOD'
             if self.cleaned_data['photo_name'] and self.cleaned_data['photo_name'] != post.photo_name:
                 if self.validate_photo_name:
                     post.photo_name = self.cleaned_data['photo_name']
                     post.slug = self.slug_russian_word(self.cleaned_data['photo_name'])
             if self.cleaned_data['photo_content'] and self.cleaned_data['photo_content'] != post.photo_content:
                 post.photo_content = self.cleaned_data['photo_content']
-            post.moderation = 'MOD'
             return post.save()
