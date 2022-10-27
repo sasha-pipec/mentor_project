@@ -194,6 +194,7 @@
 
                         {% endfor%}
                     </div>
+                    {% if user.is_authenticated %}
                     <form method="POST" action="{% url 'create_comment' parent_comment_id=None %}">
                         {% csrf_token %}
                         <input type="hidden" name="pk" value="{{post.pk}}">
@@ -202,15 +203,13 @@
                         <textarea onblur="default_text()" onclick="click_text()" name="comment" type="text"
                                   id="input-comment"
                                   placeholder="Оставить комментарий"></textarea>
-                            {% if user.is_authenticated %}
                             <button class="button-comment" type="submit"><img
                                     src="/static/image/add-comment.svg" alt="" class="image-comment-button"></button>
-                            {% else %}
-                            <a class="button-comment" href="{%provider_login_url 'vk' method='oauth2'%}"><img
-                                    src="/static/image/auth-for-comment.png" alt="" class="image-comment-button"></a>
-                            {% endif %}
                         </div>
                     </form>
+                    {% else %}
+                    <h5 style="text-align: center;margin-top: 5%;">Авторизуйтесь чтобы комментировать</h5>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -233,7 +232,7 @@
                     {% endif %}
                     {% endif %}
                     {% else %}
-                    <a class="btn btn-primary" id="btn-post-detail">Авторизуйтесь</a>
+                    <a class="btn btn-primary" id="btn-post-detail" style="cursor:default">Авторизуйтесь</a>
                     {% endif %}
                 </div>
 
