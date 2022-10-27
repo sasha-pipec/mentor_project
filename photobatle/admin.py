@@ -33,6 +33,45 @@ class PhotoAdmin(admin.ModelAdmin):
     search_fields = ('photo_name',)
     prepopulated_fields = {'slug': ('photo_name',)}
 
+    actions = ['make_published', 'make_rejected', ]
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    @admin.action(description='Одобрено')
+    def make_published(modeladmin, request, queryset):
+        channel_layer = get_channel_layer()
+        all_on_moderation = True
+        for elem in queryset:
+            if elem.moderation != "MOD":
+                all_on_moderation = False
+        if all_on_moderation:
+            queryset.update(moderation="APR")
+            for elem in queryset:
+                async_to_sync(channel_layer.group_send)(
+                    str(elem.user), {
+                        'type': 'message',
+                        'message': f"Ваше фото '{elem.photo_name}' одобрили"
+                    })
+
+    @admin.action(description='Отклонено')
+    def make_rejected(modeladmin, request, queryset):
+        channel_layer = get_channel_layer()
+        all_on_moderation = True
+        for elem in queryset:
+            if elem.moderation != "MOD":
+                all_on_moderation = False
+        if all_on_moderation:
+            queryset.update(moderation="REJ")
+            for elem in queryset:
+                async_to_sync(channel_layer.group_send)(
+                    str(elem.user), {
+                        'type': 'message',
+                        'message': f"Ваше фото '{elem.photo_name}' отклонили"
+                    }
+                )
+                DeletePhotoService.execute({'slug': elem.slug, 'user_id': elem.user.pk})
+
     def get_html_photo(self, object):
         if object.photo:
             return mark_safe(f"<img src='{object.photo.url}' width=50>")
@@ -89,6 +128,9 @@ class CommentAdmin(admin.ModelAdmin):
     ordering = ('create_at', 'user',)
     search_fields = ('user__username', 'content')
 
+    def has_delete_permission(self, request, obj=None):
+        return False
+
     def get_html_photo(self, object):
         if object.photo:
             return mark_safe(f"<img src='{object.photo.photo.url}' width=50>")
@@ -102,6 +144,9 @@ class LikeAdmin(admin.ModelAdmin):
     list_filter = ('user',)
     ordering = ('user',)
     search_fields = ('user__username',)
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
     @receiver(pre_save, sender=Like)
     def pre_save_handler(sender, instance, *args, **kwargs):
