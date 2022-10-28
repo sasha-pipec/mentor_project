@@ -3,6 +3,13 @@ from django.utils.safestring import mark_safe
 from django.http import HttpResponse
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
+from django.contrib.sites.models import Site
+from django.contrib.auth.models import Group
+
+from allauth.account.models import EmailAddress
+from allauth.socialaccount.models import SocialToken,SocialApp,SocialAccount
+
+from rest_framework.authtoken.models import TokenProxy
 
 from photobatle.service import *
 from photobatle.models import *
@@ -164,4 +171,12 @@ admin.site.register(User, UserAdmin)
 admin.site.register(Photo, PhotoAdmin)
 admin.site.register(Comment, CommentAdmin)
 admin.site.register(Like, LikeAdmin)
+
+admin.site.unregister(SocialToken)
+admin.site.unregister(SocialAccount)
+admin.site.unregister(SocialApp)
+admin.site.unregister(Site)
+admin.site.unregister(EmailAddress)
+admin.site.unregister(Group)
+admin.site.unregister(TokenProxy)
 # Register your models here.

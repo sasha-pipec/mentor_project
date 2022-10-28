@@ -40,6 +40,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.sites',
     'django.contrib.staticfiles',
+    
+    # DRF
+    'rest_framework',
+    'rest_framework.authtoken',
 
     # allauth
     'allauth',
@@ -58,10 +62,6 @@ INSTALLED_APPS = [
 
     # api
     'api.apps.ApiConfig',
-
-    # DRF
-    'rest_framework',
-    'rest_framework.authtoken',
 
     # Swagger
     'drf_yasg',
