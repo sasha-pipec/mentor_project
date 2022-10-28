@@ -131,7 +131,7 @@ a {
 }
 
 /*Кнопка в детальном просмотре*/
-#btn-post-detail {
+.btn-post-detail {
     width: 100%;
     border: none;
     border-radius: 0px;

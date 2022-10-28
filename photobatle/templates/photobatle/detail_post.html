@@ -217,22 +217,22 @@
             <div class="col-12 col-sm-4">
                 <div class="detail-post-info">
                     <p>Автор: {{post.user.username}}</p>
-                    <p>Лайки: {{post|like_count}}</p>
+                    <p id="like">Лайки: {{post|like_count}}</p>
                     <p>Комментарии: {{post|comment_count}}</p>
                     <p>Дата публикации: <br> {{post.updated_at}}</p>
                     {% if user.username %}
-                    {% if post.user.username == user.username %}
-                    <a class="btn btn-primary" id="btn-post-detail">Самолайки запрещены</a>
+                        {% if post.user.username == user.username %}
+                         <a class="btn btn-primary" id="btn-post-detail btn-post-detail">Самолайки запрещены</a>
+                        {% else %}
+                            {% if user.pk|check_like:post.pk%}
+                                <a  class="btn btn-primary btn-post-detail" id="delete">Снять
+                                голос</a>
+                            {% else %}
+                                <a  class="btn btn-primary btn-post-detail" id="create">Лайк</a>
+                            {% endif %}
+                        {% endif %}
                     {% else %}
-                    {% if user.pk|check_like:post.pk%}
-                    <a href="{% url 'delete_like' post.pk%}" class="btn btn-primary" id="btn-post-detail">Снять
-                        голос</a>
-                    {% else %}
-                    <a href="{% url 'create_like' post.pk%}" class="btn btn-primary" id="btn-post-detail">Лайк</a>
-                    {% endif %}
-                    {% endif %}
-                    {% else %}
-                    <a class="btn btn-primary" id="btn-post-detail" style="cursor:default">Авторизуйтесь</a>
+                        <a class="btn btn-primary btn-post-detail btn-post-detail" style="cursor:default">Авторизуйтесь</a>
                     {% endif %}
                 </div>
 
@@ -251,4 +251,51 @@
 {% block script %}
 <script type="text/javascript" src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+        $(document).ready(function () {
+
+
+            $('.detail-post-info').on('click','#create',function () {
+                var photo_id='{{post.pk}}';
+                var url="{% url 'create_like' 1 %}";
+                $.ajax({
+                    type:'get' ,
+                    url: url.replace('1',photo_id),
+                    success: function (response) {
+                        document.getElementById('create').remove();
+                        var content= "<a class='btn btn-primary btn-post-detail' id='delete'>"+response['button_text']+"</a>";
+                        $('.detail-post-info').append(content);
+                        document.getElementById('like').innerHTML="Лайки: "+response['like_count'];
+                    },
+                    error: function (response) {
+                        alert(response)
+                    }
+                });
+                return false;
+            });
+
+            $('.detail-post-info').on('click','#delete',function () {
+                var photo_id='{{post.pk}}';
+                var url="{% url 'delete_like' 1 %}";
+                $.ajax({
+                    type:'get' ,
+                    url: url.replace('1',photo_id),
+                    success: function (response) {
+                         document.getElementById('delete').remove();
+                        var content= "<a class='btn btn-primary btn-post-detail' id='create'>"+response['button_text']+"</a>";
+                        $('.detail-post-info').append(content);
+                        document.getElementById('like').innerHTML="Лайки: "+response['like_count'];
+                    },
+                    error: function (response) {
+                        alert(response)
+                    }
+                });
+                return false;
+            });
+
+
+        });
+</script>
 {% endblock %}

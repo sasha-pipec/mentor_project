@@ -1,5 +1,4 @@
-from django.http import HttpResponse
-from django.shortcuts import redirect
+from django.http import HttpResponse, JsonResponse
 from django.views import View
 
 from photobatle.service import *
@@ -10,10 +9,10 @@ class CreatingLikeForPhoto(View):
 
     def get(self, request, *args, **kwargs):
         try:
-            slug = CreateLikeService.execute(kwargs | {'user_id': request.user.id})
+            post=CreateLikeService.execute(kwargs | {'user_id': request.user.id})
         except Exception as error:
             return HttpResponse(error)
-        return redirect('detail_post', slug=slug)
+        return JsonResponse({'button_text': 'Снять голос','like_count':str(post.like_count)}, status=200)
 
 
 class DeletingLikeForPhoto(View):
@@ -21,7 +20,7 @@ class DeletingLikeForPhoto(View):
 
     def get(self, request, *args, **kwargs):
         try:
-            slug = DeleteLikeService.execute(kwargs | {'user_id': request.user.id})
+            post=DeleteLikeService.execute(kwargs | {'user_id': request.user.id})
         except Exception as error:
             return HttpResponse(error)
-        return redirect('detail_post', slug=slug)
+        return JsonResponse({'button_text': 'Лайк','like_count':str(post.like_count)}, status=200)

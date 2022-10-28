@@ -49,5 +49,5 @@ class CreateLikeService(Service):
                 Like.objects.create(photo_id=self.cleaned_data['photo_id'],
                                     user_id=self.cleaned_data['user_id'])
                 self.send_notification()
-                return (Photo.objects.get(pk=self.cleaned_data['photo_id'])).slug
+                return Photo.objects.annotate(like_count=Count('like_photo')).get(pk=self.cleaned_data['photo_id'])
         raise Exception(f"You cant create like, because it is your photo")
