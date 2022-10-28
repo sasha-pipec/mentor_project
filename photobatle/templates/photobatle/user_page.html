@@ -69,14 +69,14 @@
                 </div>
                 <div class="private-item">
                     <h5 class="personal-info-item">API token</h5>
-                    <a href="{% url 'api_token' user.id %}"><p>Сгенерировать</p></a>
+                    <a id="create_api" style="cursor: pointer;"><p>Сгенерировать</p></a>
                     {% if api_token %}
-                    <p>{{api_token.0}}</p>
+                    <p id="api_token">{{api_token.0}}</p>
                     {%endif%}
                     <hr>
                 </div>
                 <div class="private-item">
-                    <a href="{% url 'personal_list_posts' %}" class="btn btn-primary btn-post-personal-account">
+                    <a class="btn btn-primary btn-post-personal-account">
                         Мои фото
                     </a>
                 </div>
@@ -88,4 +88,27 @@
 {%else%}
 <h1>Зачем ты сюда зашел?)</h1>
 {%endif%}
+{% endblock %}
+{% block script%}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+        $(document).ready(function () {
+            $('#create_api').click(function () {
+                var user_id='{{user.id}}';
+                var url="{% url 'api_token' 1 %}";
+                $.ajax({
+                    type:'get' ,
+                    url: url.replace('1',user_id),
+                    success: function (response) {
+                        document.getElementById('api_token').innerHTML=response['token'];
+                    },
+                    error: function (response) {
+                        alert(response)
+                    }
+                });
+                return false;
+            });
+        });
+</script>
 {% endblock %}

@@ -13,6 +13,6 @@ class CreateAPITokenService(Service):
     def process(self):
         if Token.objects.filter(user=self.cleaned_data['user_id']):
             Token.objects.filter(user=self.cleaned_data['user_id']).delete()
-        Token.objects.create(user=User.objects.get(pk=self.cleaned_data['user_id']))
+        return Token.objects.create(user=User.objects.get(pk=self.cleaned_data['user_id']))
 
 
