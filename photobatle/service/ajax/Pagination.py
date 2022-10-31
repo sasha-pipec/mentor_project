@@ -3,6 +3,7 @@ from django.core.paginator import Paginator
 from django.db.models import Count, Q
 from service_objects.services import Service
 from photobatle.models import *
+from api.status_code import *
 
 
 class PaginationService(Service):
@@ -12,23 +13,6 @@ class PaginationService(Service):
     search_value = forms.CharField(required=False)
     direction = forms.CharField()
     page = forms.CharField()
-
-    @property
-    def validate_sort_value(self):
-        sort_list = ['like_count', 'comment_count', 'updated_at', 'id']
-        if not self.cleaned_data['sort_value']:
-            self.cleaned_data['sort_value'] = 'id'
-        if self.cleaned_data['sort_value'] not in sort_list:
-            raise Exception(f"Incorrect sort_value")
-
-    @property
-    def validate_direction(self):
-        if self.cleaned_data['direction'] == 'desc':
-            self.cleaned_data['sort_value'] = '-' + self.cleaned_data['sort_value']
-
-    def validate_page(self, page_range):
-        if int(self.cleaned_data['page']) > page_range.stop:
-            raise Exception(f"Incorrect page")
 
     def process(self):
         self.validate_sort_value
@@ -43,3 +27,20 @@ class PaginationService(Service):
         self.validate_page(paginator.page_range)
         photos_on_page = (paginator.page(int(self.cleaned_data['page']))).object_list
         return photos_on_page
+
+    @property
+    def validate_sort_value(self):
+        sort_list = ['like_count', 'comment_count', 'updated_at', 'id']
+        if not self.cleaned_data['sort_value']:
+            self.cleaned_data['sort_value'] = 'id'
+        if self.cleaned_data['sort_value'] not in sort_list:
+            raise ValidationError400(f"Incorrect sort_value")
+
+    @property
+    def validate_direction(self):
+        if self.cleaned_data['direction'] == 'desc':
+            self.cleaned_data['sort_value'] = '-' + self.cleaned_data['sort_value']
+
+    def validate_page(self, page_range):
+        if int(self.cleaned_data['page']) > page_range.stop:
+            raise ValidationError400(f"Incorrect page")

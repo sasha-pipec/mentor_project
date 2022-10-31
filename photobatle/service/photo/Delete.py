@@ -1,5 +1,5 @@
 from django import forms
-
+from api.status_code import *
 from service_objects.services import Service
 from photobatle import tasks
 from asgiref.sync import async_to_sync
@@ -11,7 +11,22 @@ class DeletePhotoService(Service):
     """Service class for delete photo"""
 
     slug = forms.SlugField()
-    user_id = forms.IntegerField()
+    user_id = forms.IntegerField(required=False)
+
+    def process(self):
+        self.validate_user_id
+        self.validate_slug_id
+        self.send_notification()
+        photo = Photo.objects.get(slug=self.cleaned_data['slug'])
+        photo.moderation = 'DEL'
+        task = tasks.delete_photo.s(photo.slug).apply_async(countdown=20)
+        photo.task_id = task.id
+        photo.save()
+
+    @property
+    def validate_user_id(self):
+        if not self.cleaned_data['user_id']:
+            raise ValidationError401(f"incorrect api token")
 
     @property
     def validate_slug_id(self):
@@ -19,7 +34,7 @@ class DeletePhotoService(Service):
             return Photo.objects.get(slug=self.cleaned_data['slug'],
                                      user_id=self.cleaned_data['user_id'])
         except:
-            raise Exception(f"Incorrect slug value")
+            raise ValidationError400(f"Incorrect slug value")
 
     def send_notification(self):
         channel_layer = get_channel_layer()
@@ -35,12 +50,3 @@ class DeletePhotoService(Service):
                                f"Ваши комментарии скоро будут удалены."
                 }
             )
-
-    def process(self):
-        if self.validate_slug_id:
-            self.send_notification()
-            photo = Photo.objects.get(slug=self.cleaned_data['slug'])
-            photo.moderation = 'DEL'
-            task = tasks.delete_photo.s(photo.slug).apply_async(countdown=20)
-            photo.task_id = task.id
-            photo.save()

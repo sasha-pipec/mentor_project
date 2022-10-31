@@ -2,11 +2,6 @@ from drf_yasg import openapi
 from rest_framework import status
 
 post_comment_parameters = [
-    openapi.Parameter('Authorization', openapi.IN_HEADER,
-                      description="Needed give 'Token your_api_token'. Api_token can be generated in your personal "
-                                  "account",
-                      type=openapi.TYPE_STRING,
-                      required=True),
     openapi.Parameter('photo_slug', openapi.IN_FORM,
                       description="The slug of photo",
                       type=openapi.TYPE_STRING,
@@ -22,6 +17,8 @@ post_comment_parameters = [
 
 post_comment_response = {
     status.HTTP_201_CREATED: 'Successes',
+    status.HTTP_400_BAD_REQUEST: 'Incorrect slug or parent_comment_id values',
     status.HTTP_401_UNAUTHORIZED: 'Incorrect value of Api_token',
-    status.HTTP_409_CONFLICT: 'Incorrect slug or parent_comment_id values',
 }
+
+post_comment_description = 'You need to authorization'

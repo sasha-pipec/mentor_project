@@ -6,11 +6,6 @@ patch_photo_parameters = [
                       description="Slug of photo",
                       type=openapi.TYPE_STRING,
                       ),
-    openapi.Parameter('Authorization', openapi.IN_HEADER,
-                      description="Needed give 'Token your_api_token'. Api_token can be generated in your personal "
-                                  "account",
-                      type=openapi.TYPE_STRING,
-                      required=True),
     openapi.Parameter('photo', openapi.IN_FORM,
                       description="The new photo of post",
                       type=openapi.TYPE_FILE),
@@ -24,8 +19,9 @@ patch_photo_parameters = [
 
 patch_photo_response = {
     status.HTTP_204_NO_CONTENT: 'Successes',
-    status.HTTP_409_CONFLICT: 'Incorrect value of slug or not required parameters',
+    status.HTTP_400_BAD_REQUEST: 'Incorrect value of slug or not required parameters',
     status.HTTP_401_UNAUTHORIZED: 'Incorrect value of Api_token',
 }
 
-patch_photo_operation_description = 'If you want change your post, send one of all not required parameters'
+patch_photo_operation_description = 'You need to authorization' \
+                                    'If you want change your post, send one of all not required parameters'

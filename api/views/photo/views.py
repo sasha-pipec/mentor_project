@@ -1,4 +1,6 @@
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework.decorators import permission_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
@@ -19,12 +21,15 @@ class PhotoAPI(APIView):
                 moderation='APR'), many=True)
         return Response(serializer.data)
 
-    @swagger_auto_schema(manual_parameters=post_photo_parameters, responses=post_photo_response)
+    @permission_classes([IsAuthenticated])
+    @swagger_auto_schema(manual_parameters=post_photo_parameters, responses=post_photo_response,
+                         operation_description=post_photo_description)
     def post(self, request, *args, **kwargs):
         try:
             AddPhotoService.execute(request.FILES.dict() | request.POST.dict() | {'user_id': request.user.id})
-        except Exception as error:
-            return Response(status=status.HTTP_409_CONFLICT)
+        except Exception as e:
+            return Response({'error': str(e.detail),
+                             'status_code': str(e.status_code)}, status=e.status_code)
         return Response(status=201)
 
 
@@ -39,19 +44,24 @@ class ModifiedPhotoAPI(APIView):
                                        like_count=Count('like_photo', distinct=True)).filter(
                     moderation='APR', slug=kwargs['slug']), many=True)
             if not serializer.data:
-                raise Exception(f"Incorrect slug_id value")
-        except Exception:
-            return Response(status=status.HTTP_409_CONFLICT)
+                raise ValidationError400(f"Incorrect slug_id value")
+        except Exception as e:
+            return Response({'error': str(e.detail),
+                             'status_code': str(e.status_code)}, status=e.status_code)
         return Response(serializer.data)
 
-    @swagger_auto_schema(manual_parameters=delete_photo_parameters, responses=delete_photo_response)
+    @permission_classes([IsAuthenticated])
+    @swagger_auto_schema(manual_parameters=delete_photo_parameters, responses=delete_photo_response,
+                         operation_description=delete_photo_description)
     def delete(self, request, *args, **kwargs):
         try:
             DeletePhotoService.execute(kwargs | {'user_id': request.user.id})
-        except Exception:
-            return Response(status=status.HTTP_409_CONFLICT)
+        except Exception as e:
+            return Response({'error': str(e.detail),
+                             'status_code': str(e.status_code)}, status=e.status_code)
         return Response(status=204)
 
+    @permission_classes([IsAuthenticated])
     @swagger_auto_schema(manual_parameters=patch_photo_parameters, responses=patch_photo_response,
                          operation_description=patch_photo_operation_description)
     def patch(self, request, *args, **kwargs):
@@ -61,5 +71,6 @@ class ModifiedPhotoAPI(APIView):
             else:
                 RecoveryPhotoService.execute(kwargs | {'user_id': request.user.id})
         except Exception as e:
-            return Response(status=status.HTTP_409_CONFLICT)
+            return Response({'error': str(e.detail),
+                             'status_code': str(e.status_code)}, status=e.status_code)
         return Response(status=201)

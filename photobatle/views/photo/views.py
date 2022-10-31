@@ -2,6 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import ListView, DetailView
+from rest_framework.exceptions import ValidationError
 
 from photobatle.forms import *
 from photobatle.service import *
@@ -19,7 +20,7 @@ class AddPhoto(View):
             AddPhotoService.execute(request.FILES.dict() | request.POST.dict() | {'user_id': request.user.id})
         except Exception as error:
             return render(request, 'photobatle/add_photo_form.html',
-                          context={'form': AddPhotoForm(), 'error_message': error.message})
+                          context={'form': AddPhotoForm(), 'error_message': error})
         return redirect('home')
 
 
@@ -31,7 +32,7 @@ class UpdatePhoto(View):
             UpdatePhotoService.execute(
                 request.FILES.dict() | request.POST.dict() | kwargs | {'user_id': request.user.id})
         except Exception as error:
-            return render(request, 'photobatle/personal_list_posts.html', context={'error_message': error.message})
+            return render(request, 'photobatle/personal_list_posts.html', context={'error_message': error})
         return redirect('personal_list_posts')
 
 
@@ -72,7 +73,7 @@ class PersonalListPosts(ListView):
 
     def get_queryset(self, *, object_list=None, **kwargs):
         posts = super().get_queryset(**kwargs)
-        return posts.filter(user_id=self.request.user)
+        return posts.filter(user_id=self.request.user).order_by('id')
 
 
 class DetailPost(DataMixin, DetailView):

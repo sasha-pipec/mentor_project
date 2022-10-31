@@ -4,13 +4,24 @@ from service_objects.services import Service
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from photobatle.models import *
+from api.status_code import *
 
 
 class CreateLikeService(Service):
     """Service class for create like"""
 
     photo_id = forms.IntegerField()
-    user_id = forms.IntegerField()
+    user_id = forms.IntegerField(required=False)
+
+    def process(self):
+        self.validate_user_id
+        if self.validate_photo_id:
+            self.get_like
+            Like.objects.create(photo_id=self.cleaned_data['photo_id'],
+                                user_id=self.cleaned_data['user_id'])
+            self.send_notification()
+            return Photo.objects.annotate(like_count=Count('like_photo')).get(pk=self.cleaned_data['photo_id'])
+        raise ValidationError409(f"You cant create like, because it is your photo")
 
     @property
     def validate_photo_id(self):
@@ -19,15 +30,19 @@ class CreateLikeService(Service):
             if photo.user.id == self.cleaned_data['user_id']:
                 return False
         except Exception:
-            raise Exception(f"Incorrect photo_id value")
+            raise ValidationError400(f"Incorrect photo_id value")
         return True
 
     @property
+    def validate_user_id(self):
+        if not self.cleaned_data['user_id']:
+            raise ValidationError401(f"incorrect api token")
+
+    @property
     def get_like(self):
-        if not Like.objects.filter(photo_id=self.cleaned_data['photo_id'],
-                                   user_id=self.cleaned_data['user_id']):
-            return True
-        raise Exception(f"Photo can have one like from one user")
+        if Like.objects.filter(photo_id=self.cleaned_data['photo_id'],
+                               user_id=self.cleaned_data['user_id']):
+            raise ValidationError409(f"Photo can have one like from one user")
 
     def send_notification(self):
         channel_layer = get_channel_layer()
@@ -42,12 +57,3 @@ class CreateLikeService(Service):
                            f"Всего голосов:{photo.like_count}"
             }
         )
-
-    def process(self):
-        if self.validate_photo_id:
-            if self.get_like:
-                Like.objects.create(photo_id=self.cleaned_data['photo_id'],
-                                    user_id=self.cleaned_data['user_id'])
-                self.send_notification()
-                return Photo.objects.annotate(like_count=Count('like_photo')).get(pk=self.cleaned_data['photo_id'])
-        raise Exception(f"You cant create like, because it is your photo")

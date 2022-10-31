@@ -1,7 +1,4 @@
-from django.http import JsonResponse
 from django.views.generic import ListView
-
-from photobatle import serializers
 from photobatle.forms import *
 from photobatle.models import Photo
 
@@ -20,4 +17,4 @@ class RenderingHomePage(ListView):
 
     def get_queryset(selfю, *, object_list=None, **kwargs):
         posts = super().get_queryset(**kwargs)
-        return posts.filter(moderation='APR')
+        return posts.filter(moderation='APR').order_by('id')

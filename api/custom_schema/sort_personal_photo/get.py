@@ -4,18 +4,18 @@ from rest_framework import status
 get_sort_personal_photo_parameters = [
     openapi.Parameter('sort_value', openapi.IN_QUERY,
                       description="You can choice one of the all parameters for sorting posts. form take: "
-                                  "'DEL',  'MOD', 'APR' , 'REJ'",
-                      type=openapi.TYPE_STRING),
-    openapi.Parameter('Authorization', openapi.IN_HEADER,
-                      description="Needed give 'Token your_api_token'. Api_token can be generated in your personal "
-                                  "account",
+                                  "'DEL'-on delete,  'MOD'-on moderation, 'APR'-on approved , 'REJ'-on rejected",
                       type=openapi.TYPE_STRING,
-                      required=True)
+                      required=True),
+    openapi.Parameter('page', openapi.IN_QUERY,
+                      description="Number of page",
+                      type=openapi.TYPE_STRING,
+                      required=True),
 ]
 
 get_sort_personal_photo_response = {
     status.HTTP_200_OK: 'Successes',
-    status.HTTP_409_CONFLICT: 'Incorrect value of form',
-
+    status.HTTP_400_BAD_REQUEST: 'Incorrect value of form',
 }
 
+get_sort_personal_photo_description = 'You need to authorization'

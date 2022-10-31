@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.sites',
     'django.contrib.staticfiles',
-    
+
     # DRF
     'rest_framework',
     'rest_framework.authtoken',
@@ -86,6 +86,17 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ]
+}
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'ApiToken': {
+            'type': 'apiKey',
+            'in': 'header',
+            'name': 'Authorization',
+            'description': "Needed give 'Token your_api_token'. Api_token can be generated in your personal account"
+        }
+    },
 }
 
 CHANNEL_LAYERS = {
