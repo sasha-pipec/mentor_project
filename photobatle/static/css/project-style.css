@@ -11,7 +11,7 @@ html, body {
 /*Блок всего контента*/
 .container-fluid {
     display: inline-flex;
-    min-height: 100vh;
+    min-height: 90vh;
     justify-content: space-evenly;
 }
 
@@ -503,7 +503,7 @@ a.btn-danger {
 }
 
 .animation {
-    height: 100vh;
+    height: 80vh;
     overflow: hidden;
 }
 
@@ -513,7 +513,7 @@ a.btn-danger {
     transform: translateY(-50%);
     text-align: center;
     width: 100%;
-    font-size: 12vw;
+    font-size: 10vw;
     line-height: 1em;
     font-weight: 800;
     text-transform: uppercase;

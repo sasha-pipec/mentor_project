@@ -222,7 +222,7 @@
                     <p>Дата публикации: <br> {{post.updated_at}}</p>
                     {% if user.username %}
                         {% if post.user.username == user.username %}
-                         <a class="btn btn-primary" id="btn-post-detail btn-post-detail">Самолайки запрещены</a>
+                         <a class="btn btn-primary" id="btn-post-detail btn-post-detail" style="cursor: default;">Самолайки запрещены</a>
                         {% else %}
                             {% if user.pk|check_like:post.pk%}
                                 <a  class="btn btn-primary btn-post-detail" id="delete">Снять

@@ -7,9 +7,10 @@ from django.contrib.sites.models import Site
 from django.contrib.auth.models import Group
 
 from allauth.account.models import EmailAddress
-from allauth.socialaccount.models import SocialToken,SocialApp,SocialAccount
+from allauth.socialaccount.models import SocialToken, SocialApp, SocialAccount
 
 from rest_framework.authtoken.models import TokenProxy
+from rest_framework.exceptions import ValidationError
 
 from photobatle.service import *
 from photobatle.models import *
@@ -19,6 +20,13 @@ class UserAdmin(admin.ModelAdmin):
     list_display = ('username', 'first_name', 'last_name', 'get_html_photo', 'email')
     list_filter = ('first_name', 'last_name', 'is_superuser')
     ordering = ('username',)
+    exclude = ('password', 'groups', 'user_permissions')
+
+    def get_readonly_fields(self, request, obj):
+        if obj:
+            return self.readonly_fields + (
+            'last_login', 'username', 'first_name', 'last_name', 'email', 'date_joined', 'photo',)
+        return super().get_readonly_fields(request, obj)
 
     def get_html_photo(self, object):
         if object.photo:
@@ -36,10 +44,10 @@ class PhotoAdmin(admin.ModelAdmin):
         'moderation')
     list_filter = ('moderation', 'user')
     ordering = ('create_at', 'photo_name', 'user')
-    readonly_fields = ('create_at', 'updated_at', 'task_id', 'previous_photo')
+    readonly_fields = ('create_at', 'updated_at', 'previous_photo')
     search_fields = ('photo_name',)
     prepopulated_fields = {'slug': ('photo_name',)}
-
+    exclude = ('task_id',)
     actions = ['make_published', 'make_rejected', ]
 
     def has_delete_permission(self, request, obj=None):
@@ -77,7 +85,7 @@ class PhotoAdmin(admin.ModelAdmin):
                         'message': f"Ваше фото '{elem.photo_name}' отклонили"
                     }
                 )
-                DeletePhotoService.execute({'slug': elem.slug, 'user_id': elem.user.pk})
+            DeletePhotoService.execute({'slug': elem.slug, 'user_id': elem.user.pk})
 
     def get_html_photo(self, object):
         if object.photo:
