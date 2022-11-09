@@ -252,7 +252,7 @@
                   type: 'get',
                   url: "{% url 'pagination' %}",
                   success: function (response) {
-                      $('.row-personal-photo').empty();
+                      $('.row').empty();
                       if((response.posts).length>0){
                       for(var key in response.posts) {
                           var name_photo = response.posts[key].photo_name;
@@ -260,6 +260,7 @@
                           var slug = response.posts[key].slug;
                           var photo_delete = '{% url "delete_photo" 0 %}'.replace('0', slug);
                           var photo_recovery = '{% url "recovery_photo" 0 %}'.replace('0', slug);
+                          var photo_update = '{% url "update_photo" 0 %}'.replace('0', slug);
                           if (url_photo != 'True') {
                               var url_photo = '/static/image/default-photo-post.jpeg';
                           } else {
@@ -301,6 +302,27 @@
                               '</div>'
                           ;
                           $('.row-personal-photo').append(content);
+                          var update_content= '<div class="col col-add-photo-form" id="col-add-photo-form-'+response.posts[key].id+'">'+
+                                              '<div id="add-photo-form">'+
+                                                  '<form class="save-photo-personal" method="post" action="'+photo_update+'" encType="multipart/form-data">'+
+                                                      '<h5>Старое фото</h5>'+
+                                                      '<img src="" alt="" id="old-photo-'+response.posts[key].id+'">'+
+                                                          '{%csrf_token%}'+
+                                                          '<p><label for="id_photo_'+response.posts[key].id+'">Новое фото'+
+                                                                '</label><br>'+
+                                                              '<input type="file" name="photo" accept="image/*" id="id_photo_'+response.posts[key].id+'"></p>'+
+                                                          '<p><label for="id_photo_'+response.posts[key].id+'">Новое имя фото</label><br>'+
+                                                              '<input type="text" name="photo_name" class="form-field" maxLength="255" required id="id_photo_name_'+response.posts[key].id+'"></p>'+
+                                                          '<p><label>Новое описание фото</label><br>'+
+                                                        '<textarea name="photo_content" cols="40" rows="10" class="form-field" required id="id_photo_content_'+response.posts[key].id+'"></textarea></p>'+
+                                                          '<div class="edit_personal_post">'+
+                                                              '<a class="btn-danger btn-primary btn-post-personal-account" id="cancel-photo-button" onclick="close_edit_a_photo()">Отмена</a>'+
+                                                              '<button type="submit" class="btn btn-primary btn-post-personal-account" id="add-photo-button">Сохранить</button>'+
+                                                          '</div>'+
+                                                  '</form>'+
+                                              '</div>'+
+                                          '</div>';
+                          $('.row-add-photo-form').append(update_content);
                           var pagination = document.getElementsByClassName('pagination__item');
                           for (var i = 0; i < pagination.length; i++) {
                                   if (pagination[i].id == response['active_page']) {

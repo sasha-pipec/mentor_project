@@ -22,6 +22,7 @@ class DeletePhotoService(Service):
         task = tasks.delete_photo.s(photo.slug).apply_async(countdown=20)
         photo.task_id = task.id
         photo.save()
+        return task.id
 
     @property
     def validate_user_id(self):

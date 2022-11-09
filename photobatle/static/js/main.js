@@ -44,6 +44,7 @@ function close_edit_comment(id,content){
 function edit_a_photo(id,content,name,photo){
     $(".row-personal-photo").css({'display':'none'});
     $(".row-add-photo-form").css({'display':'block'});
+    $(".pagination").css({'display':'none'});
     $("#col-add-photo-form-"+id).css({'display':'flex'});
     $("#old-photo-"+id).attr('src',photo);
     $("#id_photo_"+id).val('');
@@ -52,6 +53,7 @@ function edit_a_photo(id,content,name,photo){
 }
 
 function close_edit_a_photo(){
+    $(".pagination").css({'display':'flex'});
     $(".row-add-photo-form").css({'display':'none'});
     $(".col-add-photo-form").css({'display':'none'});
     $(".row-personal-photo").css({'display':'flex'});

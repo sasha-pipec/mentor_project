@@ -95,7 +95,7 @@
                 <!--Конец-->
                 <p class="card-text" id="post_content">Описание: {{post.photo_content}}</p>
                 <p class="card-text">Автор: {{post.user.username}}</p>
-                <p class="card-text">Лайки: {{post|like_count}}</p>
+                <p class="card-text {{post.pk}}">Лайки: {{post|like_count}}</p>
                 <p class="card-text">Комментарии: {{post|comment_count}}</p>
                 <p class="card-text">Дата публикации:
                     <br> {{post.updated_at}}</p>
@@ -110,7 +110,6 @@
 {% block pagination %}
     {% include 'photobatle/pagination.html' %}
 {% endblock %}
-
 
 {% block script %}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -153,7 +152,6 @@
                       }else{
                       var url_photo=response.posts[key].photo;
                       }
-
                       var content=
                         '<div class="col">'+
                                 '<div class="card" style="width: 18rem;" id="card">'+
@@ -168,7 +166,6 @@
                                     }else{
                                     var content=content+'<h5 class="card-title">Название: '+name_photo+'</h5>';
                                     }
-
                                       var content=content +
                                         '<p class="card-text" id="post_content">Описание: '+response.posts[key].photo_content+'</p>'+
                                         '<p class="card-text">Автор: '+ response.posts[key].user.username +'</p>'+
@@ -231,7 +228,6 @@
                       }else{
                       var url_photo=response.posts[key].photo;
                       }
-
                       var content=
                         '<div class="col">'+
                                 '<div class="card" style="width: 18rem;" id="card">'+
@@ -311,52 +307,49 @@
                   success: function (response) {
                       $('.row').empty();
                       if((response.posts).length>0){
-                      for(var key in response.posts)
-                      {
+                              for (var key in response.posts) {
+                                  var name_photo = response.posts[key].photo_name;
+                                  var url_photo = response.posts[key].checking_the_existence;
+                                  if (url_photo != 'True') {
+                                      var url_photo = '/static/image/default-photo-post.jpeg';
+                                  } else {
+                                      var url_photo = response.posts[key].photo;
+                                  }
+                                  var content =
+                                      '<div class="col">' +
+                                      '<div class="card" style="width: 18rem;" id="card">' +
+                                      '<a href="' + response.posts[key].get_absolute_url + '">' +
+                                      "<img class='card-img-top' src='" + url_photo + "' alt='Card image cap'>" +
+                                      '</a>' +
+                                      '<div class="card-body" id="card-body">';
 
-                      var name_photo=response.posts[key].photo_name;
-                      var url_photo=response.posts[key].checking_the_existence;
-                      if(url_photo!='True'){
-                      var url_photo='/static/image/default-photo-post.jpeg';
-                      }else{
-                      var url_photo=response.posts[key].photo;
-                      }
-
-                      var content=
-                        '<div class="col">'+
-                                '<div class="card" style="width: 18rem;" id="card">'+
-                                '<a href="' + response.posts[key].get_absolute_url + '">'+
-                                    "<img class='card-img-top' src='"+url_photo+"' alt='Card image cap'>"+
-                                '</a>'+
-                                    '<div class="card-body" id="card-body">';
-
-                                    if(name_photo.length>=11){
-                                    var content=content+'<h5 class="card-title" id="first_letters">Название: '+name_photo.substr(0,8)+'...</h5>'+
-                                    '<h5 class="card-title" id="full_letters">Название: '+name_photo+'</h5>';
-                                    }else{
-                                    var content=content+'<h5 class="card-title">Название: '+name_photo+'</h5>';
-                                    }
-                                      var content=content +
-                                        '<p class="card-text" id="post_content">Описание: '+response.posts[key].photo_content+'</p>'+
-                                        '<p class="card-text">Автор: '+ response.posts[key].user.username +'</p>'+
-                                        '<p class="card-text">Лайки: '+response.posts[key].like_count +'</p>'+
-                                        '<p class="card-text">Комментарии: '+response.posts[key].comment_count +'</p>'+
-                                        '<p class="card-text">Дата публикации: <br> '+ new Date(response.posts[key].updated_at).toLocaleDateString("ru", options) +'</p>'+
-                                        '<a href="' + response.posts[key].get_absolute_url + '"class="btn btn-primary" id="btn-post">Посмотреть</a>'+
-                                    '</div>'+
-                                '</div>'+
-                        '</div>'
-                      ;
-                      $('.row').append(content);
-                      var pagination = document.getElementsByClassName('pagination__item');
-                      for(var i=0;i<pagination.length;i++){
-                          if(pagination[i].id==response['active_page']){
-                              pagination[i].classList.add('active');
-                              continue;
-                          }
-                          pagination[i].classList.remove('active');
-                      }
-                      }
+                                  if (name_photo.length >= 11) {
+                                      var content = content + '<h5 class="card-title" id="first_letters">Название: ' + name_photo.substr(0, 8) + '...</h5>' +
+                                          '<h5 class="card-title" id="full_letters">Название: ' + name_photo + '</h5>';
+                                  } else {
+                                      var content = content + '<h5 class="card-title">Название: ' + name_photo + '</h5>';
+                                  }
+                                  var content = content +
+                                      '<p class="card-text" id="post_content">Описание: ' + response.posts[key].photo_content + '</p>' +
+                                      '<p class="card-text">Автор: ' + response.posts[key].user.username + '</p>' +
+                                      '<p class="card-text">Лайки: ' + response.posts[key].like_count + '</p>' +
+                                      '<p class="card-text">Комментарии: ' + response.posts[key].comment_count + '</p>' +
+                                      '<p class="card-text">Дата публикации: <br> ' + new Date(response.posts[key].updated_at).toLocaleDateString("ru", options) + '</p>' +
+                                      '<a href="' + response.posts[key].get_absolute_url + '"class="btn btn-primary" id="btn-post">Посмотреть</a>' +
+                                      '</div>' +
+                                      '</div>' +
+                                      '</div>'
+                                  ;
+                                  $('.row').append(content);
+                                  var pagination = document.getElementsByClassName('pagination__item');
+                                  for (var i = 0; i < pagination.length; i++) {
+                                      if (pagination[i].id == response['active_page']) {
+                                          pagination[i].classList.add('active');
+                                          continue;
+                                      }
+                                      pagination[i].classList.remove('active');
+                                  }
+                              }
                       }else{
                       var content='<h1>Ничего не найдено</h1>';
                       $('.row').append(content);
@@ -372,6 +365,7 @@
 
         <!--  AJAX для сортировки по убыванию/возрастанию     -->
         $('#up_or_down').click(function () {
+        var contentInput=$('input[name="content"]').val().trim();
         var sort_value=document.querySelector('input[name="choice"]:checked');
         var direction=document.getElementById('trigger').value;
         if(sort_value){
@@ -388,7 +382,8 @@
                   data: {'csrfmiddlewaretoken': '{{csrf_token}}',
                   'page':'1',
                   'sort_value': sort_value,
-                  'direction':direction},
+                  'direction':direction,
+                  'search_value':contentInput,},
                   type: 'post',
                   url: "{% url 'ajax' %}",
                   success: function (response) {
@@ -456,7 +451,6 @@
                   });
               return false;
         });
-
 
       });
 </script>

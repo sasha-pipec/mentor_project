@@ -25,7 +25,7 @@ class UserAdmin(admin.ModelAdmin):
     def get_readonly_fields(self, request, obj):
         if obj:
             return self.readonly_fields + (
-            'last_login', 'username', 'first_name', 'last_name', 'email', 'date_joined', 'photo',)
+                'last_login', 'username', 'first_name', 'last_name', 'email', 'date_joined', 'photo',)
         return super().get_readonly_fields(request, obj)
 
     def get_html_photo(self, object):
@@ -55,37 +55,25 @@ class PhotoAdmin(admin.ModelAdmin):
 
     @admin.action(description='Одобрено')
     def make_published(modeladmin, request, queryset):
-        channel_layer = get_channel_layer()
         all_on_moderation = True
         for elem in queryset:
             if elem.moderation != "MOD":
                 all_on_moderation = False
         if all_on_moderation:
-            queryset.update(moderation="APR")
             for elem in queryset:
-                async_to_sync(channel_layer.group_send)(
-                    str(elem.user), {
-                        'type': 'message',
-                        'message': f"Ваше фото '{elem.photo_name}' одобрили"
-                    })
+                elem.moderation = 'APR'
+                PhotoAdmin.save_model(modeladmin, request, elem, form=None, change=None)
 
     @admin.action(description='Отклонено')
     def make_rejected(modeladmin, request, queryset):
-        channel_layer = get_channel_layer()
         all_on_moderation = True
         for elem in queryset:
             if elem.moderation != "MOD":
                 all_on_moderation = False
         if all_on_moderation:
-            queryset.update(moderation="REJ")
             for elem in queryset:
-                async_to_sync(channel_layer.group_send)(
-                    str(elem.user), {
-                        'type': 'message',
-                        'message': f"Ваше фото '{elem.photo_name}' отклонили"
-                    }
-                )
-            DeletePhotoService.execute({'slug': elem.slug, 'user_id': elem.user.pk})
+                elem.moderation = 'REJ'
+                PhotoAdmin.save_model(modeladmin, request, elem, form=None, change=None)
 
     def get_html_photo(self, object):
         if object.photo:
@@ -120,7 +108,8 @@ class PhotoAdmin(admin.ModelAdmin):
                         'message': f"Ваше фото '{obj.photo_name}' отклонили"
                     }
                 )
-                DeletePhotoService.execute({'slug': obj.slug, 'user_id': obj.user.pk})
+                task_id = DeletePhotoService.execute({'slug': obj.slug, 'user_id': obj.user.pk})
+                obj.task_id = task_id
             except ValidationError as error:
                 return HttpResponse(error)
         elif obj.moderation == 'APR':
