@@ -11,8 +11,8 @@ urlpatterns = [
     # Delete method have 2 required params: slug_id, api_token in headers
     # Patch method have 2 required params: slug_id, api_token in headers; not required photo, photo_name, photo_content
     # Get method have 1 required params: slug_id
-    path('photo', PhotoAPI.as_view()),
-    path('photo/<slug:slug>', ModifiedPhotoAPI.as_view()),
+    path('photos', PhotoAPI.as_view()),
+    path('photos/<slug:slug>', ModifiedPhotoAPI.as_view()),
 
     # Personal photo
     # Get method have 1 required params: api_token in headers

@@ -19,7 +19,7 @@ transliterate = "*"
 celery = "*"
 redis = "*"
 eventlet = "*"
-django-service-objects = "*"
+django-service-objects = {editable = true, ref = "a0c4b434254fb3ca9d09ee0a33ca611926e4a602", git = "https://github.com/dvkurbatov/django-service-objects.git"}
 drf-yasg = "*"
 channels = "*"
 channels-redis = "*"

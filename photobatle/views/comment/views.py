@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.views import View
+from service_objects.services import ServiceOutcome
 
 from photobatle.service import *
 
@@ -10,7 +11,9 @@ class CreatingCommentForPhoto(View):
 
     def post(self, request, *args, **kwargs):
         try:
-            CreateCommentService.execute(request.POST.dict() | kwargs | {'user_id': request.user.id})
+            outcome = ServiceOutcome(
+                CreateCommentService, request.POST.dict() | kwargs | {'user_id': request.user.id}
+            )
         except Exception as error:
             return HttpResponse(error)
         return redirect('detail_post', slug=request.POST['photo_slug'])
@@ -21,10 +24,12 @@ class DeletingCommentForPhoto(View):
 
     def get(self, request, *args, **kwargs):
         try:
-            photo_id = DeleteCommentService.execute(kwargs | {'user_id': request.user.id})
+            outcome = ServiceOutcome(
+                DeleteCommentService, kwargs | {'user_id': request.user.id}
+            )
         except Exception as error:
             return HttpResponse(error)
-        return redirect('detail_post', slug=photo_id.slug)
+        return redirect('detail_post', slug=outcome.result)
 
 
 class UpdatingCommentForPhoto(View):
@@ -32,7 +37,9 @@ class UpdatingCommentForPhoto(View):
 
     def post(self, request, *args, **kwargs):
         try:
-            photo_id = UpdateCommentService.execute(request.POST.dict() | kwargs | {'user_id': request.user.id})
+            outcome = ServiceOutcome(
+                UpdateCommentService, request.POST.dict() | kwargs | {'user_id': request.user.id}
+            )
         except Exception as error:
             return HttpResponse(error)
-        return redirect('detail_post', slug=photo_id.slug)
+        return redirect('detail_post', slug=outcome.service.cleaned_data['slug'])
