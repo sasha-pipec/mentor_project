@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import redirect
 from django.views import View
+from service_objects.services import ServiceOutcome
 
 from photobatle.service import CreateAPITokenService
 
@@ -9,7 +9,9 @@ from photobatle.service import CreateAPITokenService
 class GeneratingAPIToken(View):
     def get(self, *args, **kwargs):
         try:
-            token = CreateAPITokenService.execute(kwargs)
+            outcome = ServiceOutcome(
+                CreateAPITokenService, kwargs
+            )
         except ValidationError as error:
             return HttpResponse(error)
-        return JsonResponse({'token': str(token)}, status=200)
+        return JsonResponse({'token': str(outcome.result)}, status=200)
