@@ -1,7 +1,8 @@
 from django.http import HttpResponse, JsonResponse
 from rest_framework.views import APIView
+from service_objects.services import ServiceOutcome
 
-from photobatle import serializers
+from photobatle.serializers import *
 from photobatle.service import *
 
 
@@ -11,12 +12,16 @@ class PaginationAjax(APIView):
     def get(self, request, *args, **kwargs):
         try:
             if 'user_id' in request.GET:
-                posts = PersonalPaginationService.execute(request.GET)
+                outcome = ServiceOutcome(
+                    PersonalPaginationService, request.GET
+                )
             else:
-                posts = PaginationService.execute(request.GET)
+                outcome = ServiceOutcome(
+                    PaginationService, request.GET
+                )
         except Exception as error:
             return HttpResponse(error)
-        return JsonResponse({'posts': serializers.PhotoSerializer(posts, many=True).data,
+        return JsonResponse({'posts': PhotoSerializer(outcome.result, many=True).data,
                              'active_page': self.request.GET['page']}, status=200)
 
 
@@ -27,10 +32,12 @@ class SortingFormAjax(APIView):
     def post(self, request, *args, **kwargs):
         # We get the value of the form by which we will sort
         try:
-            posts = SortingFormService.execute(request.POST)
+            outcome = ServiceOutcome(
+                SortingFormService, request.POST
+            )
         except Exception as error:
             return HttpResponse(error)
-        return JsonResponse({'posts': serializers.PhotoSerializer(posts, many=True).data,
+        return JsonResponse({'posts': PhotoSerializer(outcome.result, many=True).data,
                              'active_page': self.request.POST['page']}, status=200)
 
 
@@ -40,12 +47,14 @@ class SearchFormAjax(APIView):
 
     def post(self, request, *args, **kwargs):
         try:
-            data = SearchFormService.execute(request.POST)
+            outcome = ServiceOutcome(
+                SearchFormService, request.POST
+            )
         except Exception as error:
             return HttpResponse(error)
-        return JsonResponse({'posts': serializers.PhotoSerializer(data['photos'], many=True).data,
+        return JsonResponse({'posts': PhotoSerializer(outcome.result['photos'], many=True).data,
                              'active_page': self.request.POST['page'],
-                             'max_page': data['max_page']}, status=200)
+                             'max_page': outcome.result['max_page']}, status=status.HTTP_200_OK)
 
 
 class PersonalSortingFormAjax(APIView):
@@ -54,9 +63,11 @@ class PersonalSortingFormAjax(APIView):
 
     def post(self, request, *args, **kwargs):
         try:
-            data = PersonalSortingFormService.execute(request.POST)
+            outcome = ServiceOutcome(
+                PersonalSortingFormService, request.POST
+            )
         except Exception as error:
             return HttpResponse(error)
-        return JsonResponse({'posts': serializers.PhotoSerializer(data['photos'], many=True).data,
+        return JsonResponse({'posts': PhotoSerializer(outcome.result['photos'], many=True).data,
                              'active_page': self.request.POST['page'],
-                             'max_page': data['max_page']}, status=200)
+                             'max_page': outcome.result['max_page']}, status=status.HTTP_200_OK)

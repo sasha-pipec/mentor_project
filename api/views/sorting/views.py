@@ -3,9 +3,10 @@ from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from service_objects.services import ServiceOutcome
 
 from api.custom_schema import *
-from photobatle import serializers
+from photobatle.serializers import *
 from photobatle.service import *
 
 
@@ -22,8 +23,7 @@ class PersonalPhotoAPI(APIView):
                                        like_count=Count('like_photo', distinct=True)).filter(
                     user_id=request.user.id), many=True)
         except Exception as e:
-            return Response({'error': str(e.detail),
-                             'status_code': str(e.status_code)}, status=e.status_code)
+            return Response({'error': str(e.detail), 'status_code': str(e.status_code)}, status=e.status_code)
         return Response(serializer.data)
 
 
@@ -35,13 +35,16 @@ class SortAndSearchPhotoApi(APIView):
         try:
             data = request.data.dict() if request.data else request.query_params
             if 'sort_value' in data:
-                serializer = serializers.PhotoSerializer(SortingFormService.execute(data), many=True)
+                outcome = ServiceOutcome(
+                    SortingFormService, data
+                )
             else:
-                serializer = serializers.PhotoSerializer(SearchFormService.execute(data), many=True)
-            return Response(serializer.data, status=201)
+                outcome = ServiceOutcome(
+                    SearchFormService, data
+                )
+            return Response(PhotoSerializer(outcome.result, many=True).data, status=status.HTTP_200_OK)
         except Exception as e:
-            return Response({'error': str(e.detail),
-                             'status_code': str(e.status_code)}, status=e.status_code)
+            return Response({'error': str(e.detail), 'status_code': str(e.status_code)}, status=e.status_code)
 
 
 class PersonalSortPhotoApi(APIView):
@@ -51,10 +54,10 @@ class PersonalSortPhotoApi(APIView):
                          operation_description=get_sort_personal_photo_description)
     def get(self, request, *args, **kwargs):
         try:
-            data = request.data.dict() if request.data else request.query_params.dict()
-            photos=(PersonalSortingFormService.execute(data | {'user_id': request.user.id}))['photos']
-            serializer = serializers.PhotoSerializer((photos), many=True)
+            outcome = ServiceOutcome(
+                PersonalSortingFormService,
+                request.data.dict() if request.data else request.query_params.dict() | {'user_id': request.user.pk}
+            )
         except Exception as e:
-            return Response({'error': str(e.detail),
-                             'status_code': str(e.status_code)}, status=e.status_code)
-        return Response(serializer.data, status=201)
+            return Response({'error': str(e.detail), 'status_code': str(e.status_code)}, status=e.status_code)
+        return Response(PhotoSerializer(outcome.result['photos'], many=True).data, status=201)

@@ -137,11 +137,6 @@
                   url: "{% url 'ajax' %}",
                   success: function (response) {
                       $('.row').empty();
-                      if(document.getElementById('trigger').value=='asc') {
-                          document.getElementById('trigger').value = 'desc';
-                      }else{
-                       document.getElementById('trigger').value = 'asc';
-                      }
                       if((response.posts).length>0){
                       for(var key in response.posts)
                       {
@@ -368,6 +363,13 @@
         var contentInput=$('input[name="content"]').val().trim();
         var sort_value=document.querySelector('input[name="choice"]:checked');
         var direction=document.getElementById('trigger').value;
+        if(direction=='asc') {
+            document.getElementById('trigger').value = 'desc';
+            direction = 'desc';
+        }else{
+            document.getElementById('trigger').value = 'asc';
+            direction = 'asc';
+        }
         if(sort_value){
             sort_value=sort_value.value
         }else{
@@ -388,11 +390,6 @@
                   url: "{% url 'ajax' %}",
                   success: function (response) {
                       $('.row').empty();
-                      if(document.getElementById('trigger').value=='asc') {
-                          document.getElementById('trigger').value = 'desc';
-                      }else{
-                       document.getElementById('trigger').value = 'asc';
-                      }
                       if((response.posts).length>0){
                       for(var key in response.posts)
                       {
