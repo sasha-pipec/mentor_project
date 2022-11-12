@@ -28,23 +28,19 @@ class GetPhotoService(ServiceWithResult):
             if self.cleaned_data['direction'] not in directions:
                 raise ValidationError404(f"Incorrect direction")
             if self.cleaned_data['direction'] == 'desc':
-                self.cleaned_data['sort_value'] = "-" + self.cleaned_data['sort_value'].split('=')[-1]
+                self.cleaned_data['sort_value'] = "-" + self.cleaned_data['sort_value']
                 return
-            self.cleaned_data['sort_value'] = self.cleaned_data['sort_value'].split('=')[-1]
         self.cleaned_data['direction'] = 'asc'
 
     def validate_sort_value(self):
         sort_list = ['like_count', 'comment_count', 'updated_at', 'id']
-        if self.cleaned_data['sort_value'] and self.cleaned_data['sort_value'].split('=')[-1] not in sort_list:
+        if self.cleaned_data['sort_value'] and self.cleaned_data['sort_value'] not in sort_list:
             raise ValidationError404(f"Incorrect sort_value")
         elif not self.cleaned_data['sort_value']:
             self.cleaned_data['sort_value'] = "id"
 
     def validate_page(self, page_range):
-        try:
-            if int(self.cleaned_data['page']) >= page_range.stop:
-                raise ValidationError404(f"Incorrect page")
-        except Exception:
+        if self.cleaned_data['page'] >= page_range.stop:
             raise ValidationError404(f"Incorrect page")
 
     @property
