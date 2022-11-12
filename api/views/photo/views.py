@@ -10,18 +10,21 @@ from api.custom_schema import *
 from photobatle.serializers import *
 from api.serializers import *
 from photobatle.service import *
+from api.service import *
 
 
 class PhotoAPI(APIView):
     parser_classes = [MultiPartParser, ]
 
-    @swagger_auto_schema(responses={status.HTTP_200_OK: 'Successes'})
-    def get(self, *args, **kwargs):
-        serializer = PhotoSerializer(
-            Photo.objects.annotate(comment_count=Count('comment_photo', distinct=True),
-                                   like_count=Count('like_photo', distinct=True)).filter(
-                moderation='APR'), many=True)
-        return Response(serializer.data)
+    @swagger_auto_schema(manual_parameters=get_home_photo_parameters, responses=get_home_photo_response)
+    def get(self, request, *args, **kwargs):
+        try:
+            outcome = ServiceOutcome(
+                GetPhotoService, request.data.dict() if request.data else request.query_params
+            )
+            return Response(ApiPhotoSerializer(outcome.result, many=True).data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e.detail), 'status_code': str(e.status_code)}, status=e.status_code)
 
     @permission_classes([IsAuthenticated])
     @swagger_auto_schema(manual_parameters=post_photo_parameters, responses=post_photo_response,
