@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import ListView, DetailView
 from rest_framework.exceptions import ValidationError
+from service_objects.services import ServiceOutcome
 
 from photobatle.forms import *
 from photobatle.service import *
@@ -17,7 +18,9 @@ class AddPhoto(View):
 
     def post(self, request, *args, **kwargs):
         try:
-            AddPhotoService.execute(request.FILES.dict() | request.POST.dict() | {'user_id': request.user.id})
+            outcome = ServiceOutcome(
+                AddPhotoService, request.FILES.dict() | request.POST.dict() | {'user_id': request.user.id}
+            )
         except Exception as error:
             return render(request, 'photobatle/add_photo_form.html',
                           context={'form': AddPhotoForm(), 'error_message': error})
@@ -29,8 +32,9 @@ class UpdatePhoto(View):
 
     def post(self, request, *args, **kwargs):
         try:
-            UpdatePhotoService.execute(
-                request.FILES.dict() | request.POST.dict() | kwargs | {'user_id': request.user.id})
+            outcome = ServiceOutcome(
+                UpdatePhotoService, request.FILES.dict() | request.POST.dict() | kwargs | {'user_id': request.user.id}
+            )
         except Exception as error:
             return render(request, 'photobatle/personal_list_posts.html', context={'error_message': error})
         return redirect('personal_list_posts')
@@ -41,7 +45,9 @@ class DeletePhoto(View):
 
     def get(self, request, *args, **kwargs):
         try:
-            DeletePhotoService.execute(kwargs | {'user_id': request.user.id})
+            outcome = ServiceOutcome(
+                DeletePhotoService, kwargs | {'user_id': request.user.id}
+            )
         except ValidationError as error:
             return HttpResponse(error)
         return redirect('personal_list_posts')
@@ -50,9 +56,11 @@ class DeletePhoto(View):
 class RecoveryPhoto(View):
     """Class for recovery photos"""
 
-    def get(self, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         try:
-            RecoveryPhotoService.execute(kwargs | {'user_id': self.request.user.id})
+            outcome = ServiceOutcome(
+                RecoveryPhotoService, kwargs | {'user_id': request.user.id}
+            )
         except ValidationError as error:
             return HttpResponse(error)
         return redirect('personal_list_posts')

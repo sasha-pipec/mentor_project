@@ -18,7 +18,7 @@ class PersonalPhotoAPI(APIView):
         try:
             if request.user.is_anonymous:
                 raise ValidationError401(f"incorrect api token")
-            serializer = serializers.PhotoSerializer(
+            serializer = PhotoSerializer(
                 Photo.objects.annotate(comment_count=Count('comment_photo', distinct=True),
                                        like_count=Count('like_photo', distinct=True)).filter(
                     user_id=request.user.id), many=True)

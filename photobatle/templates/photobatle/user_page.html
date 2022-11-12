@@ -72,6 +72,8 @@
                     <a id="create_api" style="cursor: pointer;"><p>Сгенерировать</p></a>
                     {% if api_token %}
                     <p id="api_token">{{api_token.0}}</p>
+                    {%else%}
+                    <p id="api_token"></p>
                     {%endif%}
                     <hr>
                 </div>

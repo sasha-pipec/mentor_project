@@ -5,6 +5,7 @@ from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.contrib.sites.models import Site
 from django.contrib.auth.models import Group
+from datetime import datetime
 
 from allauth.account.models import EmailAddress
 from allauth.socialaccount.models import SocialToken, SocialApp, SocialAccount
@@ -113,6 +114,7 @@ class PhotoAdmin(admin.ModelAdmin):
             except ValidationError as error:
                 return HttpResponse(error)
         elif obj.moderation == 'APR':
+            obj.updated_at = datetime.today().strftime('%Y-%m-%d')
             async_to_sync(channel_layer.group_send)(
                 str(obj.user), {
                     'type': 'message',

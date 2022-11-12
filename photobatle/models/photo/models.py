@@ -25,7 +25,7 @@ class Photo(models.Model):
     photo_name = models.CharField(max_length=255, blank=False, unique=True, verbose_name='Имя фото')
     photo_content = models.TextField(blank=False, verbose_name='Описание фото')
     create_at = models.DateField(null=True, auto_now_add=True, verbose_name='Дата создания')
-    updated_at = models.DateField(auto_now=True, verbose_name='Дата обновления')
+    updated_at = models.DateField(auto_now_add=True, verbose_name='Дата обновления')
     task_id = models.TextField(null=True, blank=True)
 
     ON_DELETION = 'DEL'
