@@ -6,6 +6,7 @@
 {% load socialaccount %}
 
 {% block content %}
+{% if post.moderation == 'APR'%}
 <div class="container" id="first-detail-block">
     <div class="row">
         <div class="col-12 col-sm-4" id="photo-detail">
@@ -246,6 +247,8 @@
         </div>
     </div>
 </div>
+{% endif %}
+<h1>Самый умный?</h1>
 {% endblock %}
 
 {% block script %}

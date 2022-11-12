@@ -47,7 +47,7 @@ class PersonalPaginationService(ServiceWithResult):
             all_photos = Photo.objects.annotate(comment_count=Count('comment_photo', distinct=True),
                                                 like_count=Count('like_photo', distinct=True)).filter(
                 user_id=self.cleaned_data['user_id'])
-        paginator = Paginator(all_photos, 2)
+        paginator = Paginator(all_photos, 4)
         self.validate_page(paginator.page_range)
         photos_on_page = (paginator.page(int(self.cleaned_data['page']))).object_list
         return photos_on_page

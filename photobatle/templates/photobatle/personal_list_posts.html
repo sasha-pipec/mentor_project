@@ -38,9 +38,15 @@
         <div class="card" style="width: 18rem;" id="card">
 
             {% if post.photo.url|check_photo %}
-            <a href="{{ post.get_absolute_url }}">
-                <img class="card-img-top" src="{{post.photo.url}}" alt="Card image cap">
-            </a>
+                {% if post.moderation == 'APR'%}
+                    <a href="{{ post.get_absolute_url }}">
+                        <img class="card-img-top" src="{{post.photo.url}}" alt="Card image cap">
+                    </a>
+                {% else %}
+                    <a style="cursor: default">
+                        <img class="card-img-top" src="{{post.photo.url}}" alt="Card image cap">
+                    </a>
+                {% endif %}
             {% else %}
             <a href="{{ post.get_absolute_url }}">
                 <img class="card-img-top" src="/static/image/default-photo-post.jpeg" alt="Card image cap">
@@ -74,12 +80,23 @@
                 <p class="card-text">Автор: {{post.user.username}}</p>
                 <p class="card-text">Лайки: {{post|like_count}}</p>
                 <p class="card-text">Комментарии: {{post|comment_count}}</p>
+                {% if post.moderation == 'APR'%}
                 <p class="card-text">Дата публикации:
                     <br> {{post.updated_at}}</p>
+                {% else %}
+                <p class="card-text">Дата публикации:
+                    <br> не опубликовано </p>
+                {% endif %}
                 <p class="card-text">Статус: {{post.get_moderation_display}}</p>
+                {% if post.moderation == 'APR'%}
                 <a href="{{ post.get_absolute_url }}" class="btn btn-primary" id="btn-post">
                     Посмотреть
                 </a>
+                {% else %}
+                <a  class="btn btn-primary" id="btn-post" style="cursor: default">
+                    Не опубликовано
+                </a>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -170,9 +187,14 @@
 
                           var content =
                               '<div class="col">' +
-                              '<div class="card" style="width: 18rem;" id="card">' +
-                              '<a href="' + response.posts[key].get_absolute_url + '">' +
-                              "<img id='foo' class='card-img-top' src='" + url_photo + "'alt='Не загрузилось :('>" +
+                              '<div class="card" style="width: 18rem;" id="card">' ;
+                          if(response.posts[key].moderation == 'APR'){
+                             var content= content+'<a href="' + response.posts[key].get_absolute_url + '">';
+                          }else{
+                             var content= content+ '<a style="cursor: default"">';
+                          }
+
+                              var content = content +"<img id='foo' class='card-img-top' src='" + url_photo + "'alt='Не загрузилось :('>" +
                               '</a>' +
                               '<div class="card-body" id="card-body">';
                           if (response.posts[key].moderation != "DEL" && response.posts[key].moderation != "REJ") {
@@ -194,10 +216,18 @@
                               '<p class="card-text" id="post_content">Описание: ' + response.posts[key].photo_content + '</p>' +
                               '<p class="card-text">Автор: ' + response.posts[key].user.username + '</p>' +
                               '<p class="card-text">Лайки: ' + response.posts[key].like_count + '</p>' +
-                              '<p class="card-text">Комментарии: ' + response.posts[key].comment_count + '</p>' +
-                              '<p class="card-text">Дата публикации: <br> ' + new Date(response.posts[key].updated_at).toLocaleDateString("ru", options) + '</p>' +
-                              '<p class="card-text">Статус: ' + response.posts[key].get_moderation_display + '</p>' +
-                              '<a href="' + response.posts[key].get_absolute_url + '"class="btn btn-primary" id="btn-post">Посмотреть</a>' +
+                              '<p class="card-text">Комментарии: ' + response.posts[key].comment_count + '</p>' ;
+                          if(response.posts[key].moderation=='APR') {
+                              var content = content + '<p class="card-text">Дата публикации: <br> ' + new Date(response.posts[key].updated_at).toLocaleDateString("ru", options) + '</p>'+
+                                  '<p class="card-text">Статус: ' + response.posts[key].get_moderation_display + '</p>' +
+                                  '<a href="' + response.posts[key].get_absolute_url + '"class="btn btn-primary" id="btn-post">Посмотреть</a>' ;
+                          }else{
+                              var content = content + '<p class="card-text">Дата публикации: <br> не опубликовано</p>'+
+                                  '<p class="card-text">Статус: ' + response.posts[key].get_moderation_display + '</p>' +
+                                  '<a class="btn btn-primary" id="btn-post" style="cursor: default"> Не опубликовано</a>' ;
+                          }
+
+                              var content =content+
                               '</div>' +
                               '</div>' +
                               '</div>'
@@ -269,8 +299,13 @@
 
                           var content =
                               '<div class="col">' +
-                              '<div class="card" style="width: 18rem;" id="card">' +
-                              '<a href="' + response.posts[key].get_absolute_url + '">' +
+                              '<div class="card" style="width: 18rem;" id="card">' ;
+                          if(response.posts[key].moderation == 'APR'){
+                             var content= content+'<a href="' + response.posts[key].get_absolute_url + '">';
+                          }else{
+                             var content= content+ '<a style="cursor: default"">';
+                          }
+                            var content = content+
                               "<img id='foo' class='card-img-top' src='" + url_photo + "'alt='Не загрузилось :('>" +
                               '</a>' +
                               '<div class="card-body" id="card-body">';
@@ -293,10 +328,17 @@
                               '<p class="card-text" id="post_content">Описание: ' + response.posts[key].photo_content + '</p>' +
                               '<p class="card-text">Автор: ' + response.posts[key].user.username + '</p>' +
                               '<p class="card-text">Лайки: ' + response.posts[key].like_count + '</p>' +
-                              '<p class="card-text">Комментарии: ' + response.posts[key].comment_count + '</p>' +
-                              '<p class="card-text">Дата публикации: <br> ' + new Date(response.posts[key].updated_at).toLocaleDateString("ru", options) + '</p>' +
-                              '<p class="card-text">Статус: ' + response.posts[key].get_moderation_display + '</p>' +
-                              '<a href="' + response.posts[key].get_absolute_url + '"class="btn btn-primary" id="btn-post">Посмотреть</a>' +
+                              '<p class="card-text">Комментарии: ' + response.posts[key].comment_count + '</p>' ;
+                          if(response.posts[key].moderation=='APR') {
+                              var content = content + '<p class="card-text">Дата публикации: <br> ' + new Date(response.posts[key].updated_at).toLocaleDateString("ru", options) + '</p>'+
+                                  '<p class="card-text">Статус: ' + response.posts[key].get_moderation_display + '</p>' +
+                                  '<a href="' + response.posts[key].get_absolute_url + '"class="btn btn-primary" id="btn-post">Посмотреть</a>' ;
+                          }else{
+                              var content = content + '<p class="card-text">Дата публикации: <br> не опубликовано</p>'+
+                                  '<p class="card-text">Статус: ' + response.posts[key].get_moderation_display + '</p>' +
+                                  '<a class="btn btn-primary" id="btn-post" style="cursor: default"> Не опубликовано</a>' ;
+                          }
+                          var content=content+
                               '</div>' +
                               '</div>' +
                               '</div>'

@@ -48,7 +48,7 @@ class PaginationService(ServiceWithResult):
             Q(photo_name__icontains=self.cleaned_data['search_value']) |
             Q(photo_content__icontains=self.cleaned_data['search_value']),
             moderation='APR').order_by(self.cleaned_data['sort_value'])
-        paginator = Paginator(all_photos, 2)
+        paginator = Paginator(all_photos, 4)
         self.validate_page(paginator.page_range)
         photos_on_page = (paginator.page(int(self.cleaned_data['page']))).object_list
         return photos_on_page
