@@ -15,7 +15,7 @@
                 Сортировкa
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                <form method="post" id="contactForm">
+                <form method="get" id="contactForm">
                     {% csrf_token %}
                     {{form.as_p}}
                 </form>
@@ -23,7 +23,7 @@
         </li>
         <input type="hidden" id="trigger" value="asc">
         <a><img src="static/image/up_or_down.png" alt="" id="up_or_down"></a>
-        <form method='post' id="serchForm">
+        <form method='get' id="serchForm">
             {% csrf_token %}
             <div class="form-group">
                 <input class="form-control" type="text" placeholder="Поиск по слову" name="content">
@@ -128,10 +128,10 @@
               day: 'numeric',
             };
               $.ajax({
-                  data: {'sort_value':$(this).serialize(),
+                  data: {'sort_value':document.querySelector('input[name="choice"]:checked').value,
                   'search_value':contentInput,
                   'csrfmiddlewaretoken': '{{csrf_token}}',
-                  'page':'1',
+                  'page':1,
                   'direction':direction},
                   type: $(this).attr('method'),
                   url: "{% url 'ajax' %}",
@@ -207,7 +207,7 @@
                   data: {'search_value':contentInput,
                   'csrfmiddlewaretoken': '{{csrf_token}}',
                   'page':'1'},
-                  type: 'post',
+                  type: 'get',
                   url: "{% url 'ajax_second' %}",
                   success: function (response) {
                       $('#contactForm')[0].reset('');
@@ -386,7 +386,7 @@
                   'sort_value': sort_value,
                   'direction':direction,
                   'search_value':contentInput,},
-                  type: 'post',
+                  type: 'get',
                   url: "{% url 'ajax' %}",
                   success: function (response) {
                       $('.row').empty();

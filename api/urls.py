@@ -21,7 +21,7 @@ urlpatterns = [
 
     # Personal photo
     # Get method have 1 required params: api_token in headers
-    path('photos/personal/', PersonalSortPhotoApi.as_view()),
+    path('photos/personal/', PersonalPhotoAPI.as_view()),
 
     # Sort and search photo
     # Get method have 1 required params: form; 1 not required params name if you use sort photo

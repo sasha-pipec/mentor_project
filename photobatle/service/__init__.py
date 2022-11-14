@@ -7,9 +7,5 @@ from .like.Delete import *
 from .comment.Create import *
 from .comment.Delete import *
 from .comment.Update import *
-from .ajax.SortingForm import *
-from .ajax.SearchForm import *
-from .ajax.PersonalSortingForm import *
-from .ajax.Pagination import *
-from .ajax.PersonalPagination import *
+from .ajax.PaginationSorting import *
 from .apitoken.Create import *

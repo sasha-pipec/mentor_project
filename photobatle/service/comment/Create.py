@@ -52,11 +52,13 @@ class CreateCommentService(ServiceWithResult):
     @property
     def _created_comment(self):
         if self.cleaned_data['comment']:
-            return Comment.objects.create(
+            result = Comment.objects.create(
                 photo=Photo(pk=(self._get_photo).id),
                 user_id=self.cleaned_data['user_id'],
                 parent_id=self.cleaned_data['parent_comment_id'],
                 content=self.cleaned_data['comment'])
+            self.send_notification()
+            return result
 
     @property
     @lru_cache()

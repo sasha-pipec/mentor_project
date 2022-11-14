@@ -23,6 +23,7 @@ django-service-objects = {editable = true, ref = "a0c4b434254fb3ca9d09ee0a33ca61
 drf-yasg = "*"
 channels = "*"
 channels-redis = "*"
+daphne = "*"
 
 [dev-packages]
 

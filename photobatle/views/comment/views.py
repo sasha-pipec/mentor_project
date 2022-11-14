@@ -29,7 +29,7 @@ class DeletingCommentForPhoto(View):
             )
         except Exception as error:
             return HttpResponse(error)
-        return redirect('detail_post', slug=outcome.result)
+        return redirect('detail_post', slug=outcome.result.slug)
 
 
 class UpdatingCommentForPhoto(View):

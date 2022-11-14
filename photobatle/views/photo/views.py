@@ -83,6 +83,22 @@ class PersonalListPosts(ListView):
         posts = super().get_queryset(**kwargs)
         return posts.filter(user_id=self.request.user).order_by('id')
 
+class RenderingHomePage(ListView):
+    """The main page of the application will be generated here"""
+    model = Photo
+    template_name = 'photobatle/home_html_with_post_and_SortForm.html'
+    context_object_name = 'posts'
+    paginate_by = 4
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = SortForm()
+        return context
+
+    def get_queryset(selfю, *, object_list=None, **kwargs):
+        posts = super().get_queryset(**kwargs)
+        return posts.filter(moderation='APR').order_by('id')
+
 
 class DetailPost(DataMixin, DetailView):
     """Detailed view of the post"""

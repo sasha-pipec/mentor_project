@@ -17,7 +17,7 @@
                 Фильтрация
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                <form method="post" id="SortForm">
+                <form method="get" id="SortForm">
                     {% csrf_token %}
                     {{form.as_p}}
                 </form>
@@ -164,7 +164,7 @@
               day: 'numeric',
             };
               $.ajax({
-                  data: {'sort_value':$(this).serialize(),
+                  data: {'sort_value':document.querySelector('input[name="choice"]:checked').value,
                   'csrfmiddlewaretoken': '{{csrf_token}}',
                   'user_id': '{{user.pk}}',
                    'page':'1'},

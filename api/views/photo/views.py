@@ -87,3 +87,18 @@ class ModifiedPhotoAPI(APIView):
             return Response({'error': str(e.detail),
                              'status_code': str(e.status_code)}, status=e.status_code)
         return Response(ApiPhotoSerializer(outcome.result).data, status=status.HTTP_201_CREATED)
+
+
+class PersonalPhotoAPI(APIView):
+    @permission_classes([IsAuthenticated])
+    @swagger_auto_schema(manual_parameters=get_personal_photo_parameters, responses=get_personal_photo_response,
+                         operation_description=get_personal_photo_description)
+    def get(self, request, *args, **kwargs):
+        try:
+            outcome = ServiceOutcome(
+                GetPersonalPhotoService,
+                request.data.dict() if request.data else request.query_params.dict() | {"user_id": request.user.pk}
+            )
+        except Exception as e:
+            return Response({'error': str(e.detail), 'status_code': str(e.status_code)}, status=e.status_code)
+        return Response(ApiPhotoSerializer(outcome.result, many=True).data, status=status.HTTP_200_OK)

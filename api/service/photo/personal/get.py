@@ -1,19 +1,19 @@
 from django import forms
 from django.core.paginator import Paginator
-from django.db.models import Count
+from django.db.models import Q, Count
 from service_objects.services import ServiceWithResult
 from photobatle.models import *
 from api.status_code import *
 
 
-class PersonalPaginationService(ServiceWithResult):
-    """Service class for personal sorting form"""
+class GetPersonalPhotoService(ServiceWithResult):
+    """Service class for sorting form"""
 
-    page = forms.CharField()
-    user_id = forms.CharField(required=False)
+    page = forms.IntegerField(required=True)
     sort_value = forms.CharField(required=False)
+    user_id = forms.IntegerField(required=False)
 
-    custom_validations = ["validate_user_id", "validate_sort_value", ]
+    custom_validations = ["validate_user_id", "validate_sort_value"]
 
     def process(self):
         self.run_custom_validations()
@@ -21,20 +21,17 @@ class PersonalPaginationService(ServiceWithResult):
             self.result = self._get_photo_on_page
         return self
 
+    def validate_user_id(self):
+        if not self.cleaned_data['user_id']:
+            raise ValidationError401(f"incorrect api token")
+
     def validate_sort_value(self):
         sort_list = ['DEL', 'MOD', 'APR', 'REJ']
         if self.cleaned_data['sort_value'] and self.cleaned_data['sort_value'] not in sort_list:
             raise ValidationError404(f"Incorrect sort_value")
 
-    def validate_user_id(self):
-        if not self.cleaned_data['user_id']:
-            raise ValidationError401(f"incorrect api token")
-
     def validate_page(self, page_range):
-        try:
-            if int(self.cleaned_data['page']) >= page_range.stop:
-                raise ValidationError404(f"Incorrect page")
-        except Exception:
+        if self.cleaned_data['page'] >= page_range.stop:
             raise ValidationError404(f"Incorrect page")
 
     @property
