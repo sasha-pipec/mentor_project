@@ -6,9 +6,10 @@ from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
 from service_objects.services import ServiceOutcome
 
+from api.serializers import ApiCommentSerializer
+from api.service import *
 from photobatle.serializers import *
 from api.custom_schema import *
-from photobatle import serializers
 from photobatle.service import *
 
 
@@ -16,9 +17,17 @@ class CommentAPI(APIView):
     parser_classes = [MultiPartParser, ]
 
     @swagger_auto_schema(responses={status.HTTP_200_OK: 'successes'})
-    def get(self, *args, **kwargs):
-        serializer = serializers.CommentSerializer(Comment.objects.all(), many=True)
-        return Response(serializer.data)
+    def get(self, request, *args, **kwargs):
+        try:
+            outcome = ServiceOutcome(
+                GetCommentForPhotoService, kwargs | {'user_id': request.user.pk if request.user.pk else None}
+            )
+        except Exception as e:
+            return Response({'error': str(e.detail), 'status_code': str(e.status_code)}, status=e.status_code)
+        return Response(
+            ApiCommentSerializer(outcome.result, context={'user_id': request.user.pk if request.user.pk else None},
+                              many=True).data,
+            outcome.response_status or status.HTTP_200_OK, )
 
     @permission_classes([IsAuthenticated])
     @swagger_auto_schema(manual_parameters=post_comment_parameters,
@@ -30,7 +39,7 @@ class CommentAPI(APIView):
             )
         except Exception as e:
             return Response({'error': str(e.detail), 'status_code': str(e.status_code)}, status=e.status_code)
-        return Response(CommentSerializer(outcome.result).data,
+        return Response(ApiCreateCommentSerializer(outcome.result).data,
                         outcome.response_status or status.HTTP_201_CREATED, )
 
 
@@ -59,5 +68,5 @@ class ModifiedCommentAPI(APIView):
             )
         except Exception as e:
             return Response({'error': str(e.detail), 'status_code': str(e.status_code)}, status=e.status_code)
-        return Response(CommentSerializer(outcome.result).data,
+        return Response(ApiCreateCommentSerializer(outcome.result).data,
                         outcome.response_status or status.HTTP_200_OK)

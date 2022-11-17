@@ -7,10 +7,9 @@ from rest_framework.parsers import MultiPartParser
 from service_objects.services import ServiceOutcome
 
 from api.custom_schema import *
-from photobatle.serializers import *
-from api.serializers import *
 from photobatle.service import *
 from api.service import *
+from api.serializers import *
 
 
 class PhotoAPI(APIView):
@@ -22,9 +21,12 @@ class PhotoAPI(APIView):
             outcome = ServiceOutcome(
                 GetPhotoService, request.data.dict() if request.data else request.query_params
             )
-            return Response(ApiPhotoSerializer(outcome.result, many=True).data, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e.detail), 'status_code': str(e.status_code)}, status=e.status_code)
+        return Response(
+            outcome.result['pagination_data'] | {
+                'posts': ApiPhotosSerializer(outcome.result['photos'], many=True).data},
+            status=status.HTTP_200_OK)
 
     @permission_classes([IsAuthenticated])
     @swagger_auto_schema(manual_parameters=post_photo_parameters, responses=post_photo_response,
@@ -37,25 +39,21 @@ class PhotoAPI(APIView):
         except Exception as e:
             return Response({'error': str(e.detail),
                              'status_code': str(e.status_code)}, status=e.status_code)
-        return Response(ApiPhotoSerializer(outcome.result).data, status=status.HTTP_201_CREATED)
+        return Response(ApiCreatePhotoSerializers(outcome.result).data, status=status.HTTP_201_CREATED)
 
 
 class ModifiedPhotoAPI(APIView):
     parser_classes = [MultiPartParser, ]
 
     @swagger_auto_schema(manual_parameters=get_photo_parameters, responses=get_photo_response)
-    def get(self, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         try:
-            serializer = PhotoSerializer(
-                Photo.objects.annotate(comment_count=Count('comment_photo', distinct=True),
-                                       like_count=Count('like_photo', distinct=True)).filter(
-                    moderation='APR', slug=kwargs['slug']), many=True)
-            if not serializer.data:
-                raise ValidationError400(f"Incorrect slug_id value")
+            outcome = ServiceOutcome(
+                GetDetailPhotoService, kwargs | {'user_id': request.user.pk if request.user.is_authenticated else None}
+            )
         except Exception as e:
-            return Response({'error': str(e.detail),
-                             'status_code': str(e.status_code)}, status=e.status_code)
-        return Response(serializer.data)
+            return Response({'error': str(e.detail), 'status_code': str(e.status_code)}, status=e.status_code)
+        return Response(ApiDetailPhotoSerializer(outcome.result).data)
 
     @permission_classes([IsAuthenticated])
     @swagger_auto_schema(manual_parameters=delete_photo_parameters, responses=delete_photo_response,
@@ -86,7 +84,7 @@ class ModifiedPhotoAPI(APIView):
         except Exception as e:
             return Response({'error': str(e.detail),
                              'status_code': str(e.status_code)}, status=e.status_code)
-        return Response(ApiPhotoSerializer(outcome.result).data, status=status.HTTP_201_CREATED)
+        return Response(ApiCreatePhotoSerializers(outcome.result).data, status=status.HTTP_201_CREATED)
 
 
 class PersonalPhotoAPI(APIView):
@@ -101,4 +99,5 @@ class PersonalPhotoAPI(APIView):
             )
         except Exception as e:
             return Response({'error': str(e.detail), 'status_code': str(e.status_code)}, status=e.status_code)
-        return Response(ApiPhotoSerializer(outcome.result, many=True).data, status=status.HTTP_200_OK)
+        return Response(outcome.result['pagination_data'] | {
+            'posts': ApiPersonalPhotosSerializer(outcome.result['photos'], many=True).data}, status=status.HTTP_200_OK)
