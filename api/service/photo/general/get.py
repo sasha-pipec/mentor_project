@@ -4,12 +4,13 @@ from django.db.models import Q, Count
 from service_objects.services import ServiceWithResult
 from photobatle.models import *
 from api.status_code import *
+from api.utils import *
 
 
 class GetPhotoService(ServiceWithResult):
     """Service class for sorting form"""
 
-    page = forms.IntegerField(required=True)
+    page = forms.IntegerField(required=False)
     sort_value = forms.CharField(required=False)
     search_value = forms.CharField(required=False)
     direction = forms.CharField(required=False)
@@ -40,6 +41,8 @@ class GetPhotoService(ServiceWithResult):
             self.cleaned_data['sort_value'] = "id"
 
     def validate_page(self, page_range):
+        if not self.cleaned_data['page']:
+            self.cleaned_data['page'] = 1
         if self.cleaned_data['page'] >= page_range.stop:
             raise ValidationError404(f"Incorrect page")
 
@@ -53,5 +56,7 @@ class GetPhotoService(ServiceWithResult):
             moderation='APR').order_by(self.cleaned_data['sort_value'])
         paginator = Paginator(all_photos, 4)
         self.validate_page(paginator.page_range)
+        pagination_data = CustomPagination(paginator.get_page(self.cleaned_data['page']), self.cleaned_data['page'],
+                                           paginator.per_page)
         photos_on_page = (paginator.page(int(self.cleaned_data['page']))).object_list
-        return photos_on_page
+        return {'photos': photos_on_page, 'pagination_data': pagination_data.to_json()}
