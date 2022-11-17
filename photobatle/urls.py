@@ -14,11 +14,11 @@ urlpatterns = [
     path('photo/get/<slug:slug>', DetailPost.as_view(), name='detail_post'),
 
     path('comment/post/<parent_comment_id>', CreatingCommentForPhoto.as_view(), name='create_comment'),
-    path('comment/delete/<comment_id>', DeletingCommentForPhoto.as_view(), name='delete_comment'),
-    path('comment/patch/<comment_id>', UpdatingCommentForPhoto.as_view(), name='update_comment'),
+    path('comment/delete/<id>', DeletingCommentForPhoto.as_view(), name='delete_comment'),
+    path('comment/patch/<id>', UpdatingCommentForPhoto.as_view(), name='update_comment'),
 
-    path('like/post/<photo_id>', CreatingLikeForPhoto.as_view(), name='create_like'),
-    path('like/delete/<photo_id>', DeletingLikeForPhoto.as_view(), name='delete_like'),
+    path('like/post/<slug>', CreatingLikeForPhoto.as_view(), name='create_like'),
+    path('like/delete/<slug>', DeletingLikeForPhoto.as_view(), name='delete_like'),
 
     path('token/post/<user_id>', GeneratingAPIToken.as_view(), name='api_token'),
 

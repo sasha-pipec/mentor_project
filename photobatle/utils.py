@@ -5,7 +5,7 @@ from photobatle.models import *
 class DataMixin:
     def slug_russian_word(self, word):
         # Making a slug of Russian words
-        russia = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя1234567890qwertyuiopasdfghjklzxcvbnm'
+        russia = 'абвгдеёжзийклмнопрстуфхцчшщъыэюя1234567890qwertyuiopasdfghjklzxcvbnm'
         slug = ''
         for i in word:
             if i.lower() in russia:
