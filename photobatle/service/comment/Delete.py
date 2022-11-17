@@ -8,10 +8,10 @@ from api.status_code import *
 class DeleteCommentService(ServiceWithResult):
     """Service class for delete comment"""
 
-    comment_id = forms.IntegerField()
+    id = forms.IntegerField(required=False)
     user_id = forms.IntegerField(required=False)
 
-    custom_validations = ["validate_user_id", "validate_comment_id", "check_comment_author", "check_comment_children"]
+    custom_validations = ["validate_user_id", "validate_id", "check_comment_author", "check_comment_children"]
 
     def process(self):
         self.run_custom_validations()
@@ -23,25 +23,27 @@ class DeleteCommentService(ServiceWithResult):
         if not self.cleaned_data['user_id']:
             raise ValidationError401(f"incorrect api token")
 
-    def validate_comment_id(self):
+    def validate_id(self):
         try:
-            return Comment.objects.get(pk=self.cleaned_data['comment_id'])
+            return Comment.objects.get(pk=self.cleaned_data['id'])
         except ObjectDoesNotExist:
-            raise ValidationError404(f"Incorrect comment_id value")
+            if not self.cleaned_data['id']:
+                raise ValidationError400(f"Missing one of all requirements parameters: id")
+            raise ValidationError404(f"Incorrect id value")
 
     def check_comment_author(self):
         try:
-            return Comment.objects.get(pk=self.cleaned_data['comment_id'],
+            return Comment.objects.get(pk=self.cleaned_data['id'],
                                        user_id=self.cleaned_data['user_id'])
         except ObjectDoesNotExist:
             raise ValidationError404(f"You are not the author of the comment")
 
     def check_comment_children(self):
-        if Comment.objects.filter(parent_id=self.cleaned_data['comment_id']):
+        if Comment.objects.filter(parent_id=self.cleaned_data['id']):
             raise ValidationError409(f"Comment have children")
 
     @property
     def _deleted_comment(self):
-        comment = Comment.objects.get(pk=self.cleaned_data['comment_id'])
+        comment = Comment.objects.get(pk=self.cleaned_data['id'])
         comment.delete()
         return Photo.objects.get(pk=comment.photo_id)

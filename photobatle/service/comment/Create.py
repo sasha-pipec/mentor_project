@@ -15,10 +15,10 @@ class CreateCommentService(ServiceWithResult):
 
     comment = forms.CharField(required=False)
     parent_comment_id = forms.Field(required=False)
-    photo_slug = forms.SlugField()
+    slug = forms.SlugField(required=False)
     user_id = forms.IntegerField(required=False)
 
-    custom_validations = ["validate_user_id", "validate_photo_slug", "validate_parent_comment_id", ]
+    custom_validations = ["validate_user_id", 'validate_comment', "validate_slug", "validate_parent_comment_id", ]
 
     def process(self):
         self.run_custom_validations()
@@ -30,12 +30,18 @@ class CreateCommentService(ServiceWithResult):
         if not self.cleaned_data['user_id']:
             raise ValidationError401(f"incorrect api token")
 
+    def validate_comment(self):
+        if not self.cleaned_data['comment']:
+            raise ValidationError400(f"Missing one of all requirements parameters: comment")
+
     def validate_parent_comment_id(self):
         if not self._parent_comment_id:
             raise ValidationError404(f"Incorrect parent_comment_id value")
 
-    def validate_photo_slug(self):
-        if not Photo.objects.filter(slug=self.cleaned_data['photo_slug']):
+    def validate_slug(self):
+        if not self.cleaned_data['slug']:
+            raise ValidationError400(f"Missing one of all requirements parameters: comment")
+        elif not Photo.objects.filter(slug=self.cleaned_data['slug']):
             raise ValidationError404(f"Incorrect photo_slug value")
 
     @property
@@ -63,12 +69,12 @@ class CreateCommentService(ServiceWithResult):
     @property
     @lru_cache()
     def _get_photo(self):
-        return Photo.objects.get(slug=self.cleaned_data['photo_slug'])
+        return Photo.objects.get(slug=self.cleaned_data['slug'])
 
     def send_notification(self):
         channel_layer = get_channel_layer()
         photo = Photo.objects.annotate(comment_count=Count('comment_photo')).get(
-            slug=self.cleaned_data['photo_slug'])
+            slug=self.cleaned_data['slug'])
         username = str(User.objects.get(pk=self.cleaned_data['user_id']))
         async_to_sync(channel_layer.group_send)(
             str(photo.user), {
