@@ -16,7 +16,7 @@ class CreatingCommentForPhoto(View):
             )
         except Exception as error:
             return HttpResponse(error)
-        return redirect('detail_post', slug=request.POST['photo_slug'])
+        return redirect('detail_post', slug=request.POST['slug'])
 
 
 class DeletingCommentForPhoto(View):

@@ -9,6 +9,8 @@ from photobatle.forms import *
 from photobatle.service import *
 from photobatle.utils import DataMixin
 
+from api.service import *
+
 
 class AddPhoto(View):
     """Class for adding photos"""
