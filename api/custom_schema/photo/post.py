@@ -6,12 +6,12 @@ post_photo_parameters = [
                       description="The photo of post",
                       type=openapi.TYPE_FILE,
                       required=True),
-    openapi.Parameter('photo_name', openapi.IN_FORM,
-                      description="The new photo name for pos",
+    openapi.Parameter('name', openapi.IN_FORM,
+                      description="The name for post",
                       type=openapi.TYPE_STRING,
                       required=True),
-    openapi.Parameter('photo_content', openapi.IN_FORM,
-                      description="The new photo description for post",
+    openapi.Parameter('content', openapi.IN_FORM,
+                      description="The content for post",
                       type=openapi.TYPE_STRING,
                       required=True),
 ]
@@ -20,6 +20,7 @@ post_photo_response = {
     status.HTTP_201_CREATED: 'Successes',
     status.HTTP_400_BAD_REQUEST: 'Incorrect required parameters',
     status.HTTP_401_UNAUTHORIZED: 'Incorrect value of Api_token',
+    status.HTTP_409_CONFLICT: 'Conflict',
 }
 
 post_photo_description = 'You need to authorization'

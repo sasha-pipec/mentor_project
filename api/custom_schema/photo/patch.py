@@ -3,23 +3,23 @@ from rest_framework import status
 
 patch_photo_parameters = [
     openapi.Parameter('slug', openapi.IN_PATH,
-                      description="Slug of photo",
+                      description="The slug of photo",
                       type=openapi.TYPE_STRING,
                       ),
     openapi.Parameter('photo', openapi.IN_FORM,
                       description="The new photo of post",
                       type=openapi.TYPE_FILE),
-    openapi.Parameter('photo_name', openapi.IN_FORM,
-                      description="The new photo_name of post",
+    openapi.Parameter('name', openapi.IN_FORM,
+                      description="The new name of post",
                       type=openapi.TYPE_STRING),
-    openapi.Parameter('photo_content', openapi.IN_FORM,
-                      description="The new photo_content of post",
+    openapi.Parameter('content', openapi.IN_FORM,
+                      description="The new content of post",
                       type=openapi.TYPE_STRING),
 ]
 
 patch_photo_response = {
     status.HTTP_204_NO_CONTENT: 'Successes',
-    status.HTTP_400_BAD_REQUEST: 'Incorrect value of slug or not required parameters',
+    status.HTTP_404_NOT_FOUND: 'Incorrect value of slug',
     status.HTTP_401_UNAUTHORIZED: 'Incorrect value of Api_token',
 }
 

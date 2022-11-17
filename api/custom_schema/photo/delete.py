@@ -3,14 +3,14 @@ from rest_framework import status
 
 delete_photo_parameters = [
     openapi.Parameter('slug', openapi.IN_PATH,
-                      description="Slug of photo",
+                      description="The slug of photo",
                       type=openapi.TYPE_STRING,
                       ),
 ]
 
 delete_photo_response = {
     status.HTTP_204_NO_CONTENT: 'Successes',
-    status.HTTP_400_BAD_REQUEST: 'Incorrect value of slug',
+    status.HTTP_404_NOT_FOUND: 'Incorrect value of slug',
     status.HTTP_401_UNAUTHORIZED: 'Incorrect value of Api_token',
 }
 

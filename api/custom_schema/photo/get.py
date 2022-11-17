@@ -3,7 +3,7 @@ from rest_framework import status
 
 get_photo_parameters = [
     openapi.Parameter('slug', openapi.IN_PATH,
-                      description="Slug of photo",
+                      description="The slug of photo",
                       type=openapi.TYPE_STRING,
                       )]
 

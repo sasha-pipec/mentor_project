@@ -13,12 +13,12 @@ get_home_photo_parameters = [
                       description="You can choice asc-ascending or desc-descending direction",
                       type=openapi.TYPE_STRING),
     openapi.Parameter('page', openapi.IN_QUERY,
-                      description="Number of page",
+                      description="You can specify the page number, the values taken from the first page will be returned by default",
                       type=openapi.TYPE_NUMBER,
-                      required=True),
+                      required=False),
 ]
 
 get_home_photo_response = {
     status.HTTP_200_OK: 'Successes',
-    status.HTTP_404_NOT_FOUND: 'Incorrect sort_value or direction or page',
+    status.HTTP_404_NOT_FOUND: 'Incorrect value of sort, direction or page',
 }

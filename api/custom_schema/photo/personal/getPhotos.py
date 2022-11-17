@@ -7,14 +7,13 @@ get_personal_photo_parameters = [
                                   "'DEL'-on delete,  'MOD'-on moderation, 'APR'-on approved , 'REJ'-on rejected",
                       type=openapi.TYPE_STRING,),
     openapi.Parameter('page', openapi.IN_QUERY,
-                      description="Number of page",
-                      type=openapi.TYPE_NUMBER,
-                      required=True),
+                      description="You can specify the page number, the values taken from the first page will be returned by default",
+                      type=openapi.TYPE_NUMBER,),
 ]
 get_personal_photo_response = {
     status.HTTP_200_OK: 'Successes',
     status.HTTP_401_UNAUTHORIZED: 'Incorrect value of Api_token',
-    status.HTTP_404_NOT_FOUND: 'Incorrect sort value or page'
+    status.HTTP_404_NOT_FOUND: 'Incorrect value of sort or page'
 }
 
 get_personal_photo_description = 'You need to authorization'
