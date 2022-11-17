@@ -6,18 +6,20 @@ urlpatterns = [
     # Get method have 1 required params: api_token in headers
     path('user', UserAPI.as_view()),
 
+    #Token
+    path('token', TokenAPI.as_view()),
+
     # Photo
     # Post method have 4 required params: photo, photo_name, photo_content, api_token in headers
     # Delete method have 2 required params: slug_id, api_token in headers
     # Patch method have 2 required params: slug_id, api_token in headers; not required photo, photo_name, photo_content
     # Get method have 1 required params: slug_id
     path('photos', PhotoAPI.as_view()),
-    path('pagination/page_range/', UserAPI.as_view()),
-    path('personal_pagination/page_range/', UserAPI.as_view()),
     path('photos/<slug:slug>', ModifiedPhotoAPI.as_view()),
 
     path('photos/<slug:slug>/likes', LikeAPI.as_view()),
-    path('photos/<slug:slug>/comments/<int:id>', LikeAPI.as_view()),
+    path('photos/<slug:slug>/comments/', CommentAPI.as_view()),
+    path('comments/<int:id>', ModifiedCommentAPI.as_view()),
 
     # Personal photo
     # Get method have 1 required params: api_token in headers
