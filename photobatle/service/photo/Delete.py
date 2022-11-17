@@ -12,7 +12,7 @@ from photobatle.models import *
 class DeletePhotoService(ServiceWithResult):
     """Service class for delete photo"""
 
-    slug = forms.SlugField()
+    slug = forms.SlugField(required=False)
     user_id = forms.IntegerField(required=False)
 
     custom_validations = ["validate_user_id", "validate_slug", ]
@@ -31,6 +31,8 @@ class DeletePhotoService(ServiceWithResult):
         try:
             return Photo.objects.get(slug=self.cleaned_data['slug'], user_id=self.cleaned_data['user_id'])
         except Exception:
+            if not self.cleaned_data['slug']:
+                raise ValidationError400(f'Missing one of all requirements parameters: slug')
             raise ValidationError404(f"Incorrect slug value")
 
     @property
