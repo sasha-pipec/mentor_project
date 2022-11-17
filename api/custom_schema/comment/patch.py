@@ -2,8 +2,8 @@ from drf_yasg import openapi
 from rest_framework import status
 
 patch_comment_parameters = [
-    openapi.Parameter('comment_id', openapi.IN_PATH,
-                      description="The pk of comment",
+    openapi.Parameter('id', openapi.IN_PATH,
+                      description="The id of comment you want to edit",
                       type=openapi.TYPE_STRING,
                       required=True),
     openapi.Parameter('comment', openapi.IN_FORM,
@@ -14,7 +14,7 @@ patch_comment_parameters = [
 
 patch_comment_response = {
     status.HTTP_201_CREATED: 'Successes',
-    status.HTTP_400_BAD_REQUEST: 'Incorrect comment_id values',
+    status.HTTP_404_NOT_FOUND: 'Incorrect value of id',
     status.HTTP_401_UNAUTHORIZED: 'Incorrect value of Api_token',
 }
 

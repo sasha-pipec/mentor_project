@@ -2,10 +2,10 @@ from drf_yasg import openapi
 from rest_framework import status
 
 post_comment_parameters = [
-    openapi.Parameter('photo_slug', openapi.IN_FORM,
+    openapi.Parameter('slug', openapi.IN_PATH,
                       description="The slug of photo",
                       type=openapi.TYPE_STRING,
-                      required=True),
+                      ),
     openapi.Parameter('comment', openapi.IN_FORM,
                       description="The comment for photo",
                       type=openapi.TYPE_STRING,
@@ -17,7 +17,7 @@ post_comment_parameters = [
 
 post_comment_response = {
     status.HTTP_201_CREATED: 'Successes',
-    status.HTTP_400_BAD_REQUEST: 'Incorrect slug or parent_comment_id values',
+    status.HTTP_404_NOT_FOUND: 'Incorrect value of slug or parent_comment_id',
     status.HTTP_401_UNAUTHORIZED: 'Incorrect value of Api_token',
 }
 
