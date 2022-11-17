@@ -13,9 +13,17 @@
                 <form method='post' id="add-photo-form" enctype="multipart/form-data">
                     {%csrf_token%}
                     {% for i in form%}
-                    <p><label for="{{i.id_for_label}}">{{i.label}}</label><br>{{i}}</p>
                         {{i.errors}}
                     {% endfor%}
+                    <p><label for="id_photo">Фото</label><br>
+                        <input type="file" name="photo" accept="image/*" maxlength="255" required id="id_photo">
+                    </p>
+                    <p><label for="id_name">Имя фото</label><br>
+                        <input type="text" name="name" class="form-field" maxlength="255" required id="id_name">
+                    </p>
+                    <p><label for="id_content">Описание фото</label><br>
+                        <textarea type="text" name="content" class="form-field" cols="40"  rows="10" required id="id_content"></textarea>
+                    </p>
                     <button type="submit" class="btn btn-primary btn-post-personal-account" id="add-photo-button"> Добавить</button>
                 </form>
             </div>

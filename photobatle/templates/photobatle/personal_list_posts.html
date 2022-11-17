@@ -123,11 +123,11 @@
                     <input type="file" name="photo" accept="image/*" id="id_photo_{{post.pk}}">
                 </p>
                 <p><label for="{{change_form.id_for_label}}">Новое {{change_form.photo_name.label|lower}}</label><br>
-                    <input type="text" name="photo_name" class="form-field" maxlength="255" required
+                    <input type="text" name="name" class="form-field" maxlength="255" required
                            id="id_photo_name_{{post.pk}}">
                 </p>
                 <p><label for="{{change_form.id_for_label}}">Новое {{change_form.photo_content.label|lower}}</label><br>
-                    <textarea name="photo_content" cols="40" rows="10" class="form-field" required
+                    <textarea name="content" cols="40" rows="10" class="form-field" required
                               id="id_photo_content_{{post.pk}}"></textarea>
                 </p>
                 {{i.errors}}

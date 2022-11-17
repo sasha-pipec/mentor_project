@@ -300,6 +300,7 @@
                   type: 'get',
                   url: "{% url 'pagination' %}",
                   success: function (response) {
+                      console.log(response);
                       $('.row').empty();
                       if((response.posts).length>0){
                               for (var key in response.posts) {
