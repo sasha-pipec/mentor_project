@@ -1,8 +1,10 @@
+from rest_framework import serializers
+
 from api.serializers import *
 
 class PhotoSerializer(serializers.ModelSerializer):
     '''Photo serializer'''
-    user = ApiUserSerializer()
+    user = ApiUsernameSerializer()
     like_count = serializers.IntegerField()
     comment_count = serializers.IntegerField()
     checking_the_existence = serializers.CharField()

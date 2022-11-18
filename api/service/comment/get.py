@@ -3,7 +3,7 @@ from django.db.models import Value
 from service_objects.services import ServiceWithResult
 from photobatle.models import *
 from api.status_code import *
-from api.utils import *
+from api.utils import get_answers_for_comments
 
 
 class GetCommentForPhotoService(ServiceWithResult):

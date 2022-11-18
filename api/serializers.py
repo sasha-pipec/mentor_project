@@ -1,3 +1,5 @@
+from api import utils
+
 from rest_framework import serializers
 from photobatle.models import *
 from rest_framework import serializers
@@ -5,7 +7,6 @@ from rest_framework.authtoken.models import Token
 from django.db.models import Value
 
 from photobatle.models import *
-from api.utils import *
 
 
 class ApiUsernameSerializer(serializers.ModelSerializer):
@@ -37,7 +38,7 @@ class ApiUserSerializer(serializers.ModelSerializer):
 
 
 class ApiCreateCommentSerializer(serializers.ModelSerializer):
-    user = ApiUserSerializer()
+    user = ApiUsernameSerializer()
 
     class Meta:
         model = Comment
@@ -57,7 +58,7 @@ class ApiCommentSerializer(serializers.ModelSerializer):
         comments = Comment.objects.filter(parent=obj.id).annotate(removal=Value('user_not_authenticate'),
                                                                   change=Value('user_not_authenticate'))
         if self.context['user_id']:
-            comments = get_answers_for_comments(comments, self.context['user_id'])
+            comments = utils.get_answers_for_comments(comments, self.context['user_id'])
         return (ApiCommentSerializer(comments, context={'user_id': self.context['user_id']}, many=True)).data
 
     class Meta:
@@ -68,7 +69,7 @@ class ApiCommentSerializer(serializers.ModelSerializer):
 class ApiPhotosSerializer(serializers.ModelSerializer):
     '''Photo serializer'''
 
-    user = ApiUserSerializer()
+    user = ApiUsernameSerializer()
     like_count = serializers.IntegerField()
     comment_count = serializers.IntegerField()
     date_published = serializers.CharField(source='updated_at')
@@ -85,7 +86,7 @@ class ApiPhotosSerializer(serializers.ModelSerializer):
 class ApiPersonalPhotosSerializer(serializers.ModelSerializer):
     '''Photo serializer'''
 
-    user = ApiUserSerializer()
+    user = ApiUsernameSerializer()
     like_count = serializers.IntegerField()
     comment_count = serializers.IntegerField()
     date_published = serializers.CharField(source='updated_at')
@@ -115,6 +116,7 @@ class ApiPersonalPhotosSerializer(serializers.ModelSerializer):
     def get_date_published(self, obj):
         if obj.moderation != "APR":
             return 'Not published'
+        return obj.updated_at
 
     class Meta:
         model = Photo
@@ -127,7 +129,7 @@ class ApiPersonalPhotosSerializer(serializers.ModelSerializer):
 class ApiDetailPhotoSerializer(serializers.ModelSerializer):
     '''Photo serializer'''
 
-    user = ApiUserSerializer()
+    user = ApiUsernameSerializer()
     like_count = serializers.IntegerField()
     comment_count = serializers.IntegerField()
     date_published = serializers.CharField(source='updated_at')
@@ -142,7 +144,7 @@ class ApiDetailPhotoSerializer(serializers.ModelSerializer):
 
 
 class ApiCreatePhotoSerializers(serializers.ModelSerializer):
-    user = ApiUserSerializer()
+    user = ApiUsernameSerializer()
 
     class Meta:
         model = Photo
