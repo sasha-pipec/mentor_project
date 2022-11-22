@@ -82,7 +82,7 @@
                 <p class="card-text">Комментарии: {{post|comment_count}}</p>
                 {% if post.moderation == 'APR'%}
                 <p class="card-text">Дата публикации:
-                    <br> {{post.updated_at}}</p>
+                    <br> {{post.published_at}}</p>
                 {% else %}
                 <p class="card-text">Дата публикации:
                     <br> не опубликовано </p>
@@ -219,7 +219,7 @@
                               '<p class="card-text">Лайки: ' + response.posts[key].like_count + '</p>' +
                               '<p class="card-text">Комментарии: ' + response.posts[key].comment_count + '</p>' ;
                           if(response.posts[key].moderation=='APR') {
-                              var content = content + '<p class="card-text">Дата публикации: <br> ' + new Date(response.posts[key].updated_at).toLocaleDateString("ru", options) + '</p>'+
+                              var content = content + '<p class="card-text">Дата публикации: <br> ' + new Date(response.posts[key].published_at).toLocaleDateString("ru", options) + '</p>'+
                                   '<p class="card-text">Статус: ' + response.posts[key].get_moderation_display + '</p>' +
                                   '<a href="' + response.posts[key].get_absolute_url + '"class="btn btn-primary" id="btn-post">Посмотреть</a>' ;
                           }else{
@@ -353,7 +353,7 @@
                               '<p class="card-text">Лайки: ' + response.posts[key].like_count + '</p>' +
                               '<p class="card-text">Комментарии: ' + response.posts[key].comment_count + '</p>' ;
                           if(response.posts[key].moderation=='APR') {
-                              var content = content + '<p class="card-text">Дата публикации: <br> ' + new Date(response.posts[key].updated_at).toLocaleDateString("ru", options) + '</p>'+
+                              var content = content + '<p class="card-text">Дата публикации: <br> ' + new Date(response.posts[key].published_at).toLocaleDateString("ru", options) + '</p>'+
                                   '<p class="card-text">Статус: ' + response.posts[key].get_moderation_display + '</p>' +
                                   '<a href="' + response.posts[key].get_absolute_url + '"class="btn btn-primary" id="btn-post">Посмотреть</a>' ;
                           }else{

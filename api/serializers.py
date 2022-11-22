@@ -72,14 +72,13 @@ class ApiPhotosSerializer(serializers.ModelSerializer):
     user = ApiUsernameSerializer()
     like_count = serializers.IntegerField()
     comment_count = serializers.IntegerField()
-    date_published = serializers.CharField(source='updated_at')
     name = serializers.CharField(source='photo_name')
     content = serializers.CharField(source='photo_content')
 
     class Meta:
         model = Photo
         fields = (
-            'photo', 'name', 'content', 'user', 'like_count', 'comment_count', 'date_published', 'slug',
+            'photo', 'name', 'content', 'user', 'like_count', 'comment_count', 'published_at', 'slug',
         )
 
 
@@ -116,7 +115,7 @@ class ApiPersonalPhotosSerializer(serializers.ModelSerializer):
     def get_date_published(self, obj):
         if obj.moderation != "APR":
             return 'Not published'
-        return obj.updated_at
+        return obj.published_at
 
     class Meta:
         model = Photo
@@ -132,14 +131,13 @@ class ApiDetailPhotoSerializer(serializers.ModelSerializer):
     user = ApiUsernameSerializer()
     like_count = serializers.IntegerField()
     comment_count = serializers.IntegerField()
-    date_published = serializers.CharField(source='updated_at')
     content = serializers.CharField(source='photo_content')
     like_exist = serializers.CharField()
 
     class Meta:
         model = Photo
         fields = (
-            'photo', 'content', 'user', 'like_count', 'comment_count', 'date_published', 'like_exist'
+            'photo', 'content', 'user', 'like_count', 'comment_count', 'published_at', 'like_exist'
         )
 
 

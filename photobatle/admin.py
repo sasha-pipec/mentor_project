@@ -41,7 +41,7 @@ class UserAdmin(admin.ModelAdmin):
 
 class PhotoAdmin(admin.ModelAdmin):
     list_display = (
-        'user', 'get_html_photo', 'get_previous_html_photo', 'photo_name', 'create_at', 'updated_at',
+        'user', 'get_html_photo', 'get_previous_html_photo', 'photo_name', 'create_at', 'published_at',
         'moderation')
     list_filter = ('moderation', 'user')
     ordering = ('create_at', 'photo_name', 'user')
@@ -114,7 +114,7 @@ class PhotoAdmin(admin.ModelAdmin):
             except ValidationError as error:
                 return HttpResponse(error)
         elif obj.moderation == 'APR':
-            obj.updated_at = datetime.today().strftime('%Y-%m-%d')
+            obj.published_at = datetime.today().strftime('%Y-%m-%d')
             async_to_sync(channel_layer.group_send)(
                 str(obj.user), {
                     'type': 'message',
