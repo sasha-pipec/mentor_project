@@ -86,7 +86,8 @@ ROOT_URLCONF = 'mentor_prooject.urls'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
-    ]
+    ],
+    'PAGE_SIZE': int(config('PAGE_SIZE'))
 }
 
 SWAGGER_SETTINGS = {
@@ -147,7 +148,7 @@ DATABASES = {
         'USER': config('DB_USER'),
         'PASSWORD': config('DB_PASSWORD'),
         'HOST': config('DB_HOST'),
-        'PORT': '5432'
+        'PORT': config('DB_PORT'),
     }
 }
 
@@ -172,9 +173,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
-LANGUAGE_CODE = 'ru'
+LANGUAGE_CODE = config('LANGUAGE_CODE')
 
-TIME_ZONE = 'Europe/Moscow'
+TIME_ZONE = config('TIME_ZONE')
 
 USE_I18N = True
 
@@ -192,7 +193,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-SITE_ID = 1
+SITE_ID = int(config('SITE_ID'))
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
@@ -200,13 +201,13 @@ MEDIA_URL = '/media/'
 AUTH_USER_MODEL = 'photobatle.User'
 
 ACCOUNT_EMAIL_REQUIRED = True
-SITE_ID = 1
+
 LOGIN_REDIRECT_URL = '/'
 
 django_heroku.settings(locals())
 
-REDIS_HOST = '127.0.0.1'
-REDIS_PORT = '6379'
+REDIS_HOST = config('REDIS_HOST')
+REDIS_PORT = config('REDIS_PORT')
 CELERY_BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
 CELERY_BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
 CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'

@@ -8,8 +8,7 @@ from service_objects.services import ServiceOutcome
 from photobatle.forms import *
 from photobatle.service import *
 from photobatle.utils import DataMixin
-
-from api.service import *
+from mentor_prooject.settings import REST_FRAMEWORK
 
 
 class AddPhoto(View):
@@ -73,7 +72,7 @@ class PersonalListPosts(ListView):
     model = Photo
     template_name = 'photobatle/personal_list_posts.html'
     context_object_name = 'posts'
-    paginate_by = 4
+    paginate_by = REST_FRAMEWORK['PAGE_SIZE']
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -85,19 +84,20 @@ class PersonalListPosts(ListView):
         posts = super().get_queryset(**kwargs)
         return posts.filter(user_id=self.request.user).order_by('id')
 
+
 class RenderingHomePage(ListView):
     """The main page of the application will be generated here"""
     model = Photo
     template_name = 'photobatle/home_html_with_post_and_SortForm.html'
     context_object_name = 'posts'
-    paginate_by = 4
+    paginate_by = REST_FRAMEWORK['PAGE_SIZE']
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form'] = SortForm()
         return context
 
-    def get_queryset(selfю, *, object_list=None, **kwargs):
+    def get_queryset(self, *, object_list=None, **kwargs):
         posts = super().get_queryset(**kwargs)
         return posts.filter(moderation='APR').order_by('id')
 

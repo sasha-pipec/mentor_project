@@ -2,8 +2,9 @@ from django import forms
 from django.core.paginator import Paginator
 from django.db.models import Count, Q
 from service_objects.services import ServiceWithResult
-from api.status_code import *
+
 from photobatle.utils import *
+from mentor_prooject.settings import REST_FRAMEWORK
 
 
 class PaginationService(ServiceWithResult):
@@ -44,7 +45,7 @@ class PaginationService(ServiceWithResult):
                 Q(photo_name__icontains=self.cleaned_data['search_value']) |
                 Q(photo_content__icontains=self.cleaned_data['search_value']),
                 moderation='APR').order_by(self.cleaned_data['sort_value'])
-        paginator = Paginator(all_photos, 4)
+        paginator = Paginator(all_photos, REST_FRAMEWORK['PAGE_SIZE'])
         photos_on_page = (paginator.page(int(self.cleaned_data['page']))).object_list
         max_page = str(paginator.page_range[-1])
         return {'photos': photos_on_page, 'max_page': max_page}
