@@ -7,7 +7,6 @@ from rest_framework.parsers import MultiPartParser
 from service_objects.services import ServiceOutcome
 
 from api.custom_schema import *
-from photobatle.service import *
 from api.service import *
 from api.serializers import *
 
@@ -34,11 +33,12 @@ class PhotoAPI(APIView):
     def post(self, request, *args, **kwargs):
         try:
             outcome = ServiceOutcome(
-                AddPhotoService, request.FILES.dict() | request.POST.dict() | {'user_id': request.user.id}
+                ApiAddPhotoService, request.POST.dict() | {'user_id': request.user.id}, request.FILES.dict()
             )
-        except Exception as e:
-            return Response({'error': str(e.detail),
-                             'status_code': str(e.status_code)}, status=e.status_code)
+        except Exception as error:
+            return Response({'errors': {key: value for key, value in error.errors_dict.items()},
+                             'status_code': error.response_status},
+                            status=status.HTTP_400_BAD_REQUEST)
         return Response(ApiCreatePhotoSerializers(outcome.result).data, status=status.HTTP_201_CREATED)
 
 

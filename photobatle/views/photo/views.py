@@ -20,11 +20,12 @@ class AddPhoto(View):
     def post(self, request, *args, **kwargs):
         try:
             outcome = ServiceOutcome(
-                AddPhotoService, request.FILES.dict() | request.POST.dict() | {'user_id': request.user.id}
+                AddPhotoService, request.POST.dict() | {'user_id': request.user.id}, request.FILES.dict()
             )
         except Exception as error:
             return render(request, 'photobatle/add_photo_form.html',
-                          context={'form': AddPhotoForm(), 'error_message': error})
+                          context={'form': AddPhotoForm(),
+                                   'error_message': {key: value for key, value in error.errors_dict.items()}})
         return redirect('home')
 
 
