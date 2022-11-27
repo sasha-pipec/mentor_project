@@ -206,7 +206,7 @@
               $.ajax({
                   data: {'search_value':contentInput,
                   'csrfmiddlewaretoken': '{{csrf_token}}',
-                  'page':'1'},
+                  'page': 1},
                   type: 'get',
                   url: "{% url 'ajax_second' %}",
                   success: function (response) {
@@ -293,7 +293,7 @@
             };
               $.ajax({
                   data: {'csrfmiddlewaretoken': '{{csrf_token}}',
-                  'page':$(this).attr('id'),
+                  'page':Number($(this).attr('id')),
                   'sort_value': sort_value,
                   'search_value':contentInput,
                   'direction':direction},
@@ -364,17 +364,17 @@
         var contentInput=$('input[name="content"]').val().trim();
         var sort_value=document.querySelector('input[name="choice"]:checked');
         var direction=document.getElementById('trigger').value;
+        if(sort_value){
+            sort_value=sort_value.value
+        }else{
+            return ;
+        }
         if(direction=='asc') {
             document.getElementById('trigger').value = 'desc';
             direction = 'desc';
         }else{
             document.getElementById('trigger').value = 'asc';
             direction = 'asc';
-        }
-        if(sort_value){
-            sort_value=sort_value.value
-        }else{
-            sort_value="id";
         }
         var options = {
               year: 'numeric',
@@ -383,7 +383,7 @@
             };
               $.ajax({
                   data: {'csrfmiddlewaretoken': '{{csrf_token}}',
-                  'page':'1',
+                  'page':1,
                   'sort_value': sort_value,
                   'direction':direction,
                   'search_value':contentInput,},

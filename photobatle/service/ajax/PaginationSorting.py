@@ -10,11 +10,11 @@ from mentor_prooject.settings import REST_FRAMEWORK
 class PaginationService(ServiceWithResult):
     """Service class for personal sorting form"""
 
-    user_id = forms.CharField(required=False)
+    user_id = forms.IntegerField(required=False)
     sort_value = forms.CharField(required=False)
     search_value = forms.CharField(required=False)
     direction = forms.CharField(required=False)
-    page = forms.CharField()
+    page = forms.IntegerField()
 
     def process(self):
         self.result = self._get_photo_on_page
@@ -45,7 +45,6 @@ class PaginationService(ServiceWithResult):
                 Q(photo_name__icontains=self.cleaned_data['search_value']) |
                 Q(photo_content__icontains=self.cleaned_data['search_value']),
                 moderation='APR').order_by(self.cleaned_data['sort_value'])
-        paginator = Paginator(all_photos, REST_FRAMEWORK['PAGE_SIZE'])
-        photos_on_page = (paginator.page(int(self.cleaned_data['page']))).object_list
-        max_page = str(paginator.page_range[-1])
+        photos_on_page = Paginator(all_photos, REST_FRAMEWORK['PAGE_SIZE']).page(self.cleaned_data['page'])
+        max_page = photos_on_page.paginator.page_range.stop
         return {'photos': photos_on_page, 'max_page': max_page}
