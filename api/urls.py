@@ -12,7 +12,7 @@ urlpatterns = [
     path('photos/personal', PersonalPhotoAPI.as_view()),
     path('photos', PhotoAPI.as_view()),
     path('photos/<slug>', ModifiedPhotoAPI.as_view()),
-    path('photos/<slug>/likes', LikeAPI.as_view()),
+    path('photos/<slug>/like_toggle', LikeAPI.as_view()),
     path('photos/<slug>/comments', CommentAPI.as_view()),
     path('comments/<int:id>', ModifiedCommentAPI.as_view()),
 

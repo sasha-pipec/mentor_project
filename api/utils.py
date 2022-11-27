@@ -33,11 +33,13 @@ def can_be_deleted_and_changing_by_user(comments, user_id):
     return comments
 
 
-def check_like(user_id, slug):
-    photo = PhotoRepository.get_first_object_by_filter(slug=slug)
+def _like_exist(user_id, slug):
     if not user_id:
-        raise ValidationError401('Missing one of all requirements parameters: api token')
-    elif not photo:
-        raise ValidationError404(f'Incorrect value of slug or api_token')
+        raise ValidationError401("Missing one of all requirements parameters:api token")
+    elif not slug:
+        raise ValidationError400("Missing one of all requirements parameters:api slug")
+    photo = PhotoRepository.get_first_object_by_filter(slug=slug)
+    if not photo:
+        raise ValidationError404(f"Photo with slug '{slug}' dont found")
     like = LikeRepository.get_objects_by_filter(user_id=user_id, photo_id=photo.id)
     return True if not like else False
