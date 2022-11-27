@@ -1,35 +1,38 @@
-from api import utils
+from api.utils import *
+from api.constants import *
+from api.repositorys import *
 
 from rest_framework import serializers
-from photobatle.models import *
-from rest_framework import serializers
 from rest_framework.authtoken.models import Token
-from django.db.models import Value
 
 from photobatle.models import *
 
 
 class ApiUsernameSerializer(serializers.ModelSerializer):
-    '''User serializer'''
+    """Username serializer"""
 
     class Meta:
         model = User
         fields = ('username',)
 
+
 class ApiUserSerializer(serializers.ModelSerializer):
-    '''User serializer'''
+    """User serializer"""
 
     all_likes = serializers.SerializerMethodField()
     all_comments = serializers.SerializerMethodField()
     api_token = serializers.SerializerMethodField()
 
-    def get_all_likes(self, obj):
+    @staticmethod
+    def get_all_likes(obj):
         return Like.objects.filter(user_id=obj.pk).count()
 
-    def get_all_comments(self, obj):
+    @staticmethod
+    def get_all_comments(obj):
         return Comment.objects.filter(user_id=obj.pk).count()
 
-    def get_api_token(self, obj):
+    @staticmethod
+    def get_api_token(obj):
         return Token.objects.get(user=obj.pk).pk
 
     class Meta:
@@ -38,36 +41,40 @@ class ApiUserSerializer(serializers.ModelSerializer):
 
 
 class ApiCreateCommentSerializer(serializers.ModelSerializer):
+    """Create comment serializer"""
+
     user = ApiUsernameSerializer()
 
     class Meta:
         model = Comment
-        fields = ('id', 'photo', 'user', 'content', 'create_at',)
+        fields = ('id', 'photo', 'user', 'content', 'create_at', 'parent')
+
 
 class ApiCommentSerializer(serializers.ModelSerializer):
-    '''Comment serializer'''
-    removal = serializers.BooleanField()
-    change = serializers.BooleanField()
+    """Comment serializer"""
+    user = ApiUsernameSerializer()
+    can_be_deleted = serializers.BooleanField()
+    can_be_change = serializers.BooleanField()
     answers = serializers.SerializerMethodField()
     photo = serializers.SerializerMethodField()
 
-    def get_photo(self, obj):
+    @staticmethod
+    def get_photo(obj):
         return str(obj.user.photo)
 
     def get_answers(self, obj):
-        comments = Comment.objects.filter(parent=obj.id).annotate(removal=Value('user_not_authenticate'),
-                                                                  change=Value('user_not_authenticate'))
+        comments = CommentRepository.get_objects_by_filter(parent=obj.id)
         if self.context['user_id']:
-            comments = utils.get_answers_for_comments(comments, self.context['user_id'])
+            comments = can_be_deleted_and_changing_by_user(comments, self.context['user_id'])
         return (ApiCommentSerializer(comments, context={'user_id': self.context['user_id']}, many=True)).data
 
     class Meta:
         model = Comment
-        fields = ('id', 'photo', 'user', 'content', 'create_at', 'answers', 'change', 'removal')
+        fields = ('id', 'photo', 'user', 'content', 'create_at', 'parent', 'answers', 'can_be_change', 'can_be_deleted')
 
 
 class ApiPhotosSerializer(serializers.ModelSerializer):
-    '''Photo serializer'''
+    """Photo serializer"""
 
     user = ApiUsernameSerializer()
     like_count = serializers.IntegerField()
@@ -83,12 +90,11 @@ class ApiPhotosSerializer(serializers.ModelSerializer):
 
 
 class ApiPersonalPhotosSerializer(serializers.ModelSerializer):
-    '''Photo serializer'''
+    """Personal photo serializer"""
 
     user = ApiUsernameSerializer()
     like_count = serializers.IntegerField()
     comment_count = serializers.IntegerField()
-    date_published = serializers.CharField(source='updated_at')
     name = serializers.CharField(source='photo_name')
     content = serializers.CharField(source='photo_content')
     status = serializers.CharField(source='get_moderation_display')
@@ -97,23 +103,27 @@ class ApiPersonalPhotosSerializer(serializers.ModelSerializer):
     change = serializers.SerializerMethodField()
     recovery = serializers.SerializerMethodField()
 
-    def get_change(self, obj):
-        if obj.moderation != "DEL" and obj.moderation != "REJ":
+    @staticmethod
+    def get_change(obj):
+        if obj.moderation != Photo.ON_DELETION and obj.moderation != Photo.REJECTED:
             return True
         return False
 
-    def get_delete(self, obj):
-        if obj.moderation != "DEL" and obj.moderation != "REJ":
+    @staticmethod
+    def get_delete(obj):
+        if obj.moderation != Photo.ON_DELETION and obj.moderation != Photo.REJECTED:
             return True
         return False
 
-    def get_recovery(self, obj):
-        if obj.moderation == "DEL" or obj.moderation == "REJ":
+    @staticmethod
+    def get_recovery(obj):
+        if obj.moderation == Photo.ON_DELETION or obj.moderation == Photo.ON_MODERATION:
             return True
         return False
 
-    def get_date_published(self, obj):
-        if obj.moderation != "APR":
+    @staticmethod
+    def get_date_published(obj):
+        if obj.moderation != Photo.APPROVED:
             return 'Not published'
         return obj.published_at
 
@@ -126,26 +136,34 @@ class ApiPersonalPhotosSerializer(serializers.ModelSerializer):
 
 
 class ApiDetailPhotoSerializer(serializers.ModelSerializer):
-    '''Photo serializer'''
+    """ Detail photo serializer"""
 
     user = ApiUsernameSerializer()
     like_count = serializers.IntegerField()
     comment_count = serializers.IntegerField()
     content = serializers.CharField(source='photo_content')
-    like_exist = serializers.CharField()
+    is_liked_by_current_user = serializers.CharField()
+    the_first_three_comments = serializers.SerializerMethodField()
+
+    def get_the_first_three_comments(self, obj):
+        comments = CommentRepository.get_objects_by_filter(MAX_NUMBER_OF_COMMENTS_FOR_DETAIL_PHOTO,
+                                                           photo_id=obj.id, parent=None)
+        if self.context['user_id']:
+            comments = can_be_deleted_and_changing_by_user(comments, self.context['user_id'])
+        return (ApiCommentSerializer(comments, context={'user_id': self.context['user_id']}, many=True)).data
 
     class Meta:
         model = Photo
         fields = (
-            'photo', 'content', 'user', 'like_count', 'comment_count', 'published_at', 'like_exist'
+            'photo', 'content', 'user', 'like_count', 'comment_count', 'published_at', 'is_liked_by_current_user',
+            'the_first_three_comments'
         )
 
 
 class ApiCreatePhotoSerializers(serializers.ModelSerializer):
+    """Create photo serializer"""
     user = ApiUsernameSerializer()
 
     class Meta:
         model = Photo
         fields = ('slug', 'photo_name', 'photo_content', 'create_at', 'user')
-
-

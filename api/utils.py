@@ -1,7 +1,7 @@
 from mentor_prooject.settings import *
-from photobatle.models import Comment
-from photobatle.serializers import *
+from photobatle.models import *
 from api.status_code import *
+from api.repositorys import *
 
 
 class CustomPagination:
@@ -24,26 +24,20 @@ class CustomPagination:
         }
 
 
-def get_answers_for_comments(comments, user_id):
+def can_be_deleted_and_changing_by_user(comments, user_id):
     for comment in comments:
         if comment.user.pk == user_id:
-            comment.change = True
-            if Comment.objects.filter(parent=comment.pk):
-                comment.removal = False
-            else:
-                comment.removal = True
-        else:
-            comment.change = False
-            comment.removal = False
+            comment.can_be_change = True
+            if not CommentRepository.get_objects_by_filter(parent=comment.pk):
+                comment.can_be_deleted = True
     return comments
 
 
 def check_like(user_id, slug):
-    try:
-        if not user_id:
-            raise ValidationError401(f'Incorrect value of api token')
-        photo = Photo.objects.get(slug=slug)
-        like = Like.objects.filter(user_id=user_id, photo_id=photo.id)
-        return True if not like else False
-    except Exception:
+    photo = PhotoRepository.get_first_object_by_filter(slug=slug)
+    if not user_id:
+        raise ValidationError401('Missing one of all requirements parameters: api token')
+    elif not photo:
         raise ValidationError404(f'Incorrect value of slug or api_token')
+    like = LikeRepository.get_objects_by_filter(user_id=user_id, photo_id=photo.id)
+    return True if not like else False
