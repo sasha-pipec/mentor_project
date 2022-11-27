@@ -13,7 +13,12 @@ get_home_photo_parameters = [
                       description="You can choice asc-ascending or desc-descending direction",
                       type=openapi.TYPE_STRING),
     openapi.Parameter('page', openapi.IN_QUERY,
-                      description="You can specify the page number, the values taken from the first page will be returned by default",
+                      description="You can specify the page number,"
+                                  " the values taken from the first page will be returned by default",
+                      type=openapi.TYPE_NUMBER,
+                      required=False),
+    openapi.Parameter('per_page', openapi.IN_QUERY,
+                      description="you can choose the number of photos per page",
                       type=openapi.TYPE_NUMBER,
                       required=False),
 ]

@@ -23,8 +23,10 @@ class PhotoAPI(APIView):
             outcome = ServiceOutcome(
                 GetPhotoService, request.data.dict() if request.data else request.query_params
             )
-        except Exception as e:
-            return Response({ERROR: e.detail, STATUS_ERROR: e.status_code}, status=e.status_code)
+        except Exception as error:
+            return Response({ERROR: {key: value for key, value in error.errors_dict.items()},
+                             STATUS_ERROR: error.response_status},
+                            status=status.HTTP_400_BAD_REQUEST)
         return Response({METADATA: outcome.result['pagination_data'],
                          RESPONSE: ApiPhotosSerializer(outcome.result['photos'], many=True).data},
                         status=status.HTTP_200_OK)
