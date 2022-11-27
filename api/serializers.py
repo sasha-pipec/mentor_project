@@ -99,25 +99,25 @@ class ApiPersonalPhotosSerializer(serializers.ModelSerializer):
     content = serializers.CharField(source='photo_content')
     status = serializers.CharField(source='get_moderation_display')
     date_published = serializers.SerializerMethodField()
-    delete = serializers.SerializerMethodField()
-    change = serializers.SerializerMethodField()
-    recovery = serializers.SerializerMethodField()
+    can_be_deleted = serializers.SerializerMethodField()
+    can_be_changed = serializers.SerializerMethodField()
+    can_be_recovered = serializers.SerializerMethodField()
 
     @staticmethod
-    def get_change(obj):
+    def get_can_be_changed(obj):
         if obj.moderation != Photo.ON_DELETION and obj.moderation != Photo.REJECTED:
             return True
         return False
 
     @staticmethod
-    def get_delete(obj):
+    def get_can_be_deleted(obj):
         if obj.moderation != Photo.ON_DELETION and obj.moderation != Photo.REJECTED:
             return True
         return False
 
     @staticmethod
-    def get_recovery(obj):
-        if obj.moderation == Photo.ON_DELETION or obj.moderation == Photo.ON_MODERATION:
+    def get_can_be_recovered(obj):
+        if obj.moderation == Photo.ON_DELETION or obj.moderation == Photo.REJECTED:
             return True
         return False
 
@@ -131,7 +131,7 @@ class ApiPersonalPhotosSerializer(serializers.ModelSerializer):
         model = Photo
         fields = (
             'photo', 'name', 'content', 'user', 'like_count', 'comment_count', 'date_published', 'status', 'slug',
-            'delete', 'change', 'recovery',
+            'can_be_deleted', 'can_be_changed', 'can_be_recovered',
         )
 
 
