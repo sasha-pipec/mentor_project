@@ -1,8 +1,9 @@
 from django import forms
 from service_objects.services import ServiceWithResult
-from photobatle.utils import *
-from photobatle.models import Photo
-from api.status_code import *
+
+from api.repositorys import *
+from photobatle.utils import DataMixin
+from photobatle.models import *
 
 
 class ApiAddPhotoService(DataMixin, ServiceWithResult):
@@ -42,18 +43,14 @@ class ApiAddPhotoService(DataMixin, ServiceWithResult):
             self.errors['type'] = f"Incorrect type of photo '{type_of_photo}',try jpeg"
 
     def validate_name(self):
-        if not self.get_photo_objects_by_filter(photo_name=self.cleaned_data['name']):
+        if not PhotoRepository.get_objects_by_filter(photo_name=self.cleaned_data['name']):
             return self.set_slug()
         self.errors['conflict_name'] = "Photo with that name already exists"
 
     def validate_slug(self):
         if 'slug' in self.cleaned_data:
-            if self.get_photo_objects_by_filter(slug=self.cleaned_data['slug']):
+            if PhotoRepository.get_objects_by_filter(slug=self.cleaned_data['slug']):
                 self.errors['conflict_slug'] = "Photo with that slug already exists, try new photo name"
-
-    @staticmethod
-    def get_photo_objects_by_filter(**kwargs):
-        return Photo.objects.filter(**kwargs)
 
     def set_slug(self):
         self.cleaned_data['slug'] = self.slug_russian_word(self.cleaned_data['name'])

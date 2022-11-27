@@ -1,14 +1,17 @@
+from api.custom_schema import *
+from api.service import *
+from api.serializers import *
+from api.metadata import *
+
 from drf_yasg.utils import swagger_auto_schema
+
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
-from service_objects.services import ServiceOutcome
 
-from api.custom_schema import *
-from api.service import *
-from api.serializers import *
+from service_objects.services import ServiceOutcome
 
 
 class PhotoAPI(APIView):
@@ -21,11 +24,10 @@ class PhotoAPI(APIView):
                 GetPhotoService, request.data.dict() if request.data else request.query_params
             )
         except Exception as e:
-            return Response({'error': str(e.detail), 'status_code': str(e.status_code)}, status=e.status_code)
-        return Response(
-            outcome.result['pagination_data'] | {
-                'posts': ApiPhotosSerializer(outcome.result['photos'], many=True).data},
-            status=status.HTTP_200_OK)
+            return Response({ERROR: e.detail, STATUS_ERROR: e.status_code}, status=e.status_code)
+        return Response({METADATA: outcome.result['pagination_data'],
+                         RESPONSE: ApiPhotosSerializer(outcome.result['photos'], many=True).data},
+                        status=status.HTTP_200_OK)
 
     @permission_classes([IsAuthenticated])
     @swagger_auto_schema(manual_parameters=post_photo_parameters, responses=post_photo_response,
@@ -33,27 +35,31 @@ class PhotoAPI(APIView):
     def post(self, request, *args, **kwargs):
         try:
             outcome = ServiceOutcome(
-                ApiAddPhotoService, request.POST.dict() | {'user_id': request.user.id}, request.FILES.dict()
+                ApiAddPhotoService, request.POST.dict() | {ID_OF_USER: request.user.id}, request.FILES.dict()
             )
         except Exception as error:
-            return Response({'errors': {key: value for key, value in error.errors_dict.items()},
-                             'status_code': error.response_status},
+            return Response({ERROR: {key: value for key, value in error.errors_dict.items()},
+                             STATUS_ERROR: error.response_status},
                             status=status.HTTP_400_BAD_REQUEST)
         return Response(ApiCreatePhotoSerializers(outcome.result).data, status=status.HTTP_201_CREATED)
 
 
 class ModifiedPhotoAPI(APIView):
     parser_classes = [MultiPartParser, ]
+    metadata_class = DetailPhotoMetadata
 
     @swagger_auto_schema(manual_parameters=get_photo_parameters, responses=get_photo_response)
     def get(self, request, *args, **kwargs):
         try:
             outcome = ServiceOutcome(
-                GetDetailPhotoService, kwargs | {'user_id': request.user.pk if request.user.is_authenticated else None}
+                GetDetailPhotoService, kwargs | {ID_OF_USER: request.user.pk if request.user.is_authenticated else None}
             )
+            metadata = self.metadata_class().determine_metadata(request, self)
         except Exception as e:
-            return Response({'error': str(e.detail), 'status_code': str(e.status_code)}, status=e.status_code)
-        return Response(ApiDetailPhotoSerializer(outcome.result).data)
+            return Response({ERROR: e.detail, STATUS_ERROR: e.status_code}, status=e.status_code)
+        return Response({METADATA: metadata} | {RESPONSE: (
+            ApiDetailPhotoSerializer(outcome.result, context={ID_OF_USER: request.user.pk if request.user.pk else None},
+                                     many=True).data)})
 
     @permission_classes([IsAuthenticated])
     @swagger_auto_schema(manual_parameters=delete_photo_parameters, responses=delete_photo_response,
@@ -61,11 +67,10 @@ class ModifiedPhotoAPI(APIView):
     def delete(self, request, *args, **kwargs):
         try:
             outcome = ServiceOutcome(
-                DeletePhotoService, kwargs | {'user_id': request.user.id}
+                DeletePhotoService, kwargs | {ID_OF_USER: request.user.id}
             )
         except Exception as e:
-            return Response({'error': str(e.detail),
-                             'status_code': str(e.status_code)}, status=e.status_code)
+            return Response({ERROR: e.detail, STATUS_ERROR: e.status_code}, status=e.status_code)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @permission_classes([IsAuthenticated])
@@ -75,15 +80,14 @@ class ModifiedPhotoAPI(APIView):
         try:
             if request.data:
                 outcome = ServiceOutcome(
-                    UpdatePhotoService, request.data.dict() | kwargs | {'user_id': request.user.id}
+                    UpdatePhotoService, request.data.dict() | kwargs | {ID_OF_USER: request.user.id}
                 )
             else:
                 outcome = ServiceOutcome(
-                    RecoveryPhotoService, kwargs | {'user_id': request.user.id}
+                    RecoveryPhotoService, kwargs | {ID_OF_USER: request.user.id}
                 )
         except Exception as e:
-            return Response({'error': str(e.detail),
-                             'status_code': str(e.status_code)}, status=e.status_code)
+            return Response({ERROR: e.detail, STATUS_ERROR: e.status_code}, status=e.status_code)
         return Response(ApiCreatePhotoSerializers(outcome.result).data, status=status.HTTP_201_CREATED)
 
 
@@ -95,9 +99,10 @@ class PersonalPhotoAPI(APIView):
         try:
             outcome = ServiceOutcome(
                 GetPersonalPhotoService,
-                request.data.dict() if request.data else request.query_params.dict() | {"user_id": request.user.pk}
+                request.data.dict() if request.data else request.query_params.dict() | {ID_OF_USER: request.user.pk}
             )
         except Exception as e:
-            return Response({'error': str(e.detail), 'status_code': str(e.status_code)}, status=e.status_code)
-        return Response(outcome.result['pagination_data'] | {
-            'posts': ApiPersonalPhotosSerializer(outcome.result['photos'], many=True).data}, status=status.HTTP_200_OK)
+            return Response({ERROR: e.detail, STATUS_ERROR: e.status_code}, status=e.status_code)
+        return Response({METADATA: outcome.result['pagination_data'],
+                         RESPONSE: ApiPersonalPhotosSerializer(outcome.result['photos'], many=True).data},
+                        status=status.HTTP_200_OK)

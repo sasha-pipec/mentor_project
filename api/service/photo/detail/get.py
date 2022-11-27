@@ -1,8 +1,10 @@
 from django import forms
-from django.db.models import Count, Value
+
 from service_objects.services import ServiceWithResult
-from photobatle.models import *
+
+from api.repositorys import *
 from api.status_code import *
+from photobatle.models import *
 
 
 class GetDetailPhotoService(ServiceWithResult):
@@ -19,23 +21,20 @@ class GetDetailPhotoService(ServiceWithResult):
             self.result = self._get_detail_photo
         return self
 
-    def validate_slug(self):
-        try:
-            Photo.objects.get(slug=self.cleaned_data['slug'], moderation='APR')
-        except Exception:
-            if not self.cleaned_data['slug']:
-                raise ValidationError400(f'Missing one of all requirements parameters: slug')
-            raise ValidationError404(f"Incorrect slug value")
-
-    @property
-    def _like_exist(self):
-        photo = Photo.objects.get(slug=self.cleaned_data['slug'], moderation='APR')
-        like = Like.objects.filter(photo_id=photo.id, user_id=self.cleaned_data['user_id'])
-        return bool(like) if photo.user.pk != self.cleaned_data['user_id'] else 'you_author_of_this_photo'
-
     @property
     def _get_detail_photo(self):
-        like = self._like_exist if self.cleaned_data['user_id'] else 'user_not_authenticate'
-        return Photo.objects.annotate(comment_count=Count('comment_photo', distinct=True),
-                                      like_count=Count('like_photo', distinct=True),
-                                      like_exist=Value(like)).get(moderation='APR', slug=self.cleaned_data['slug'])
+        like = self._is_liked_by_current_user if self.cleaned_data['user_id'] else 'user_not_authenticate'
+        return DetailPhotoRepository.get_objects_by_filter(like=like, moderation=Photo.APPROVED,
+                                                           slug=self.cleaned_data['slug'])
+
+    def validate_slug(self):
+        if not self.cleaned_data['slug']:
+            raise ValidationError400(f'Missing one of all requirements parameters: slug')
+
+    @property
+    def _is_liked_by_current_user(self):
+        photo = PhotoRepository.get_first_object_by_filter(slug=self.cleaned_data['slug'], moderation=Photo.APPROVED)
+        if photo:
+            like = LikeRepository.get_objects_by_filter(photo_id=photo.pk, user_id=self.cleaned_data['user_id'])
+            return bool(like) if photo.user.pk != self.cleaned_data['user_id'] else 'you_author_of_this_photo'
+        return False
