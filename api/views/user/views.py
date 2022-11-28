@@ -26,4 +26,5 @@ class UserAPI(APIView):
             )
         except Exception as e:
             return Response({ERROR: e.detail, STATUS_ERROR: e.status_code}, status=e.status_code)
-        return Response(ApiUserSerializer(outcome.result, many=False).data, status=status.HTTP_200_OK)
+        return Response(ApiUserSerializer(outcome.result, context={'request': request}, many=False).data,
+                        status=status.HTTP_200_OK)

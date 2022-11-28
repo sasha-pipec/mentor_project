@@ -25,8 +25,8 @@ class CommentAPI(APIView):
         except Exception as e:
             return Response({ERROR: e.detail, STATUS_ERROR: e.status_code}, status=e.status_code)
         return Response(
-            ApiCommentSerializer(outcome.result, context={ID_OF_USER: request.user.pk if request.user.pk else None},
-                              many=True).data,
+            ApiCommentSerializer(outcome.result, context={ID_OF_USER: request.user.pk if request.user.pk else None,
+                                                          'request': request}, many=True).data,
             outcome.response_status or status.HTTP_200_OK, )
 
     @permission_classes([IsAuthenticated])
@@ -39,7 +39,7 @@ class CommentAPI(APIView):
             )
         except Exception as e:
             return Response({ERROR: e.detail, STATUS_ERROR: e.status_code}, status=e.status_code)
-        return Response(ApiCreateCommentSerializer(outcome.result).data,
+        return Response(ApiCreateCommentSerializer(outcome.result, context={'request': request}).data,
                         outcome.response_status or status.HTTP_201_CREATED, )
 
 
@@ -69,5 +69,5 @@ class ModifiedCommentAPI(APIView):
             )
         except Exception as e:
             return Response({ERROR: str(e.detail), STATUS_ERROR: str(e.status_code)}, status=e.status_code)
-        return Response(ApiCreateCommentSerializer(outcome.result).data,
+        return Response(ApiCreateCommentSerializer(outcome.result, context={'request': request}).data,
                         outcome.response_status or status.HTTP_200_OK)

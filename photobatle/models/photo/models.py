@@ -35,10 +35,10 @@ class Photo(models.Model):
     REJECTED = 'REJ'
 
     STATUS_CHOICES = (
-        (ON_DELETION, 'На удалении'),
-        (ON_MODERATION, 'На модерации'),
-        (APPROVED, 'Одобренно'),
-        (REJECTED, 'Отклоненно'),
+        (ON_DELETION, 'On deletion'),
+        (ON_MODERATION, 'On moderation'),
+        (APPROVED, 'Approved'),
+        (REJECTED, 'Rejected'),
     )
     moderation = models.CharField(max_length=3, choices=STATUS_CHOICES, verbose_name='Статус', default=ON_MODERATION)
 

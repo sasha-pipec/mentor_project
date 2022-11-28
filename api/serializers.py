@@ -1,3 +1,5 @@
+from transliterate import translit
+
 from api.utils import *
 from api.constants import *
 from api.repositorys import *
@@ -22,6 +24,12 @@ class ApiUserSerializer(serializers.ModelSerializer):
     all_likes = serializers.SerializerMethodField()
     all_comments = serializers.SerializerMethodField()
     api_token = serializers.SerializerMethodField()
+    photo = serializers.SerializerMethodField()
+
+    def get_photo(self, obj):
+        request = self.context['request']
+        photo_url = obj.photo.url
+        return request.build_absolute_uri(photo_url)
 
     @staticmethod
     def get_all_likes(obj):
@@ -44,6 +52,12 @@ class ApiCreateCommentSerializer(serializers.ModelSerializer):
     """Create comment serializer"""
 
     user = ApiUsernameSerializer()
+    photo = serializers.SerializerMethodField()
+
+    def get_photo(self, obj):
+        request = self.context['request']
+        photo_url = obj.user.photo.url
+        return request.build_absolute_uri(photo_url)
 
     class Meta:
         model = Comment
@@ -58,15 +72,17 @@ class ApiCommentSerializer(serializers.ModelSerializer):
     answers = serializers.SerializerMethodField()
     photo = serializers.SerializerMethodField()
 
-    @staticmethod
-    def get_photo(obj):
-        return str(obj.user.photo)
+    def get_photo(self, obj):
+        request = self.context['request']
+        photo_url = obj.user.photo.url
+        return request.build_absolute_uri(photo_url)
 
     def get_answers(self, obj):
         comments = CommentRepository.get_objects_by_filter(parent=obj.id)
         if self.context['user_id']:
             comments = can_be_deleted_and_changing_by_user(comments, self.context['user_id'])
-        return (ApiCommentSerializer(comments, context={'user_id': self.context['user_id']}, many=True)).data
+        return (ApiCommentSerializer(comments, context={'user_id': self.context['user_id'],
+                                                        'request': self.context['request']}, many=True)).data
 
     class Meta:
         model = Comment
@@ -81,17 +97,24 @@ class ApiPhotosSerializer(serializers.ModelSerializer):
     comment_count = serializers.IntegerField()
     name = serializers.CharField(source='photo_name')
     content = serializers.CharField(source='photo_content')
+    photo = serializers.SerializerMethodField()
+
+    def get_photo(self, obj):
+        request = self.context['request']
+        photo_url = obj.photo.url
+        return request.build_absolute_uri(photo_url)
 
     class Meta:
         model = Photo
         fields = (
-            'photo', 'name', 'content', 'user', 'like_count', 'comment_count', 'published_at', 'slug',
+            'photo', 'name', 'content', 'user', 'like_count', 'comment_count', 'published_at', 'slug'
         )
 
 
 class ApiPersonalPhotosSerializer(serializers.ModelSerializer):
     """Personal photo serializer"""
 
+    photo = serializers.SerializerMethodField()
     user = ApiUsernameSerializer()
     like_count = serializers.IntegerField()
     comment_count = serializers.IntegerField()
@@ -102,6 +125,11 @@ class ApiPersonalPhotosSerializer(serializers.ModelSerializer):
     can_be_deleted = serializers.SerializerMethodField()
     can_be_changed = serializers.SerializerMethodField()
     can_be_recovered = serializers.SerializerMethodField()
+
+    def get_photo(self, obj):
+        request = self.context['request']
+        photo_url = obj.photo.url
+        return request.build_absolute_uri(photo_url)
 
     @staticmethod
     def get_can_be_changed(obj):
@@ -144,13 +172,20 @@ class ApiDetailPhotoSerializer(serializers.ModelSerializer):
     content = serializers.CharField(source='photo_content')
     is_liked_by_current_user = serializers.CharField()
     the_first_three_comments = serializers.SerializerMethodField()
+    photo = serializers.SerializerMethodField()
+
+    def get_photo(self, obj):
+        request = self.context['request']
+        photo_url = obj.photo.url
+        return request.build_absolute_uri(photo_url)
 
     def get_the_first_three_comments(self, obj):
         comments = CommentRepository.get_objects_by_filter(MAX_NUMBER_OF_COMMENTS_FOR_DETAIL_PHOTO,
                                                            photo_id=obj.id, parent=None)
         if self.context['user_id']:
             comments = can_be_deleted_and_changing_by_user(comments, self.context['user_id'])
-        return (ApiCommentSerializer(comments, context={'user_id': self.context['user_id']}, many=True)).data
+        return (ApiCommentSerializer(comments, context={'user_id': self.context['user_id'],
+                                                        'request': self.context['request']}, many=True)).data
 
     class Meta:
         model = Photo

@@ -30,8 +30,8 @@ class PhotoAPI(APIView):
                              STATUS_ERROR: error.response_status},
                             status=status.HTTP_400_BAD_REQUEST)
         return Response({METADATA: outcome.result['pagination_data'],
-                         RESPONSE: ApiPhotosSerializer(outcome.result['photos'], many=True).data},
-                        status=status.HTTP_200_OK)
+                         RESPONSE: ApiPhotosSerializer(outcome.result['photos'], context={'request': request},
+                                                       many=True).data}, status=status.HTTP_200_OK)
 
     @permission_classes([IsAuthenticated])
     @swagger_auto_schema(manual_parameters=post_photo_parameters, responses=post_photo_response,
@@ -63,8 +63,8 @@ class ModifiedPhotoAPI(APIView):
         except Exception as e:
             return Response({ERROR: e.detail, STATUS_ERROR: e.status_code}, status=e.status_code)
         return Response({METADATA: metadata} | {RESPONSE: (
-            ApiDetailPhotoSerializer(outcome.result, context={ID_OF_USER: request.user.pk if request.user.pk else None},
-                                     many=True).data)})
+            ApiDetailPhotoSerializer(outcome.result, context={ID_OF_USER: request.user.pk if request.user.pk else None,
+                                                              'request': request}, many=True).data)})
 
     @permission_classes([IsAuthenticated])
     @swagger_auto_schema(manual_parameters=delete_photo_parameters, responses=delete_photo_response,
@@ -93,7 +93,7 @@ class ModifiedPhotoAPI(APIView):
                 )
         except Exception as e:
             return Response({ERROR: e.detail, STATUS_ERROR: e.status_code}, status=e.status_code)
-        return Response(ApiCreatePhotoSerializers(outcome.result).data, status=status.HTTP_201_CREATED)
+        return Response(ApiCreatePhotoSerializers(outcome.result).data, status=status.HTTP_200_OK)
 
 
 class PersonalPhotoAPI(APIView):
@@ -111,5 +111,5 @@ class PersonalPhotoAPI(APIView):
         except Exception as e:
             return Response({ERROR: e.detail, STATUS_ERROR: e.status_code}, status=e.status_code)
         return Response({METADATA: outcome.result['pagination_data'],
-                         RESPONSE: ApiPersonalPhotosSerializer(outcome.result['photos'], many=True).data},
-                        status=status.HTTP_200_OK)
+                         RESPONSE: ApiPersonalPhotosSerializer(outcome.result['photos'], context={'request': request},
+                                                               many=True).data}, status=status.HTTP_200_OK)

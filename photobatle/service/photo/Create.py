@@ -1,3 +1,4 @@
+from transliterate import translit
 from django import forms
 from service_objects.services import ServiceWithResult
 from photobatle.utils import *
@@ -54,4 +55,4 @@ class AddPhotoService(DataMixin, ServiceWithResult):
         self.errors['name'] = "Incorrect name of photo"
 
     def set_photo_name(self):
-        self.cleaned_data['photo'].name = self.cleaned_data['slug']
+        self.cleaned_data['photo'].name = translit(self.cleaned_data['photo'].name, 'ru', reversed=True)

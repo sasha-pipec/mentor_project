@@ -34,7 +34,7 @@ class UpdatePhotoService(DataMixin, ServiceWithResult):
             raise ValidationError404(f"Incorrect slug value", code='invalid')
 
     def set_new_photo_name(self, value):
-        self.cleaned_data['photo'].name = self.slug_russian_word(value)
+        self.cleaned_data['photo'].name = translit(self.cleaned_data['photo'].name, 'ru', reversed=True)
 
     @property
     def validate_type_of_photo(self):
