@@ -2,6 +2,7 @@ from api.custom_schema import *
 from api.service import *
 from api.serializers import *
 from api.metadata import *
+from photobatle.service import *
 
 from drf_yasg.utils import swagger_auto_schema
 
@@ -16,6 +17,7 @@ from service_objects.services import ServiceOutcome
 
 class PhotoAPI(APIView):
     parser_classes = [MultiPartParser, ]
+    authentication_classes = (CustomTokenAuthentication,)
 
     @swagger_auto_schema(manual_parameters=get_home_photo_parameters, responses=get_home_photo_response)
     def get(self, request, *args, **kwargs):
@@ -49,6 +51,7 @@ class PhotoAPI(APIView):
 class ModifiedPhotoAPI(APIView):
     parser_classes = [MultiPartParser, ]
     metadata_class = DetailPhotoMetadata
+    authentication_classes = (CustomTokenAuthentication,)
 
     @swagger_auto_schema(manual_parameters=get_photo_parameters, responses=get_photo_response)
     def get(self, request, *args, **kwargs):
@@ -94,6 +97,8 @@ class ModifiedPhotoAPI(APIView):
 
 
 class PersonalPhotoAPI(APIView):
+    authentication_classes = (CustomTokenAuthentication,)
+
     @permission_classes([IsAuthenticated])
     @swagger_auto_schema(manual_parameters=get_personal_photo_parameters, responses=get_personal_photo_response,
                          operation_description=get_personal_photo_description)

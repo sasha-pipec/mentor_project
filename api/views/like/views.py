@@ -9,11 +9,12 @@ from service_objects.services import ServiceOutcome
 from api.custom_schema import *
 from api.service import ApiCreateLikeService, ApiDeleteLikeService
 from api.constants import *
-from api.utils import _like_exist
+from api.utils import _like_exist, CustomTokenAuthentication
 
 
 class LikeAPI(APIView):
     parser_classes = [MultiPartParser, ]
+    authentication_classes = (CustomTokenAuthentication,)
 
     @permission_classes([IsAuthenticated])
     @swagger_auto_schema(manual_parameters=post_like_parameters,

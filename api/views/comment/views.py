@@ -6,26 +6,26 @@ from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
 from service_objects.services import ServiceOutcome
 
-from api.serializers import ApiCommentSerializer
+from api.serializers import *
 from api.service import *
-from photobatle.serializers import *
 from api.custom_schema import *
 from photobatle.service import *
 
 
 class CommentAPI(APIView):
     parser_classes = [MultiPartParser, ]
+    authentication_classes = (CustomTokenAuthentication,)
 
     @swagger_auto_schema(responses={status.HTTP_200_OK: 'successes'})
     def get(self, request, *args, **kwargs):
         try:
             outcome = ServiceOutcome(
-                GetCommentForPhotoService, kwargs | {'user_id': request.user.pk if request.user.pk else None}
+                GetCommentForPhotoService, kwargs | {ID_OF_USER: request.user.pk if request.user.pk else None}
             )
         except Exception as e:
-            return Response({'error': str(e.detail), 'status_code': str(e.status_code)}, status=e.status_code)
+            return Response({ERROR: e.detail, STATUS_ERROR: e.status_code}, status=e.status_code)
         return Response(
-            ApiCommentSerializer(outcome.result, context={'user_id': request.user.pk if request.user.pk else None},
+            ApiCommentSerializer(outcome.result, context={ID_OF_USER: request.user.pk if request.user.pk else None},
                               many=True).data,
             outcome.response_status or status.HTTP_200_OK, )
 
@@ -35,16 +35,17 @@ class CommentAPI(APIView):
     def post(self, request, *args, **kwargs):
         try:
             outcome = ServiceOutcome(
-                CreateCommentService, request.POST.dict() | kwargs | {'user_id': request.user.id}
+                CreateCommentService, request.POST.dict() | kwargs | {ID_OF_USER: request.user.id}
             )
         except Exception as e:
-            return Response({'error': str(e.detail), 'status_code': str(e.status_code)}, status=e.status_code)
+            return Response({ERROR: e.detail, STATUS_ERROR: e.status_code}, status=e.status_code)
         return Response(ApiCreateCommentSerializer(outcome.result).data,
                         outcome.response_status or status.HTTP_201_CREATED, )
 
 
 class ModifiedCommentAPI(APIView):
     parser_classes = [MultiPartParser, ]
+    authentication_classes = (CustomTokenAuthentication,)
 
     @permission_classes([IsAuthenticated])
     @swagger_auto_schema(manual_parameters=delete_comment_parameters,
@@ -52,11 +53,11 @@ class ModifiedCommentAPI(APIView):
     def delete(self, request, *args, **kwargs):
         try:
             outcome = ServiceOutcome(
-                DeleteCommentService, kwargs | {'user_id': request.user.id}
+                DeleteCommentService, kwargs | {ID_OF_USER: request.user.id}
             )
         except Exception as e:
-            return Response({'error': str(e.detail), 'status_code': str(e.status_code)}, status=e.status_code)
-        return Response({"message:": "comment deleted"}, status=status.HTTP_204_NO_CONTENT)
+            return Response({ERROR: str(e.detail), STATUS_ERROR: str(e.status_code)}, status=e.status_code)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @permission_classes([IsAuthenticated])
     @swagger_auto_schema(manual_parameters=patch_comment_parameters,
@@ -64,9 +65,9 @@ class ModifiedCommentAPI(APIView):
     def patch(self, request, *args, **kwargs):
         try:
             outcome = ServiceOutcome(
-                UpdateCommentService, request.data.dict() | kwargs | {'user_id': request.user.id}
+                UpdateCommentService, request.data.dict() | kwargs | {ID_OF_USER: request.user.id}
             )
         except Exception as e:
-            return Response({'error': str(e.detail), 'status_code': str(e.status_code)}, status=e.status_code)
+            return Response({ERROR: str(e.detail), STATUS_ERROR: str(e.status_code)}, status=e.status_code)
         return Response(ApiCreateCommentSerializer(outcome.result).data,
                         outcome.response_status or status.HTTP_200_OK)
