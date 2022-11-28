@@ -28,7 +28,10 @@ class ApiUserSerializer(serializers.ModelSerializer):
 
     def get_photo(self, obj):
         request = self.context['request']
-        photo_url = obj.photo.url
+        try:
+            photo_url = obj.photo.url
+        except:
+            photo_url = DEFAULT_PHOTO_PATH
         return request.build_absolute_uri(photo_url)
 
     @staticmethod
@@ -56,7 +59,10 @@ class ApiCreateCommentSerializer(serializers.ModelSerializer):
 
     def get_photo(self, obj):
         request = self.context['request']
-        photo_url = obj.user.photo.url
+        try:
+            photo_url = obj.user.photo.url
+        except:
+            photo_url = DEFAULT_PHOTO_PATH
         return request.build_absolute_uri(photo_url)
 
     class Meta:
@@ -74,7 +80,10 @@ class ApiCommentSerializer(serializers.ModelSerializer):
 
     def get_photo(self, obj):
         request = self.context['request']
-        photo_url = obj.user.photo.url
+        try:
+            photo_url = obj.user.photo.url
+        except:
+            photo_url = DEFAULT_PHOTO_PATH
         return request.build_absolute_uri(photo_url)
 
     def get_answers(self, obj):
@@ -101,7 +110,10 @@ class ApiPhotosSerializer(serializers.ModelSerializer):
 
     def get_photo(self, obj):
         request = self.context['request']
-        photo_url = obj.photo.url
+        try:
+            photo_url = obj.photo.url
+        except:
+            photo_url = DEFAULT_PHOTO_PATH
         return request.build_absolute_uri(photo_url)
 
     class Meta:
@@ -128,7 +140,10 @@ class ApiPersonalPhotosSerializer(serializers.ModelSerializer):
 
     def get_photo(self, obj):
         request = self.context['request']
-        photo_url = obj.photo.url
+        try:
+            photo_url = obj.photo.url
+        except:
+            photo_url = DEFAULT_PHOTO_PATH
         return request.build_absolute_uri(photo_url)
 
     @staticmethod
@@ -176,7 +191,10 @@ class ApiDetailPhotoSerializer(serializers.ModelSerializer):
 
     def get_photo(self, obj):
         request = self.context['request']
-        photo_url = obj.photo.url
+        try:
+            photo_url = obj.photo.url
+        except:
+            photo_url = DEFAULT_PHOTO_PATH
         return request.build_absolute_uri(photo_url)
 
     def get_the_first_three_comments(self, obj):

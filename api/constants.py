@@ -11,3 +11,4 @@ STATUS_LIST = [Photo.ON_DELETION, Photo.ON_MODERATION, Photo.APPROVED, Photo.REJ
 DIRECTION_LIST = ['asc', 'desc']
 DEFAULT_SORT_VALUE = 'id'
 TOKEN = 'Token'
+DEFAULT_PHOTO_PATH = '/static/image/default-photo-post.jpeg'
