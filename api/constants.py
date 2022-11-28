@@ -10,3 +10,4 @@ SORT_LIST = ['like_count', 'comment_count', 'updated_at', 'id']
 STATUS_LIST = [Photo.ON_DELETION, Photo.ON_MODERATION, Photo.APPROVED, Photo.REJECTED]
 DIRECTION_LIST = ['asc', 'desc']
 DEFAULT_SORT_VALUE = 'id'
+TOKEN = 'Token'

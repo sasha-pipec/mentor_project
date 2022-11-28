@@ -1,7 +1,25 @@
+from rest_framework.authentication import TokenAuthentication
+from rest_framework import exceptions
+
 from mentor_prooject.settings import *
-from photobatle.models import *
+
 from api.status_code import *
 from api.repositorys import *
+
+
+class CustomTokenAuthentication(TokenAuthentication):
+
+    def authenticate_credentials(self, key):
+        model = self.get_model()
+        try:
+            token = model.objects.select_related('user').get(key=key)
+        except model.DoesNotExist:
+            raise exceptions.AuthenticationFailed('Invalid token, make sure it is up-to-date and valid')
+
+        if not token.user.is_active:
+            raise exceptions.AuthenticationFailed('User inactive or deleted.')
+
+        return (token.user, token)
 
 
 class CustomPagination:
