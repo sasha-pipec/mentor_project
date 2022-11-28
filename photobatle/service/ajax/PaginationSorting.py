@@ -47,4 +47,4 @@ class PaginationService(ServiceWithResult):
                 moderation='APR').order_by(self.cleaned_data['sort_value'])
         photos_on_page = Paginator(all_photos, REST_FRAMEWORK['PAGE_SIZE']).page(self.cleaned_data['page'])
         max_page = photos_on_page.paginator.page_range.stop
-        return {'photos': photos_on_page, 'max_page': max_page}
+        return {'photos': photos_on_page, 'max_page': max_page-1}
