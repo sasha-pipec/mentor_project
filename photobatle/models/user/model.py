@@ -3,9 +3,10 @@ from django.contrib.auth.models import AbstractUser
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
 
+
 class User(AbstractUser):
     """User model"""
-    photo = models.FileField(upload_to='user/photos/%Y/%m/%d', verbose_name='Фото', max_length=255)
+    photo = models.FileField(upload_to='user/photos/%Y/%m/%d', verbose_name='Photo', max_length=255)
     photo_imagekit_medium = ImageSpecField(source='photo',
                                            processors=[ResizeToFill(350, 350)],
                                            format='JPEG',
@@ -16,4 +17,4 @@ class User(AbstractUser):
 
     class Meta:
         app_label = 'photobatle'
-        verbose_name_plural = 'Пользователи'
+        verbose_name_plural = 'User'

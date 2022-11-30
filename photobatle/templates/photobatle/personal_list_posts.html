@@ -54,7 +54,7 @@
             {% endif %}
 
             <div class="card-body" id="card-body">
-                {% if post.moderation != 'DEL' and post.moderation != 'REJ' %}
+                {% if post.moderation != 'DELETION' and post.moderation != 'REJECTED' %}
                 <a href="{% url 'delete_photo' post.slug%}"><img src="/static/image/удалить.png"
                                                                  style="margin-right:10%;" alt=""></a>
                     {% if post.photo.url|check_photo%}
@@ -80,7 +80,7 @@
                 <p class="card-text">Автор: {{post.user.username}}</p>
                 <p class="card-text">Лайки: {{post|like_count}}</p>
                 <p class="card-text">Комментарии: {{post|comment_count}}</p>
-                {% if post.moderation == 'APR'%}
+                {% if post.moderation == 'APPROVED'%}
                 <p class="card-text">Дата публикации:
                     <br> {{post.published_at}}</p>
                 {% else %}
@@ -88,7 +88,7 @@
                     <br> не опубликовано </p>
                 {% endif %}
                 <p class="card-text">Статус: {{post.get_moderation_display}}</p>
-                {% if post.moderation == 'APR'%}
+                {% if post.moderation == 'APPROVED'%}
                 <a href="{{ post.get_absolute_url }}" class="btn btn-primary" id="btn-post">
                     Посмотреть
                 </a>
@@ -189,7 +189,7 @@
                           var content =
                               '<div class="col">' +
                               '<div class="card" style="width: 18rem;" id="card">' ;
-                          if(response.posts[key].moderation == 'APR'){
+                          if(response.posts[key].moderation == 'APPROVED'){
                              var content= content+'<a href="' + response.posts[key].get_absolute_url + '">';
                           }else{
                              var content= content+ '<a style="cursor: default"">';
@@ -198,7 +198,7 @@
                               var content = content +"<img id='foo' class='card-img-top' src='" + url_photo + "'alt='Не загрузилось :('>" +
                               '</a>' +
                               '<div class="card-body" id="card-body">';
-                          if (response.posts[key].moderation != "DEL" && response.posts[key].moderation != "REJ") {
+                          if (response.posts[key].moderation != "DELETION" && response.posts[key].moderation != "REJECTED") {
                               var content = content + '<a href="' + photo_delete + '"><img src="/static/image/удалить.png" style="margin-right:10%;"></a>' +
                                   '<a onclick="' + "edit_a_photo(id='" + response.posts[key].id + "',content='" + response.posts[key].photo_content + "',name='" + response.posts[key].photo_name + "',photo='" + response.posts[key]['photo_imagekit_medium'] + "')" + '">' +
                                   '<img src="/static/image/изменение.png" style="margin-left:75%; cursor:pointer;" alt=""></a>';
@@ -218,7 +218,7 @@
                               '<p class="card-text">Автор: ' + response.posts[key].user.username + '</p>' +
                               '<p class="card-text">Лайки: ' + response.posts[key].like_count + '</p>' +
                               '<p class="card-text">Комментарии: ' + response.posts[key].comment_count + '</p>' ;
-                          if(response.posts[key].moderation=='APR') {
+                          if(response.posts[key].moderation=='APPROVED') {
                               var content = content + '<p class="card-text">Дата публикации: <br> ' + new Date(response.posts[key].published_at).toLocaleDateString("ru", options) + '</p>'+
                                   '<p class="card-text">Статус: ' + response.posts[key].get_moderation_display + '</p>' +
                                   '<a href="' + response.posts[key].get_absolute_url + '"class="btn btn-primary" id="btn-post">Посмотреть</a>' ;
@@ -323,7 +323,7 @@
                           var content =
                               '<div class="col">' +
                               '<div class="card" style="width: 18rem;" id="card">' ;
-                          if(response.posts[key].moderation == 'APR'){
+                          if(response.posts[key].moderation == 'APPROVED'){
                              var content= content+'<a href="' + response.posts[key].get_absolute_url + '">';
                           }else{
                              var content= content+ '<a style="cursor: default"">';
@@ -332,7 +332,7 @@
                               "<img id='foo' class='card-img-top' src='" + url_photo + "'alt='Не загрузилось :('>" +
                               '</a>' +
                               '<div class="card-body" id="card-body">';
-                          if (response.posts[key].moderation != "DEL" && response.posts[key].moderation != "REJ") {
+                          if (response.posts[key].moderation != "DELETION" && response.posts[key].moderation != "REJECTED") {
                               var content = content + '<a href="' + photo_delete + '"><img src="/static/image/удалить.png" style="margin-right:10%;"></a>' +
                                   '<a onclick="' + "edit_a_photo(id='" + response.posts[key].id + "',content='" + response.posts[key].photo_content + "',name='" + response.posts[key].photo_name + "',photo='" + response.posts[key]['photo_imagekit_medium'] + "')" + '">' +
                                   '<img src="/static/image/изменение.png" style="margin-left:75%; cursor:pointer;" alt=""></a>';
@@ -352,7 +352,7 @@
                               '<p class="card-text">Автор: ' + response.posts[key].user.username + '</p>' +
                               '<p class="card-text">Лайки: ' + response.posts[key].like_count + '</p>' +
                               '<p class="card-text">Комментарии: ' + response.posts[key].comment_count + '</p>' ;
-                          if(response.posts[key].moderation=='APR') {
+                          if(response.posts[key].moderation=='APPROVED') {
                               var content = content + '<p class="card-text">Дата публикации: <br> ' + new Date(response.posts[key].published_at).toLocaleDateString("ru", options) + '</p>'+
                                   '<p class="card-text">Статус: ' + response.posts[key].get_moderation_display + '</p>' +
                                   '<a href="' + response.posts[key].get_absolute_url + '"class="btn btn-primary" id="btn-post">Посмотреть</a>' ;

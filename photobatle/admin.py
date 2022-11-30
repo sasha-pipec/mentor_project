@@ -13,6 +13,7 @@ from allauth.socialaccount.models import SocialToken, SocialApp, SocialAccount
 from rest_framework.authtoken.models import TokenProxy
 from rest_framework.exceptions import ValidationError
 
+import photobatle.forms
 from photobatle.service import *
 from photobatle.models import *
 
@@ -36,7 +37,7 @@ class UserAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return False
 
-    get_html_photo.short_description = 'фото'
+    get_html_photo.short_description = 'Photo'
 
 
 class PhotoAdmin(admin.ModelAdmin):
@@ -54,26 +55,26 @@ class PhotoAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return False
 
-    @admin.action(description='Одобрено')
+    @admin.action(description='Approved')
     def make_published(modeladmin, request, queryset):
         all_on_moderation = True
         for elem in queryset:
-            if elem.moderation != "MOD":
+            if elem.moderation != Photo.ON_MODERATION:
                 all_on_moderation = False
         if all_on_moderation:
             for elem in queryset:
-                elem.moderation = 'APR'
+                elem.moderation = photobatle.forms.AddPhotoForm
                 PhotoAdmin.save_model(modeladmin, request, elem, form=None, change=None)
 
-    @admin.action(description='Отклонено')
+    @admin.action(description='Rejected')
     def make_rejected(modeladmin, request, queryset):
         all_on_moderation = True
         for elem in queryset:
-            if elem.moderation != "MOD":
+            if elem.moderation != Photo.ON_MODERATION:
                 all_on_moderation = False
         if all_on_moderation:
             for elem in queryset:
-                elem.moderation = 'REJ'
+                elem.moderation = Photo.REJECTED
                 PhotoAdmin.save_model(modeladmin, request, elem, form=None, change=None)
 
     def get_html_photo(self, object):
@@ -86,22 +87,22 @@ class PhotoAdmin(admin.ModelAdmin):
 
     def get_readonly_fields(self, request, obj):
         if obj:
-            if obj.moderation == "APR":
+            if obj.moderation == Photo.APPROVED:
                 return self.readonly_fields + ('moderation',)
         return super().get_readonly_fields(request, obj)
 
     def formfield_for_choice_field(self, db_field, request, **kwargs):
         if request.user.is_superuser:
             kwargs['choices'] = (
-                ('MOD', 'На модерации'),
-                ('REJ', 'Отклоненно'),
-                ('APR', 'Одобренно'),
+                ('MODERATION', 'На модерации'),
+                ('REJECTED', 'Отклоненно'),
+                ('APPROVED', 'Одобренно'),
             )
         return super(PhotoAdmin, self).formfield_for_choice_field(db_field, request, **kwargs)
 
     def save_model(self, request, obj, form, change):
         channel_layer = get_channel_layer()
-        if obj.moderation == 'REJ':
+        if obj.moderation == Photo.REJECTED:
             try:
                 async_to_sync(channel_layer.group_send)(
                     str(obj.user), {
@@ -113,7 +114,7 @@ class PhotoAdmin(admin.ModelAdmin):
                 obj.task_id = task_id
             except ValidationError as error:
                 return HttpResponse(error)
-        elif obj.moderation == 'APR':
+        elif obj.moderation == Photo.APPROVED:
             obj.published_at = datetime.today().strftime('%Y-%m-%d')
             async_to_sync(channel_layer.group_send)(
                 str(obj.user), {
@@ -124,8 +125,8 @@ class PhotoAdmin(admin.ModelAdmin):
 
         super().save_model(request, obj, form, change)
 
-    get_html_photo.short_description = 'фото'
-    get_previous_html_photo.short_description = 'старое фото'
+    get_html_photo.short_description = 'File'
+    get_previous_html_photo.short_description = 'Previous file'
 
 
 class CommentAdmin(admin.ModelAdmin):
@@ -141,7 +142,7 @@ class CommentAdmin(admin.ModelAdmin):
         if object.photo:
             return mark_safe(f"<img src='{object.photo.photo.url}' width=50>")
 
-    get_html_photo.short_description = 'фото'
+    get_html_photo.short_description = 'Photo'
 
 
 class LikeAdmin(admin.ModelAdmin):
@@ -163,7 +164,7 @@ class LikeAdmin(admin.ModelAdmin):
         if object.photo:
             return mark_safe(f"<img src='{object.photo.photo.url}' width=50>")
 
-    get_html_photo.short_description = 'фото'
+    get_html_photo.short_description = 'Photo'
 
 
 admin.site.register(User, UserAdmin)
