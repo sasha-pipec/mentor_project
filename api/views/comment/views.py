@@ -6,10 +6,12 @@ from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
 from service_objects.services import ServiceOutcome
 
-from api.serializers import *
-from api.service import *
+from api.constants import *
 from api.custom_schema import *
-from photobatle.service import *
+from api.serializers import ApiCommentSerializer, ApiCreateCommentSerializer
+from api.services import GetCommentForPhotoService
+from api.utils import CustomTokenAuthentication
+from photobatle.services import CreateCommentService, DeleteCommentService, UpdateCommentService
 
 
 class CommentAPI(APIView):

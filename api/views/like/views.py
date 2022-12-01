@@ -7,7 +7,7 @@ from rest_framework.parsers import MultiPartParser
 from service_objects.services import ServiceOutcome
 
 from api.custom_schema import *
-from api.service import ApiCreateLikeService, ApiDeleteLikeService
+from api.services import ApiCreateLikeService, ApiDeleteLikeService
 from api.constants import *
 from api.utils import _like_exist, CustomTokenAuthentication
 

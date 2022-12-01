@@ -1,4 +1,5 @@
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework import status
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -8,7 +9,7 @@ from service_objects.services import ServiceOutcome
 
 from api.utils import CustomTokenAuthentication
 from api.constants import *
-from photobatle.service import *
+from photobatle.services import CreateAPITokenService
 
 
 class TokenAPI(APIView):

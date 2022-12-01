@@ -7,8 +7,8 @@ from rest_framework.views import APIView
 from service_objects.services import ServiceOutcome
 
 from api.custom_schema import *
-from api.serializers import *
-from api.service import *
+from api.serializers import ApiUserSerializer
+from api.services import GetUserService
 from api.utils import CustomTokenAuthentication
 from api.constants import *
 
