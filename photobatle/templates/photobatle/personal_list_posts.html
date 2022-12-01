@@ -158,16 +158,17 @@
       <!--  AJAX для фильтрации     -->
         $('#SortForm').change(function () {
             var pagination = document.getElementsByClassName('pagination__item');
-         var options = {
+            var options = {
               year: 'numeric',
               month: 'long',
               day: 'numeric',
             };
               $.ajax({
-                  data: {'sort_value':document.querySelector('input[name="choice"]:checked').value,
-                  'csrfmiddlewaretoken': '{{csrf_token}}',
-                  'user_id': '{{user.pk}}',
-                   'page':'1'},
+                  data:({
+                      "sort_value": document.querySelector('input[name="choice"]:checked').value,
+                      "page": 1,
+                      "user_id": '{{user.id}}',
+                  }) ,
                   type: $(this).attr('method'),
                   url: "{% url 'personal_sort_form' %}",
                   success: function (response) {
@@ -289,19 +290,21 @@
         <!--  AJAX для пагинации     -->
         $('.pagination__link').click(function () {
             var sort_value=document.querySelector('input[name="choice"]:checked');
-        if(sort_value){
-            sort_value=sort_value.value
-        }
-        var options = {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
+            if(sort_value){
+                sort_value=sort_value.value
+            }
+            var options = {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
             };
               $.ajax({
-                  data: {'csrfmiddlewaretoken': '{{csrf_token}}',
-                        'page':$(this).attr('id'),
-                      'user_id':'{{user.pk}}',
-                  'sort_value': sort_value,},
+                  data: {
+                      'csrfmiddlewaretoken': '{{csrf_token}}',
+                      'page':$(this).attr('id'),
+                      'user_id':'{{user.id}}',
+                      'sort_value': sort_value,
+                  },
                   type: 'get',
                   url: "{% url 'pagination' %}",
                   success: function (response) {
