@@ -1,9 +1,9 @@
 from transliterate import translit
 from django import forms
 from service_objects.services import ServiceWithResult
-from photobatle.utils import *
-from photobatle.models import *
-from api.status_code import *
+from service_objects.fields import ModelField
+from photobatle.utils import DataMixin
+from photobatle.models import Photo, User
 
 
 class AddPhotoService(DataMixin, ServiceWithResult):
@@ -12,7 +12,7 @@ class AddPhotoService(DataMixin, ServiceWithResult):
     name = forms.CharField()
     content = forms.CharField()
     photo = forms.ImageField()
-    user_id = forms.IntegerField()
+    user = ModelField(User)
 
     custom_validations = ["validate_type_of_photo", "validate_name", "validate_slug"]
 
@@ -27,7 +27,7 @@ class AddPhotoService(DataMixin, ServiceWithResult):
         return Photo.objects.create(photo_name=self.cleaned_data['name'],
                                     photo_content=self.cleaned_data['content'],
                                     photo=self.cleaned_data['photo'],
-                                    user_id=self.cleaned_data['user_id'],
+                                    user_id=self.cleaned_data['user'].id,
                                     slug=self.cleaned_data['slug'])
 
     def validate_type_of_photo(self):

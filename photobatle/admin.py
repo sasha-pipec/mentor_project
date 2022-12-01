@@ -63,7 +63,7 @@ class PhotoAdmin(admin.ModelAdmin):
                 all_on_moderation = False
         if all_on_moderation:
             for elem in queryset:
-                elem.moderation = photobatle.forms.AddPhotoForm
+                elem.moderation = Photo.APPROVED
                 PhotoAdmin.save_model(modeladmin, request, elem, form=None, change=None)
 
     @admin.action(description='Rejected')
