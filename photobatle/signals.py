@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from rest_framework.exceptions import ValidationError
 from service_objects.services import ServiceOutcome
 
-from photobatle.service import *
+from photobatle.services import *
 
 
 def social_signal(request, user, **kwargs):

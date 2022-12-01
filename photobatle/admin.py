@@ -14,7 +14,7 @@ from rest_framework.authtoken.models import TokenProxy
 from rest_framework.exceptions import ValidationError
 
 import photobatle.forms
-from photobatle.service import *
+from photobatle.services import *
 from photobatle.models import *
 
 

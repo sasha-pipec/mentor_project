@@ -1,16 +1,20 @@
 from django.db.models import Value, Count, Q
 
 from api.constants import DEFAULT_SORT_VALUE
+from api.status_code import *
 from photobatle.models import Comment, Photo, Like
 
 
 class DetailPhotoRepository:
 
     @staticmethod
-    def get_objects_by_filter(like, **kwargs):
-        return Photo.objects.annotate(comment_count=Count('comment_photo', distinct=True),
-                                      like_count=Count('like_photo', distinct=True),
-                                      is_liked_by_current_user=Value(like)).filter(**kwargs)
+    def get_object(like, **kwargs):
+        try:
+            return Photo.objects.annotate(comment_count=Count('comment_photo', distinct=True),
+                                          like_count=Count('like_photo', distinct=True),
+                                          is_liked_by_current_user=Value(like)).get(**kwargs)
+        except Exception:
+            raise ValidationError404(f"Photo by this slug not found")
 
 
 class GeneralPhotoRepository:

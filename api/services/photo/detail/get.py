@@ -24,8 +24,7 @@ class GetDetailPhotoService(ServiceWithResult):
     @property
     def _get_detail_photo(self):
         like = self._is_liked_by_current_user if self.cleaned_data['user_id'] else 'user_not_authenticate'
-        return DetailPhotoRepository.get_objects_by_filter(like=like, moderation=Photo.APPROVED,
-                                                           slug=self.cleaned_data['slug'])
+        return DetailPhotoRepository.get_object(like=like, moderation=Photo.APPROVED, slug=self.cleaned_data['slug'])
 
     def validate_slug(self):
         if not self.cleaned_data['slug']:
