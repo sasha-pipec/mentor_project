@@ -2,11 +2,11 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import ListView, DetailView
-from rest_framework.exceptions import ValidationError
 from service_objects.services import ServiceOutcome
 
-from photobatle.forms import *
-from photobatle.service import *
+from photobatle.models import Photo, Comment
+from photobatle.forms import AddPhotoForm, PersonalSortForm, SortForm
+from photobatle.services import AddPhotoService, DeletePhotoService, UpdatePhotoService, RecoveryPhotoService
 from photobatle.utils import DataMixin
 from mentor_prooject.settings import REST_FRAMEWORK
 
@@ -20,7 +20,7 @@ class AddPhoto(View):
     def post(self, request, *args, **kwargs):
         try:
             outcome = ServiceOutcome(
-                AddPhotoService, request.POST.dict() | {'user_id': request.user.id}, request.FILES.dict()
+                AddPhotoService, request.POST.dict() | {'user': request.user}, request.FILES.dict()
             )
         except Exception as error:
             return render(request, 'photobatle/add_photo_form.html',
@@ -35,7 +35,7 @@ class UpdatePhoto(View):
     def post(self, request, *args, **kwargs):
         try:
             outcome = ServiceOutcome(
-                UpdatePhotoService, request.FILES.dict() | request.POST.dict() | kwargs | {'user_id': request.user.id}
+                UpdatePhotoService, request.POST.dict() | kwargs | {'user': request.user}, request.FILES.dict()
             )
         except Exception as error:
             return render(request, 'photobatle/personal_list_posts.html', context={'error_message': error})
@@ -48,9 +48,9 @@ class DeletePhoto(View):
     def get(self, request, *args, **kwargs):
         try:
             outcome = ServiceOutcome(
-                DeletePhotoService, kwargs | {'user_id': request.user.id}
+                DeletePhotoService, kwargs | {'user': request.user}
             )
-        except ValidationError as error:
+        except Exception as error:
             return HttpResponse(error)
         return redirect('personal_list_posts')
 
@@ -61,9 +61,9 @@ class RecoveryPhoto(View):
     def get(self, request, *args, **kwargs):
         try:
             outcome = ServiceOutcome(
-                RecoveryPhotoService, kwargs | {'user_id': request.user.id}
+                RecoveryPhotoService, kwargs | {'user': request.user}
             )
-        except ValidationError as error:
+        except Exception as error:
             return HttpResponse(error)
         return redirect('personal_list_posts')
 
@@ -100,7 +100,7 @@ class RenderingHomePage(ListView):
 
     def get_queryset(self, *, object_list=None, **kwargs):
         posts = super().get_queryset(**kwargs)
-        return posts.filter(moderation='APR').order_by('id')
+        return posts.filter(moderation=Photo.APPROVED).order_by('id')
 
 
 class DetailPost(DataMixin, DetailView):

@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from service_objects.services import ServiceOutcome
 
 from photobatle.serializers import *
-from photobatle.service import *
+from photobatle.services import *
 
 
 class PaginationAjax(APIView):
@@ -16,8 +16,12 @@ class PaginationAjax(APIView):
             )
         except Exception as error:
             return HttpResponse(error)
-        return JsonResponse({'posts': PhotoSerializer(outcome.result['photos'], many=True).data,
-                             'active_page': self.request.GET['page']}, status=200)
+        return JsonResponse(
+            {
+                'posts': PhotoSerializer(outcome.result, many=True).data,
+                'active_page': self.request.GET['page']
+            }, status=200
+        )
 
 
 class SortingFormAjax(APIView):
@@ -32,8 +36,12 @@ class SortingFormAjax(APIView):
             )
         except Exception as error:
             return HttpResponse(error)
-        return JsonResponse({'posts': PhotoSerializer(outcome.result['photos'], many=True).data,
-                             'active_page': self.request.GET['page']}, status=200)
+        return JsonResponse(
+            {
+                'posts': PhotoSerializer(outcome.result, many=True).data,
+                'active_page': self.request.GET['page']
+            }, status=200
+        )
 
 
 class SearchFormAjax(APIView):
@@ -47,9 +55,13 @@ class SearchFormAjax(APIView):
             )
         except Exception as error:
             return HttpResponse(error)
-        return JsonResponse({'posts': PhotoSerializer(outcome.result['photos'], many=True).data,
-                             'active_page': self.request.GET['page'],
-                             'max_page': outcome.result['max_page']}, status=status.HTTP_200_OK)
+        return JsonResponse(
+            {
+                'posts': PhotoSerializer(outcome.result, many=True).data,
+                'active_page': self.request.GET['page'],
+                'max_page': outcome.result.paginator.page_range.stop - 1
+            }, status=status.HTTP_200_OK
+        )
 
 
 class PersonalSortingFormAjax(APIView):
@@ -63,6 +75,10 @@ class PersonalSortingFormAjax(APIView):
             )
         except Exception as error:
             return HttpResponse(error)
-        return JsonResponse({'posts': PhotoSerializer(outcome.result['photos'], many=True).data,
-                             'active_page': self.request.GET['page'],
-                             'max_page': outcome.result['max_page']}, status=status.HTTP_200_OK)
+        return JsonResponse(
+            {
+                'posts': PhotoSerializer(outcome.result.object_list, many=True).data,
+                'active_page': self.request.GET['page'],
+                'max_page': outcome.result.paginator.page_range.stop - 1
+            }, status=status.HTTP_200_OK
+        )

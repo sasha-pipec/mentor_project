@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 from django.views import View
 from service_objects.services import ServiceOutcome
 
-from photobatle.service import *
+from photobatle.services import *
 
 
 class CreatingCommentForPhoto(View):

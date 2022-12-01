@@ -3,7 +3,7 @@ from django.http import HttpResponse, JsonResponse
 from django.views import View
 from service_objects.services import ServiceOutcome
 
-from photobatle.service import CreateAPITokenService
+from photobatle.services import CreateAPITokenService
 
 
 class GeneratingAPIToken(View):
@@ -14,4 +14,6 @@ class GeneratingAPIToken(View):
             )
         except ValidationError as error:
             return HttpResponse(error)
-        return JsonResponse({'token': str(outcome.result)}, status=200)
+        return JsonResponse({
+            'token': str(outcome.result)
+        }, status=200)

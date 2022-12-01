@@ -2,7 +2,7 @@ from django.http import HttpResponse, JsonResponse
 from django.views import View
 from service_objects.services import ServiceOutcome
 
-from photobatle.service import *
+from photobatle.services import *
 
 
 class CreatingLikeForPhoto(View):
@@ -15,8 +15,10 @@ class CreatingLikeForPhoto(View):
             )
         except Exception as error:
             return HttpResponse(error)
-        return JsonResponse({'button_text': 'Снять голос', 'like_count': str(outcome.result.like_count)},
-                            status=status.HTTP_200_OK)
+        return JsonResponse({
+            'button_text': 'Снять голос',
+            'like_count': str(outcome.result.like_count)
+        }, status=status.HTTP_200_OK)
 
 
 class DeletingLikeForPhoto(View):
@@ -29,5 +31,7 @@ class DeletingLikeForPhoto(View):
             )
         except Exception as error:
             return HttpResponse(error)
-        return JsonResponse({'button_text': 'Лайк', 'like_count': str(outcome.result.like_count)},
-                            status=status.HTTP_200_OK)
+        return JsonResponse({
+            'button_text': 'Лайк',
+            'like_count': str(outcome.result.like_count)
+        }, status=status.HTTP_200_OK)
