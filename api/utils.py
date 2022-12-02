@@ -24,8 +24,8 @@ class CustomTokenAuthentication(TokenAuthentication):
 
 class CustomPagination:
     def __init__(self, page, current_page, per_page):
-        self._current_page = current_page
-        self._per_page = per_page
+        self._current_page = int(current_page)
+        self._per_page = int(per_page)
         self._page = page
 
     def to_json(self):

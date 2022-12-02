@@ -1,6 +1,5 @@
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework.decorators import permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.generics import ListCreateAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
@@ -14,7 +13,7 @@ from api.utils import CustomTokenAuthentication
 from photobatle.services import CreateCommentService, DeleteCommentService, UpdateCommentService
 
 
-class CommentAPI(APIView):
+class CommentListCreateView(ListCreateAPIView):
     parser_classes = [MultiPartParser, ]
     authentication_classes = (CustomTokenAuthentication,)
 
@@ -31,9 +30,7 @@ class CommentAPI(APIView):
                                                           'request': request}, many=True).data,
             outcome.response_status or status.HTTP_200_OK, )
 
-    @permission_classes([IsAuthenticated])
-    @swagger_auto_schema(manual_parameters=post_comment_parameters,
-                         responses=post_comment_response, operation_description=post_comment_description)
+    @swagger_auto_schema(**COMMENT_CREATE)
     def post(self, request, *args, **kwargs):
         try:
             outcome = ServiceOutcome(
@@ -45,13 +42,11 @@ class CommentAPI(APIView):
                         outcome.response_status or status.HTTP_201_CREATED, )
 
 
-class ModifiedCommentAPI(APIView):
+class CommentUpdateDestroyView(APIView):
     parser_classes = [MultiPartParser, ]
     authentication_classes = (CustomTokenAuthentication,)
 
-    @permission_classes([IsAuthenticated])
-    @swagger_auto_schema(manual_parameters=delete_comment_parameters,
-                         responses=delete_comment_response, operation_description=delete_comment_description)
+    @swagger_auto_schema(**COMMENT_DELETE)
     def delete(self, request, *args, **kwargs):
         try:
             outcome = ServiceOutcome(
@@ -61,9 +56,7 @@ class ModifiedCommentAPI(APIView):
             return Response({ERROR: str(e.detail), STATUS_ERROR: str(e.status_code)}, status=e.status_code)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @permission_classes([IsAuthenticated])
-    @swagger_auto_schema(manual_parameters=patch_comment_parameters,
-                         responses=patch_comment_response, operation_description=patch_comment_description)
+    @swagger_auto_schema(**COMMENT_PATCH)
     def patch(self, request, *args, **kwargs):
         try:
             outcome = ServiceOutcome(
