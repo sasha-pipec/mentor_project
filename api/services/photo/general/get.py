@@ -31,22 +31,15 @@ class GetPhotoService(ServiceWithResult):
     @property
     def _paginated_photos(self):
         try:
-            paginator = Paginator(
+            return Paginator(
                 self._photos,
                 self.cleaned_data["per_page"] or REST_FRAMEWORK["PAGE_SIZE"],
             ).page(self.cleaned_data["page"] or 1)
         except EmptyPage:
-            paginator = Paginator(
+            return Paginator(
                 Photo.objects.none(),
                 self.cleaned_data["per_page"] or REST_FRAMEWORK["PAGE_SIZE"],
             ).page(1)
-        finally:
-            pagination_data = CustomPagination(
-                paginator,
-                self.cleaned_data['page'],
-                self.cleaned_data["per_page"] or REST_FRAMEWORK["PAGE_SIZE"]
-            )
-            return {'photos': paginator, 'pagination_data': pagination_data.to_json()}
 
     @property
     def _photos(self):

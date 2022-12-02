@@ -4,17 +4,17 @@ from .views import *
 urlpatterns = [
     # User
     # Get method have 1 required params: api_token in headers
-    path('user', UserAPI.as_view()),
+    path('user', UserRetrieve.as_view()),
 
     # Token
-    path('token', TokenAPI.as_view()),
+    path('token', TokenCreateView.as_view()),
 
-    path('photos/personal', PersonalPhotoAPI.as_view()),
-    path('photos', PhotoAPI.as_view()),
-    path('photos/<slug>', ModifiedPhotoAPI.as_view()),
-    path('photos/<slug>/like_toggle', LikeAPI.as_view()),
-    path('photos/<slug>/comments', CommentAPI.as_view()),
-    path('comments/<int:id>', ModifiedCommentAPI.as_view()),
+    path('photos/personal', PersonalPhotoListView.as_view()),
+    path('photos', PhotoListCreateView.as_view()),
+    path('photos/<slug>', PhotoRetrieveUpdateDestroyView.as_view()),
+    path('photos/<slug>/like_toggle', LikeCreateDestroyView.as_view()),
+    path('photos/<slug>/comments', CommentListCreateView.as_view()),
+    path('comments/<int:id>', CommentUpdateDestroyView.as_view()),
 
     # Personal photo
     # Get method have 1 required params: api_token in headers, not required: sort_value

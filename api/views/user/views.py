@@ -1,9 +1,7 @@
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework.decorators import permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.generics import RetrieveAPIView
 from rest_framework.response import Response
 
-from rest_framework.views import APIView
 from service_objects.services import ServiceOutcome
 
 from api.custom_schema import *
@@ -13,12 +11,10 @@ from api.utils import CustomTokenAuthentication
 from api.constants import *
 
 
-class UserAPI(APIView):
+class UserRetrieve(RetrieveAPIView):
     authentication_classes = (CustomTokenAuthentication,)
 
-    @permission_classes([IsAuthenticated])
-    @swagger_auto_schema(manual_parameters=get_user_parameters,
-                         responses=get_user_response, operation_description=get_user_description)
+    @swagger_auto_schema(**USER_RETRIEVE)
     def get(self, request, *args, **kwargs):
         try:
             outcome = ServiceOutcome(

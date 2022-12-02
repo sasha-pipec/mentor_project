@@ -1,6 +1,4 @@
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework.decorators import permission_classes
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
@@ -12,13 +10,11 @@ from api.constants import *
 from api.utils import _like_exist, CustomTokenAuthentication
 
 
-class LikeAPI(APIView):
+class LikeCreateDestroyView(APIView):
     parser_classes = [MultiPartParser, ]
     authentication_classes = (CustomTokenAuthentication,)
 
-    @permission_classes([IsAuthenticated])
-    @swagger_auto_schema(manual_parameters=post_like_parameters,
-                         responses=post_like_response, operation_description=post_like_description)
+    @swagger_auto_schema(**LIKE_TOGGLE)
     def post(self, request, *args, **kwargs):
         try:
             if _like_exist(request.user.id, kwargs['slug']):
