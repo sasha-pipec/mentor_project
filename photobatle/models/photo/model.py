@@ -1,9 +1,21 @@
 import os
+import string
+import random
+
 from django.db import models
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 from django.urls import reverse
+from django.utils.text import slugify
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
+from transliterate import translit
+
 from photobatle.models.base_model.model import BaseModel
+
+
+def rand_slug():
+    return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(6))
 
 
 class Photo(BaseModel):
@@ -23,7 +35,7 @@ class Photo(BaseModel):
                                            format='JPEG',
                                            options={'quality': 60})
     previous_photo = models.ImageField(blank=True, verbose_name='Previous file')
-    photo_name = models.CharField(max_length=255, blank=False, unique=True, verbose_name='Title')
+    photo_name = models.CharField(max_length=255, blank=False, verbose_name='Title')
     photo_content = models.TextField(blank=False, verbose_name='Description')
     published_at = models.DateField(null=True, verbose_name='Date of publish')
     task_id = models.TextField(null=True, blank=True)
@@ -40,6 +52,12 @@ class Photo(BaseModel):
         (REJECTED, 'Rejected'),
     )
     moderation = models.CharField(max_length=10, choices=STATUS_CHOICES, verbose_name='Status', default=ON_MODERATION)
+
+    @receiver(pre_save)
+    def set_slug(sender, instance, *args, **kwargs):
+        instance.photo.name = translit(instance.photo.name, 'ru', reversed=True)
+        if not instance.slug:
+            instance.slug = slugify(rand_slug() + "-" + translit(instance.photo_name, 'ru', reversed=True))
 
     def __str__(self):
         return self.photo_name

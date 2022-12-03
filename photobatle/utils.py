@@ -1,19 +1,7 @@
-from transliterate import translit
 from photobatle.models import *
 
 
 class DataMixin:
-    def slug_russian_word(self, word):
-        # Making a slug of Russian words
-        russia = 'абвгдеёжзийклмнопрстуфхцчшщъыэюя1234567890qwertyuiopasdfghjklzxcvbnm'
-        slug = ''
-        for i in word:
-            if i.lower() in russia:
-                slug += translit(i, language_code='ru', reversed=True)
-            else:
-                if i == ' ':
-                    slug += '-'
-        return slug
 
     def all_comments_for_post(self, parent_id=None, photo_id=None):
         # function for getting all the answers under the comment
