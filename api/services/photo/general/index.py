@@ -2,16 +2,15 @@ from django import forms
 from django.core.paginator import Paginator, EmptyPage
 from service_objects.services import ServiceWithResult
 
-from api.utils import *
-from api.repositorys import *
+from api.repositorys import GeneralPhotoRepository
 from api.constants import *
 
-from photobatle.models import *
+from photobatle.models import Photo
 
 from mentor_prooject.settings import REST_FRAMEWORK
 
 
-class GetPhotoService(ServiceWithResult):
+class ListGeneralPhotoService(ServiceWithResult):
     """Api service class for det general photo"""
 
     page = forms.IntegerField(required=False)
