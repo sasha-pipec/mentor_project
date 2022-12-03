@@ -6,13 +6,13 @@ from service_objects.services import ServiceOutcome
 
 from api.constants import *
 from api.custom_schema import *
-from api.services import GetPhotoService, ApiAddPhotoService, GetDetailPhotoService, GetPersonalPhotoService
+from api.services import ListGeneralPhotoService, ApiAddPhotoService, ShowDetailPhotoService, PersonalListPhotoService, \
+    ApiUpdatePhotoService, ApiRecoveryPhotoService, ApiDeletePhotoService
 from api.serializers import ApiPhotosSerializer, ApiCreatePhotoSerializers, ApiDetailPhotoSerializer, \
     ApiPersonalPhotosSerializer
 from api.metadata import *
 from api.utils import CustomTokenAuthentication, CustomPagination
 from mentor_prooject.settings import REST_FRAMEWORK
-from photobatle.services import DeletePhotoService, RecoveryPhotoService, UpdatePhotoService
 
 
 class PhotoListCreateView(ListCreateAPIView):
@@ -23,7 +23,7 @@ class PhotoListCreateView(ListCreateAPIView):
     def get(self, request, *args, **kwargs):
         try:
             outcome = ServiceOutcome(
-                GetPhotoService, request.data.dict() if request.data else request.query_params
+                ListGeneralPhotoService, request.data.dict() if request.data else request.query_params
             )
         except Exception as error:
             return Response(
@@ -45,7 +45,9 @@ class PhotoListCreateView(ListCreateAPIView):
     def post(self, request, *args, **kwargs):
         try:
             outcome = ServiceOutcome(
-                ApiAddPhotoService, request.POST.dict() | {ID_OF_USER: request.user.id}, request.FILES.dict()
+                ApiAddPhotoService,
+                request.POST.dict() | {USER: request.user if request.user.is_authenticated else None},
+                request.FILES.dict()
             )
         except Exception as error:
             return Response(
@@ -66,7 +68,7 @@ class PhotoRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     def get(self, request, *args, **kwargs):
         try:
             outcome = ServiceOutcome(
-                GetDetailPhotoService, kwargs | {ID_OF_USER: request.user.pk if request.user.is_authenticated else None}
+                ShowDetailPhotoService, kwargs | {USER: request.user if request.user.is_authenticated else None}
             )
         except Exception as e:
             return Response({ERROR: e.detail, STATUS_ERROR: e.status_code}, status=e.status_code)
@@ -83,10 +85,13 @@ class PhotoRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     def delete(self, request, *args, **kwargs):
         try:
             outcome = ServiceOutcome(
-                DeletePhotoService, kwargs | {ID_OF_USER: request.user.id}
+                ApiDeletePhotoService, kwargs | {USER: request.user if request.user.is_authenticated else None}
             )
-        except Exception as e:
-            return Response({ERROR: e.detail, STATUS_ERROR: e.status_code}, status=e.status_code)
+        except Exception as error:
+            return Response({
+                    ERROR: {key: value for key, value in error.errors_dict.items()},
+                    STATUS_ERROR: error.response_status
+                }, status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @swagger_auto_schema(**PHOTO_PATCH)
@@ -94,14 +99,20 @@ class PhotoRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
         try:
             if request.data:
                 outcome = ServiceOutcome(
-                    UpdatePhotoService, request.data.dict() | kwargs | {ID_OF_USER: request.user.id}
+                    ApiUpdatePhotoService, request.data.dict() | kwargs |
+                                           {USER: request.user if request.user.is_authenticated else None},
+                    request.FILES
                 )
             else:
                 outcome = ServiceOutcome(
-                    RecoveryPhotoService, kwargs | {ID_OF_USER: request.user.id}
+                    ApiRecoveryPhotoService, kwargs | {USER: request.user if request.user.is_authenticated else None}
                 )
-        except Exception as e:
-            return Response({ERROR: e.detail, STATUS_ERROR: e.status_code}, status=e.status_code)
+        except Exception as error:
+            return Response(
+                {
+                    ERROR: {key: value for key, value in error.errors_dict.items()},
+                    STATUS_ERROR: error.response_status
+                }, status=status.HTTP_400_BAD_REQUEST)
         return Response(ApiCreatePhotoSerializers(outcome.result).data, status=status.HTTP_200_OK)
 
 
@@ -112,8 +123,9 @@ class PersonalPhotoListView(ListAPIView):
     def get(self, request, *args, **kwargs):
         try:
             outcome = ServiceOutcome(
-                GetPersonalPhotoService,
-                request.data.dict() if request.data else request.query_params.dict() | {ID_OF_USER: request.user.pk}
+                PersonalListPhotoService,
+                request.data.dict() if request.data else request.query_params.dict() |
+                                                         {USER: request.user if request.user.is_authenticated else None}
             )
         except Exception as e:
             return Response({ERROR: e.detail, STATUS_ERROR: e.status_code}, status=e.status_code)

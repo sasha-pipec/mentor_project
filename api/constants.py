@@ -5,6 +5,7 @@ METADATA = 'Metadata'
 RESPONSE = 'Response'
 ERROR = 'Error'
 STATUS_ERROR = 'Status_error'
+USER = 'user'
 ID_OF_USER = 'user_id'
 SORT_LIST = ['like_count', 'comment_count', 'updated_at', 'id']
 STATUS_LIST = [Photo.ON_DELETION, Photo.ON_MODERATION, Photo.APPROVED, Photo.REJECTED]
