@@ -25,7 +25,7 @@ class CreateCommentService(ServiceWithResult):
     def _created_comment(self) -> Comment:
         self.send_notification()
         comment = Comment(
-            photo=Photo(pk=(self._get_photo).id),
+            photo=self._get_photo,
             user_id=self.cleaned_data['user'].id,
             parent_id=self.cleaned_data['parent_comment_id'],
             content=self.cleaned_data['comment']

@@ -27,7 +27,7 @@ class ApiCreateCommentService(ServiceWithResult):
     @property
     def _created_comment(self):
         comment = Comment(
-            photo=Photo(id=(self.check_photo_presence_by_slug()).id),
+            photo=self.check_photo_presence_by_slug(),
             user_id=self.cleaned_data['user'].id,
             parent_id=self.cleaned_data['parent_comment_id'],
             content=self.cleaned_data['comment']
