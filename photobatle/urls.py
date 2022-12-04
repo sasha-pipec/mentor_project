@@ -13,7 +13,7 @@ urlpatterns = [
     path('photo/get/personal_list_photo', PersonalListPosts.as_view(), name='personal_list_posts'),
     path('photo/get/<slug:slug>', DetailPost.as_view(), name='detail_post'),
 
-    path('comment/post/<parent_comment_id>', CreatingCommentForPhoto.as_view(), name='create_comment'),
+    path('comment/post/', CreatingCommentForPhoto.as_view(), name='create_comment'),
     path('comment/delete/<id>', DeletingCommentForPhoto.as_view(), name='delete_comment'),
     path('comment/patch/<id>', UpdatingCommentForPhoto.as_view(), name='update_comment'),
 

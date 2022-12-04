@@ -55,9 +55,10 @@ class Photo(BaseModel):
 
     @receiver(pre_save)
     def set_slug(sender, instance, *args, **kwargs):
-        instance.photo.name = translit(instance.photo.name, 'ru', reversed=True)
-        if not instance.slug:
-            instance.slug = slugify(rand_slug() + "-" + translit(instance.photo_name, 'ru', reversed=True))
+        if isinstance(instance, Photo):
+            instance.photo.name = translit(instance.photo.name, 'ru', reversed=True)
+            if not instance.slug:
+                instance.slug = slugify(rand_slug() + "-" + translit(instance.photo_name, 'ru', reversed=True))
 
     def __str__(self):
         return self.photo_name

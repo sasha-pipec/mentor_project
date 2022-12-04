@@ -61,12 +61,12 @@
                                     <div class="answer-for-comment" id="answer-for-comment-{{comment.pk}}">
                                         <div class="answer-comment-button">
                                             <form method="post"
-                                                  action="{% url 'create_comment' comment.pk %}">
+                                                  action="{% url 'create_comment' %}">
                                                 {% csrf_token %}
                                                 <textarea name="comment" type="text"
                                                           class="md-textarea form-control answer-comment-textarea"
                                                           rows="3" id="input-answer-comment" required></textarea>
-                                                <input name="id" type="hidden" value="{{post.pk}}">
+                                                <input name="parent_comment_id" type="hidden" value="{{comment.pk}}">
                                                 <input name="slug" type="hidden" value="{{post.slug}}">
                                                 <a class="btn-danger" onclick="close_answer_comment()">Отмена</a>
                                                 {% if user.is_authenticated %}
@@ -144,13 +144,13 @@
                                         <div class="answer-for-comment" id="answer-for-comment-{{answer.pk}}">
                                             <div class="answer-comment-button">
                                                 <form method="post"
-                                                      action="{% url 'create_comment' answer.pk %}">
+                                                      action="{% url 'create_comment' %}">
                                                     {% csrf_token %}
                                                     <textarea name="comment" type="text"
                                                               class="md-textarea form-control answer-comment-textarea"
                                                               rows="3" id="input-answer-comment"
                                                               style="margin-left:-50px;" required></textarea>
-                                                    <input name="id" type="hidden" value="{{post.pk}}">
+                                                    <input name="parent_comment_id" type="hidden" value="{{answer.pk}}">
                                                     <input name="slug" type="hidden" value="{{post.slug}}">
                                                     <a class="btn-danger" onclick="close_answer_comment()">Отмена</a>
                                                     {% if user.is_authenticated %}
@@ -196,7 +196,7 @@
                         {% endfor%}
                     </div>
                     {% if user.is_authenticated %}
-                    <form method="POST" action="{% url 'create_comment' parent_comment_id=None %}">
+                    <form method="POST" action="{% url 'create_comment'%}">
                         {% csrf_token %}
                         <input type="hidden" name="id" value="{{post.pk}}">
                         <input type="hidden" name="slug" value="{{post.slug}}">
