@@ -8,9 +8,9 @@ from service_objects.services import ServiceOutcome
 from api.constants import *
 from api.custom_schema import *
 from api.serializers import ApiCommentSerializer, ApiCreateCommentSerializer
-from api.services import GetCommentForPhotoService
+from api.services import ListCommentForPhotoService, ApiCreateCommentService, ApiUpdateCommentService, \
+    ApiDeleteCommentService
 from api.utils import CustomTokenAuthentication
-from photobatle.services import CreateCommentService, DeleteCommentService, UpdateCommentService
 
 
 class CommentListCreateView(ListCreateAPIView):
@@ -21,7 +21,7 @@ class CommentListCreateView(ListCreateAPIView):
     def get(self, request, *args, **kwargs):
         try:
             outcome = ServiceOutcome(
-                GetCommentForPhotoService, kwargs | {ID_OF_USER: request.user.pk if request.user.pk else None}
+                ListCommentForPhotoService, kwargs | {USER: request.user if request.user.is_authenticated else None}
             )
         except Exception as e:
             return Response({ERROR: e.detail, STATUS_ERROR: e.status_code}, status=e.status_code)
@@ -34,10 +34,15 @@ class CommentListCreateView(ListCreateAPIView):
     def post(self, request, *args, **kwargs):
         try:
             outcome = ServiceOutcome(
-                CreateCommentService, request.POST.dict() | kwargs | {ID_OF_USER: request.user.id}
+                ApiCreateCommentService, request.POST.dict() | kwargs |
+                                         {USER: request.user if request.user.is_authenticated else None}
             )
-        except Exception as e:
-            return Response({ERROR: e.detail, STATUS_ERROR: e.status_code}, status=e.status_code)
+        except Exception as error:
+            return Response(
+                {
+                    ERROR: {key: value for key, value in error.errors_dict.items()},
+                    STATUS_ERROR: error.response_status
+                }, status=status.HTTP_400_BAD_REQUEST)
         return Response(ApiCreateCommentSerializer(outcome.result, context={'request': request}).data,
                         outcome.response_status or status.HTTP_201_CREATED, )
 
@@ -50,19 +55,28 @@ class CommentUpdateDestroyView(APIView):
     def delete(self, request, *args, **kwargs):
         try:
             outcome = ServiceOutcome(
-                DeleteCommentService, kwargs | {ID_OF_USER: request.user.id}
+                ApiDeleteCommentService, kwargs | {USER: request.user if request.user.is_authenticated else None}
             )
-        except Exception as e:
-            return Response({ERROR: str(e.detail), STATUS_ERROR: str(e.status_code)}, status=e.status_code)
+        except Exception as error:
+            return Response(
+                {
+                    ERROR: {key: value for key, value in error.errors_dict.items()},
+                    STATUS_ERROR: error.response_status
+                }, status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @swagger_auto_schema(**COMMENT_PATCH)
     def patch(self, request, *args, **kwargs):
         try:
             outcome = ServiceOutcome(
-                UpdateCommentService, request.data.dict() | kwargs | {ID_OF_USER: request.user.id}
+                ApiUpdateCommentService, request.data.dict() | kwargs |
+                                         {USER: request.user if request.user.is_authenticated else None}
             )
-        except Exception as e:
-            return Response({ERROR: str(e.detail), STATUS_ERROR: str(e.status_code)}, status=e.status_code)
+        except Exception as error:
+            return Response(
+                {
+                    ERROR: {key: value for key, value in error.errors_dict.items()},
+                    STATUS_ERROR: error.response_status
+                }, status=status.HTTP_400_BAD_REQUEST)
         return Response(ApiCreateCommentSerializer(outcome.result, context={'request': request}).data,
                         outcome.response_status or status.HTTP_200_OK)

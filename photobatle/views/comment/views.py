@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 from django.views import View
 from service_objects.services import ServiceOutcome
 
-from photobatle.services import *
+from photobatle.services import CreateCommentService, DeleteCommentService, UpdateCommentService
 
 
 class CreatingCommentForPhoto(View):
@@ -12,7 +12,7 @@ class CreatingCommentForPhoto(View):
     def post(self, request, *args, **kwargs):
         try:
             outcome = ServiceOutcome(
-                CreateCommentService, request.POST.dict() | kwargs | {'user_id': request.user.id}
+                CreateCommentService, request.POST.dict() | kwargs | {'user': request.user}
             )
         except Exception as error:
             return HttpResponse(error)
@@ -25,7 +25,7 @@ class DeletingCommentForPhoto(View):
     def get(self, request, *args, **kwargs):
         try:
             outcome = ServiceOutcome(
-                DeleteCommentService, kwargs | {'user_id': request.user.id}
+                DeleteCommentService, kwargs | {'user': request.user}
             )
         except Exception as error:
             return HttpResponse(error)
@@ -38,7 +38,7 @@ class UpdatingCommentForPhoto(View):
     def post(self, request, *args, **kwargs):
         try:
             outcome = ServiceOutcome(
-                UpdateCommentService, request.POST.dict() | kwargs | {'user_id': request.user.id}
+                UpdateCommentService, request.POST.dict() | kwargs | {'user': request.user}
             )
         except Exception as error:
             return HttpResponse(error)
