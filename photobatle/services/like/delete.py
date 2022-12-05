@@ -1,27 +1,28 @@
 from functools import lru_cache
 
 from django import forms
-from django.db.models import Count
 from service_objects.services import ServiceWithResult
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
-from photobatle.models import *
+from django.db.models import Count
+from photobatle.models import User, Photo, Like
 
 
-class CreateLikeService(ServiceWithResult):
-    """Service class for create like"""
+class DeleteLikeService(ServiceWithResult):
+    """Service class for delete like"""
 
     slug = forms.SlugField(required=False)
     user_id = forms.IntegerField(required=False)
 
     def process(self):
-        self.result = self._create_like
+        self.result = self._delete_like
         return self
 
     @property
-    def _create_like(self):
+    def _delete_like(self):
         photo = Photo.objects.get(slug=self.cleaned_data['slug'])
-        Like.objects.create(photo_id=photo.id, user_id=self.cleaned_data['user_id'])
+        like = Like.objects.get(photo_id=photo.id, user_id=self.cleaned_data['user_id'])
+        like.delete()
         self.send_notification()
         return self._photo
 
@@ -36,8 +37,8 @@ class CreateLikeService(ServiceWithResult):
         async_to_sync(channel_layer.group_send)(
             str(self._photo.user), {
                 'type': 'message',
-                'message': f"Ваше фото '{self._photo.photo_name}' "
-                           f"понравилось пользователю {username}. "
-                           f"Всего голосов:{self._photo.like_count}"
+                'message': f"User '{username}' "
+                           f"delete like for photo '{self._photo.photo_name}'. "
+                           f"All likes:{self._photo.like_count}"
             }
         )
