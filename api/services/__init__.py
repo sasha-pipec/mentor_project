@@ -9,6 +9,5 @@ from api.services.comment.index import *
 from api.services.comment.create import *
 from api.services.comment.update import *
 from api.services.comment.delete import *
-from api.services.like.Create import *
-from api.services.like.Delete import *
+from api.services.like.like_toggle import *
 from api.services.user.get import *

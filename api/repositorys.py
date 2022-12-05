@@ -1,7 +1,6 @@
 from django.db.models import Value, Count, Q
 
 from api.constants import DEFAULT_SORT_VALUE
-from api.status_code import *
 from photobatle.models import Comment, Photo, Like
 
 
@@ -44,10 +43,6 @@ class PhotoRepository:
     @staticmethod
     def get_objects_by_filter(**kwargs):
         return Photo.objects.filter(**kwargs)
-
-    @staticmethod
-    def get_first_object_by_filter(**kwargs):
-        return Photo.objects.filter(**kwargs).first()
 
 
 class CommentRepository:

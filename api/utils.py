@@ -3,7 +3,6 @@ from rest_framework import exceptions
 
 from mentor_prooject.settings import *
 
-from api.status_code import *
 from api.repositorys import *
 
 
@@ -49,15 +48,3 @@ def can_be_deleted_and_changing_by_user(comments, user_id):
             if not CommentRepository.get_objects_by_filter(parent=comment.pk):
                 comment.can_be_deleted = True
     return comments
-
-
-def _like_exist(user_id, slug):
-    if not user_id:
-        raise ValidationError401("Missing one of all requirements parameters:api token")
-    elif not slug:
-        raise ValidationError400("Missing one of all requirements parameters:api slug")
-    photo = PhotoRepository.get_first_object_by_filter(slug=slug)
-    if not photo:
-        raise ValidationError404(f"Photo with slug '{slug}' dont found")
-    like = LikeRepository.get_objects_by_filter(user_id=user_id, photo_id=photo.id)
-    return True if not like else False
