@@ -10,5 +10,5 @@ from api.services.comment.create import *
 from api.services.comment.update import *
 from api.services.comment.delete import *
 from api.services.like.like_toggle import *
-from api.services.user.get import *
+from api.services.user.show import *
 from api.services.api_token.create import *

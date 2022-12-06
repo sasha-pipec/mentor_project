@@ -23,14 +23,15 @@ class CreateCommentService(ServiceWithResult):
 
     @property
     def _created_comment(self) -> Comment:
-        self.send_notification()
+        photo = Photo.objects.get(slug=self.cleaned_data['slug'])
         comment = Comment(
-            photo=self._get_photo,
+            photo=photo,
             user_id=self.cleaned_data['user'].id,
             parent_id=self.cleaned_data['parent_comment_id'],
             content=self.cleaned_data['comment']
         )
         comment.save()
+        self.send_notification()
         return comment
 
     @property

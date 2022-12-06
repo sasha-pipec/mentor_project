@@ -110,7 +110,7 @@ class PhotoAdmin(admin.ModelAdmin):
                         'message': f"Ваше фото '{obj.photo_name}' отклонили"
                     }
                 )
-                task_id = DeletePhotoService.execute({'slug': obj.slug, 'user_id': obj.user.pk})
+                task_id = DeletePhotoService.execute({'slug': obj.slug, 'user': obj.user})
                 obj.task_id = task_id
             except ValidationError as error:
                 return HttpResponse(error)
