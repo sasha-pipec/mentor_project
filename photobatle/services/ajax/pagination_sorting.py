@@ -28,8 +28,7 @@ class PaginationService(ServiceWithResult):
 
     @property
     def _get_photo_on_page(self):
-        all_photos = Photo.objects.annotate(comment_count=Count('comment_photo', distinct=True),
-                                            like_count=Count('like_photo', distinct=True))
+        all_photos = Photo.objects.all().order_by('id')
         if self.cleaned_data['user_id']:
             all_photos = all_photos.filter(user_id=int(self.cleaned_data['user_id']))
             if self.cleaned_data['sort_value']:

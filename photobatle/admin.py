@@ -46,7 +46,7 @@ class PhotoAdmin(admin.ModelAdmin):
         'moderation')
     list_filter = ('moderation', 'user')
     ordering = ('create_at', 'photo_name', 'user')
-    readonly_fields = ('create_at', 'updated_at', 'previous_photo')
+    readonly_fields = ('create_at', 'updated_at', 'previous_photo', 'like_count', 'comment_count')
     search_fields = ('photo_name',)
     prepopulated_fields = {'slug': ('photo_name',)}
     exclude = ('task_id',)

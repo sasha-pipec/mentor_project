@@ -8,17 +8,14 @@ class DetailPhotoRepository:
 
     @staticmethod
     def get_object(like=False, **kwargs):
-        return Photo.objects.annotate(comment_count=Count('comment_photo', distinct=True),
-                                      like_count=Count('like_photo', distinct=True),
-                                      is_liked_by_current_user=Value(like)).get(**kwargs)
+        return Photo.objects.annotate(is_liked_by_current_user=Value(like)).get(**kwargs)
 
 
 class GeneralPhotoRepository:
 
     @staticmethod
     def get_objects_by_filter_with_order(search_value, sort_value=DEFAULT_SORT_VALUE, **kwargs):
-        photos = Photo.objects.annotate(comment_count=Count('comment_photo', distinct=True),
-                                        like_count=Count('like_photo', distinct=True)).filter(**kwargs)
+        photos = Photo.objects.filter(**kwargs)
         if search_value:
             return photos.filter(
                 Q(user__username__icontains=search_value) |
@@ -31,8 +28,7 @@ class PersonalPhotoRepository:
 
     @staticmethod
     def get_objects_by_filter(sort_value, **kwargs):
-        photos = Photo.objects.annotate(comment_count=Count('comment_photo', distinct=True),
-                                        like_count=Count('like_photo', distinct=True)).filter(**kwargs)
+        photos = Photo.objects.filter(**kwargs)
         if sort_value:
             return photos.filter(moderation=sort_value)
         return photos

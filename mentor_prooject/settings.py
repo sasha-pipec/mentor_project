@@ -69,6 +69,8 @@ INSTALLED_APPS = [
 
     # Imagekit
     'imagekit',
+
+    'django_counter_cache_field',
 ]
 
 MIDDLEWARE = [

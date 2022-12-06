@@ -37,7 +37,7 @@ class CreateCommentService(ServiceWithResult):
     @property
     @lru_cache()
     def _get_photo(self) -> Photo:
-        return Photo.objects.annotate(comment_count=Count('comment_photo')).get(slug=self.cleaned_data['slug'])
+        return Photo.objects.get(slug=self.cleaned_data['slug'])
 
     def send_notification(self):
         channel_layer = get_channel_layer()

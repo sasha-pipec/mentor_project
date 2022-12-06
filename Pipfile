@@ -24,6 +24,7 @@ drf-yasg = "*"
 channels = "*"
 channels-redis = "*"
 daphne = "*"
+django-counter-cache-field = "*"
 
 [dev-packages]
 

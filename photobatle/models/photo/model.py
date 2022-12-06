@@ -7,6 +7,7 @@ from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.text import slugify
+from django_counter_cache_field import CounterCacheField
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
 from transliterate import translit
@@ -39,6 +40,8 @@ class Photo(BaseModel):
     photo_content = models.TextField(blank=False, verbose_name='Description')
     published_at = models.DateField(null=True, verbose_name='Date of publish')
     task_id = models.TextField(null=True, blank=True)
+    comment_count = CounterCacheField()
+    like_count = CounterCacheField()
 
     ON_DELETION = 'DELETION'
     ON_MODERATION = 'MODERATION'

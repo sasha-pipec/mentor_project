@@ -6,7 +6,7 @@ from django.db.models import Count, Value
 from service_objects.services import ServiceWithResult
 from service_objects.fields import ModelField
 
-from api.status_code import ValidationError400,ValidationError404
+from api.status_code import ValidationError400, ValidationError404
 from photobatle.models import Photo, User, Like
 
 
@@ -41,9 +41,8 @@ class ShowDetailPhotoService(ServiceWithResult):
     @lru_cache
     def _photo_presence(self):
         try:
-            return Photo.objects.annotate(comment_count=Count('comment_photo', distinct=True),
-                                          like_count=Count('like_photo', distinct=True),
-                                          is_liked_by_current_user=Value(False)).get(
+            test = Photo.objects.get(slug='szethq-privet-suka').comment_count
+            return Photo.objects.annotate(is_liked_by_current_user=Value(False)).get(
                 slug=self.cleaned_data['slug'], moderation=Photo.APPROVED
             )
         except Exception:
@@ -53,4 +52,4 @@ class ShowDetailPhotoService(ServiceWithResult):
     def _is_liked_by_current_user(self):
         photo = self._photo_presence
         like = Like.objects.filter(photo_id=photo.pk, user_id=self.cleaned_data['user'].pk)
-        return bool(like) if self._photo_presence.user.pk != self.cleaned_data['user'].id    else False
+        return bool(like) if self._photo_presence.user.pk != self.cleaned_data['user'].id else False

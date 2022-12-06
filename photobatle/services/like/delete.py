@@ -29,7 +29,7 @@ class DeleteLikeService(ServiceWithResult):
     @property
     @lru_cache
     def _photo(self):
-        return Photo.objects.annotate(like_count=Count('like_photo')).get(slug=self.cleaned_data['slug'])
+        return Photo.objects.get(slug=self.cleaned_data['slug'])
 
     def send_notification(self):
         channel_layer = get_channel_layer()
