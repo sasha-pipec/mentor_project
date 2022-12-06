@@ -1,10 +1,11 @@
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework import status
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.response import Response
 
 from service_objects.services import ServiceOutcome
 
-from api.custom_schema import *
+from api.custom_schema import USER_RETRIEVE
 from api.serializers import ApiUserSerializer
 from api.services import GetUserService
 from api.utils import CustomTokenAuthentication
@@ -18,7 +19,7 @@ class UserRetrieve(RetrieveAPIView):
     def get(self, request, *args, **kwargs):
         try:
             outcome = ServiceOutcome(
-                GetUserService, {ID_OF_USER: request.user.id}
+                GetUserService, {USER: request.user if request.user.is_authenticated else None}
             )
         except Exception as e:
             return Response({ERROR: e.detail, STATUS_ERROR: e.status_code}, status=e.status_code)

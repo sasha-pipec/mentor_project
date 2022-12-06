@@ -9,8 +9,7 @@ from service_objects.services import ServiceOutcome
 
 from api.utils import CustomTokenAuthentication
 from api.constants import *
-from photobatle.services import CreateAPITokenService
-
+from api.services import ApiCreateApiTokenService
 
 class TokenCreateView(CreateAPIView):
     authentication_classes = (CustomTokenAuthentication,)
@@ -20,7 +19,7 @@ class TokenCreateView(CreateAPIView):
     def post(self, request, *args, **kwargs):
         try:
             outcome = ServiceOutcome(
-                CreateAPITokenService, {ID_OF_USER: request.user.id}
+                ApiCreateApiTokenService, {USER: request.user if request.user.is_authenticated else None}
             )
         except Exception as e:
             return Response({ERROR: e.detail, STATUS_ERROR: e.status_code}, status=e.status_code)
