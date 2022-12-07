@@ -78,8 +78,8 @@
                 <!--Конец-->
                 <p class="card-text" id="post_content">Описание: {{post.photo_content}}</p>
                 <p class="card-text">Автор: {{post.user.username}}</p>
-                <p class="card-text">Лайки: {{post|like_count}}</p>
-                <p class="card-text">Комментарии: {{post|comment_count}}</p>
+                <p class="card-text">Лайки: {{post.like_count}}</p>
+                <p class="card-text">Комментарии: {{post.comment_count}}</p>
                 {% if post.moderation == 'APPROVED'%}
                 <p class="card-text">Дата публикации:
                     <br> {{post.published_at}}</p>

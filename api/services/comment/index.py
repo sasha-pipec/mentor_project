@@ -6,7 +6,7 @@ from service_objects.fields import ModelField
 
 from api.status_code import *
 from api.utils import can_be_deleted_and_changing_by_user
-from api.repositorys import PhotoRepository, CommentRepository
+from api.query_objects import PhotoRepository, CommentRepository
 from photobatle.models import Comment, User
 
 

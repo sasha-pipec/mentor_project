@@ -41,7 +41,6 @@ class ShowDetailPhotoService(ServiceWithResult):
     @lru_cache
     def _photo_presence(self):
         try:
-            test = Photo.objects.get(slug='szethq-privet-suka').comment_count
             return Photo.objects.annotate(is_liked_by_current_user=Value(False)).get(
                 slug=self.cleaned_data['slug'], moderation=Photo.APPROVED
             )

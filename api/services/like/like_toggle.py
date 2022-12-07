@@ -4,7 +4,7 @@ from django import forms
 from service_objects.services import ServiceWithResult
 from service_objects.fields import ModelField
 
-from api.repositorys import PhotoRepository, LikeRepository
+from api.query_objects import PhotoRepository, LikeRepository
 from photobatle.models import Like, Photo, User
 
 

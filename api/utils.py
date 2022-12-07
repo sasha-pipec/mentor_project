@@ -3,7 +3,7 @@ from rest_framework import exceptions
 
 from mentor_prooject.settings import *
 
-from api.repositorys import *
+from api.query_objects import CommentRepository
 
 
 class CustomTokenAuthentication(TokenAuthentication):

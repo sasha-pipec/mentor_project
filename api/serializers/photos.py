@@ -1,101 +1,11 @@
-from transliterate import translit
-
-from api.utils import *
-from api.constants import *
-from api.repositorys import *
-
 from rest_framework import serializers
-from rest_framework.authtoken.models import Token
 
-from photobatle.models import *
-
-
-class ApiUsernameSerializer(serializers.ModelSerializer):
-    """Username serializer"""
-
-    class Meta:
-        model = User
-        fields = ('username',)
-
-
-class ApiUserSerializer(serializers.ModelSerializer):
-    """User serializer"""
-
-    all_likes = serializers.SerializerMethodField()
-    all_comments = serializers.SerializerMethodField()
-    api_token = serializers.SerializerMethodField()
-    photo = serializers.SerializerMethodField()
-
-    def get_photo(self, obj):
-        request = self.context['request']
-        try:
-            photo_url = obj.photo.url
-        except:
-            photo_url = DEFAULT_PHOTO_PATH
-        return request.build_absolute_uri(photo_url)
-
-    @staticmethod
-    def get_all_likes(obj):
-        return Like.objects.filter(user_id=obj.pk).count()
-
-    @staticmethod
-    def get_all_comments(obj):
-        return Comment.objects.filter(user_id=obj.pk).count()
-
-    @staticmethod
-    def get_api_token(obj):
-        return Token.objects.get(user=obj.pk).pk
-
-    class Meta:
-        model = User
-        fields = ('first_name', 'last_name', 'email', 'photo', 'all_likes', 'all_comments', 'api_token')
-
-
-class ApiCreateCommentSerializer(serializers.ModelSerializer):
-    """Create comment serializer"""
-
-    user = ApiUsernameSerializer()
-    photo = serializers.SerializerMethodField()
-
-    def get_photo(self, obj):
-        request = self.context['request']
-        try:
-            photo_url = obj.user.photo.url
-        except:
-            photo_url = DEFAULT_PHOTO_PATH
-        return request.build_absolute_uri(photo_url)
-
-    class Meta:
-        model = Comment
-        fields = ('id', 'photo', 'user', 'content', 'create_at', 'parent')
-
-
-class ApiCommentSerializer(serializers.ModelSerializer):
-    """Comment serializer"""
-    user = ApiUsernameSerializer()
-    can_be_deleted = serializers.BooleanField()
-    can_be_change = serializers.BooleanField()
-    answers = serializers.SerializerMethodField()
-    photo = serializers.SerializerMethodField()
-
-    def get_photo(self, obj):
-        request = self.context['request']
-        try:
-            photo_url = obj.user.photo.url
-        except:
-            photo_url = DEFAULT_PHOTO_PATH
-        return request.build_absolute_uri(photo_url)
-
-    def get_answers(self, obj):
-        comments = CommentRepository.get_objects_by_filter(parent=obj.id)
-        if self.context['user_id']:
-            comments = can_be_deleted_and_changing_by_user(comments, self.context['user_id'])
-        return (ApiCommentSerializer(comments, context={'user_id': self.context['user_id'],
-                                                        'request': self.context['request']}, many=True)).data
-
-    class Meta:
-        model = Comment
-        fields = ('id', 'photo', 'user', 'content', 'create_at', 'parent', 'answers', 'can_be_change', 'can_be_deleted')
+from api.constants import MAX_NUMBER_OF_COMMENTS_FOR_DETAIL_PHOTO, DEFAULT_PHOTO_PATH
+from api.query_objects import CommentRepository
+from api.serializers.comments import ApiCommentSerializer
+from api.serializers.users import ApiUsernameSerializer
+from api.utils import can_be_deleted_and_changing_by_user
+from photobatle.models import Photo
 
 
 class ApiPhotosSerializer(serializers.ModelSerializer):

@@ -5,7 +5,7 @@ from django.core.paginator import Paginator, EmptyPage
 from service_objects.services import ServiceWithResult
 from service_objects.fields import ModelField
 
-from api.repositorys import PersonalPhotoRepository
+from api.query_objects import PersonalPhotoRepository
 from api.status_code import ValidationError401, ValidationError400
 from api.constants import *
 from mentor_prooject.settings import REST_FRAMEWORK

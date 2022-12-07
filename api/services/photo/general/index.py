@@ -2,7 +2,7 @@ from django import forms
 from django.core.paginator import Paginator, EmptyPage
 from service_objects.services import ServiceWithResult
 
-from api.repositorys import GeneralPhotoRepository
+from api.query_objects import GeneralPhotoRepository
 from api.constants import *
 
 from photobatle.models import Photo
