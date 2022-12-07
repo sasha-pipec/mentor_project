@@ -35,7 +35,7 @@ class ApiLikeToggleService(ServiceWithResult):
 
     @property
     def _like_created(self):
-        like = Like(photo_id=self.check_photo_presence_by_slug.id, user_id=self.cleaned_data['user_id'])
+        like = Like(photo_id=self.check_photo_presence_by_slug().id, user_id=self.cleaned_data['user'].id)
         like.save()
         return True
 

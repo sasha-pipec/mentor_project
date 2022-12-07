@@ -10,7 +10,6 @@ class ApiCreateCommentSerializer(serializers.ModelSerializer):
     """Create comment serializer"""
 
     user = ApiUsernameSerializer()
-    photo = serializers.SerializerMethodField()
 
     class Meta:
         model = Comment
